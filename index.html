@@ -99,6 +99,23 @@
                     </select>
                 </div>
                 
+                <!-- Database Management Section -->
+                <div class="mt-6 bg-gray-700 p-4 rounded-lg">
+                    <h3 class="font-semibold mb-2">Database Management</h3>
+                    <p class="text-xs text-gray-400 mb-3">Transfer your product database between devices</p>
+                    <div class="space-y-2">
+                        <button id="export-db-btn" class="w-full vr-button bg-purple-700 text-white py-2 px-4 rounded hover:bg-purple-600 transition">
+                            <i class="fas fa-download mr-2"></i>Export Products
+                        </button>
+                        <div class="relative">
+                            <input type="file" id="import-db-file" class="hidden" accept=".json">
+                            <button id="import-db-btn" class="w-full vr-button bg-purple-700 text-white py-2 px-4 rounded hover:bg-purple-600 transition">
+                                <i class="fas fa-upload mr-2"></i>Import Products
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
                 <!-- VR Info Section -->
                 <div class="mt-6 bg-purple-900 bg-opacity-50 p-4 rounded-lg vr-glow">
                     <h3 class="font-semibold mb-2">VR Quick Facts</h3>

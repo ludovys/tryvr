@@ -478,6 +478,30 @@ function setupEventListeners() {
         }
     });
     
+    // Export database button
+    const exportDbBtn = document.getElementById('export-db-btn');
+    if (exportDbBtn) {
+        exportDbBtn.addEventListener('click', exportDatabase);
+    }
+    
+    // Import database button
+    const importDbBtn = document.getElementById('import-db-btn');
+    if (importDbBtn) {
+        importDbBtn.addEventListener('click', () => {
+            document.getElementById('import-db-file').click();
+        });
+    }
+    
+    // Import database file input
+    const importDbFile = document.getElementById('import-db-file');
+    if (importDbFile) {
+        importDbFile.addEventListener('change', (event) => {
+            if (event.target.files.length > 0) {
+                importDatabase(event.target.files[0]);
+            }
+        });
+    }
+    
     // Save database to localStorage before unloading the page
     window.addEventListener('beforeunload', () => {
         const data = db.export();
@@ -570,4 +594,81 @@ function closeProductDetailModal() {
     
     // Re-enable scrolling on the body
     document.body.style.overflow = '';
+}
+
+// Export database to a JSON file
+function exportDatabase() {
+    try {
+        // Export the database to a Uint8Array
+        const data = db.export();
+        const buffer = new Uint8Array(data);
+        
+        // Convert to JSON
+        const jsonData = JSON.stringify(Array.from(buffer));
+        
+        // Create a blob and download link
+        const blob = new Blob([jsonData], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        // Create a download link and trigger it
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'tryvr_products.json';
+        document.body.appendChild(a);
+        a.click();
+        
+        // Clean up
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        showNotification('Database exported successfully');
+    } catch (error) {
+        console.error('Error exporting database:', error);
+        showNotification('Failed to export database', 'error');
+    }
+}
+
+// Import database from a JSON file
+async function importDatabase(file) {
+    try {
+        // Read the file
+        const reader = new FileReader();
+        
+        reader.onload = async (event) => {
+            try {
+                // Parse the JSON data
+                const jsonData = JSON.parse(event.target.result);
+                const uint8Array = new Uint8Array(jsonData);
+                
+                // Load SQL.js library
+                const sqlPromise = initSqlJs({
+                    locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
+                });
+                
+                const SQL = await sqlPromise;
+                
+                // Create a new database from the imported data
+                db = new SQL.Database(uint8Array);
+                
+                // Save to localStorage
+                const data = db.export();
+                const buffer = new Uint8Array(data);
+                const jsonArray = Array.from(buffer);
+                localStorage.setItem('tryvr_products_db', JSON.stringify(jsonArray));
+                
+                // Reload products
+                loadProducts();
+                
+                showNotification('Database imported successfully');
+            } catch (error) {
+                console.error('Error processing imported file:', error);
+                showNotification('Failed to import database', 'error');
+            }
+        };
+        
+        reader.readAsText(file);
+    } catch (error) {
+        console.error('Error importing database:', error);
+        showNotification('Failed to import database', 'error');
+    }
 } 
