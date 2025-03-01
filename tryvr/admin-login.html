@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TryVR Admin Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background-color: #f3f4f6;
+        }
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 400px;
+            padding: 2rem;
+        }
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            transform: translateY(20px);
+            opacity: 0;
+            z-index: 50;
+        }
+        .notification-enter {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .notification-exit {
+            transform: translateY(20px);
+            opacity: 0;
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        @keyframes slideOut {
+            from {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="text-center mb-8">
+                <h1 class="text-2xl font-bold text-gray-800">TryVR Admin</h1>
+                <p class="text-gray-600">Sign in to access the admin dashboard</p>
+            </div>
+            
+            <form id="login-form" class="space-y-6">
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                    <input type="text" id="username" name="username" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+                </div>
+                
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                    <input type="password" id="password" name="password" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+                </div>
+                
+                <div>
+                    <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Sign in
+                    </button>
+                </div>
+            </form>
+            
+            <div class="mt-6 text-center">
+                <a href="index.html" class="text-sm text-indigo-600 hover:text-indigo-500">
+                    <i class="fas fa-arrow-left mr-1"></i> Back to website
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notification -->
+    <div id="status-notification" class="notification bg-green-500 translate-y-20 opacity-0">
+        <span id="status-message">Login successful!</span>
+    </div>
+    
+    <script>
+        // Show notification
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('status-notification');
+            const messageElement = document.getElementById('status-message');
+            
+            if (!notification || !messageElement) {
+                console.error('Notification elements not found');
+                return;
+            }
+            
+            // Set message
+            messageElement.textContent = message;
+            
+            // Set color based on type
+            if (type === 'success') {
+                notification.classList.remove('bg-red-500');
+                notification.classList.add('bg-green-500');
+            } else {
+                notification.classList.remove('bg-green-500');
+                notification.classList.add('bg-red-500');
+            }
+            
+            // Show notification
+            notification.classList.remove('translate-y-20', 'opacity-0');
+            notification.classList.add('notification-enter');
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('notification-enter');
+                notification.classList.add('notification-exit');
+                
+                setTimeout(() => {
+                    notification.classList.remove('notification-exit');
+                    notification.classList.add('translate-y-20', 'opacity-0');
+                }, 300);
+            }, 3000);
+        }
+        
+        // Validate admin login
+        function validateLogin(username, password) {
+            try {
+                // Check if username and password are correct
+                if (username === 'admin' && password === 'password') {
+                    // Set admin authentication in localStorage
+                    localStorage.setItem('adminAuthenticated', 'true');
+                    
+                    // Show success message
+                    showNotification('Login successful! Redirecting...', 'success');
+                    
+                    // Redirect to admin dashboard after a short delay
+                    setTimeout(() => {
+                        window.location.href = 'admin-dashboard.html';
+                    }, 1000);
+                    
+                    return true;
+                } else {
+                    showNotification('Invalid username or password', 'error');
+                    return false;
+                }
+            } catch (error) {
+                console.error('Error validating login:', error);
+                showNotification('Error during login: ' + error.message, 'error');
+                return false;
+            }
+        }
+        
+        // Handle form submission
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            validateLogin(username, password);
+        });
+        
+        // Check if already logged in
+        document.addEventListener('DOMContentLoaded', function() {
+            if (localStorage.getItem('adminAuthenticated')) {
+                window.location.href = 'admin-dashboard.html';
+            }
+        });
+    </script>
+</body>
+</html> 

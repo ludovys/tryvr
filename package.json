@@ -1,0 +1,23 @@
+{
+  "name": "amazon-affiliate-showcase",
+  "version": "1.0.0",
+  "description": "A lightweight Amazon affiliate product showcase with automatic affiliate link integration",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": [
+    "amazon",
+    "affiliate",
+    "sqlite",
+    "tailwind",
+    "javascript"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+} 

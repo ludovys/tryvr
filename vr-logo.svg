@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100" height="100">
+  <!-- VR Headset -->
+  <g fill="#4F46E5" stroke="#2D3748" stroke-width="8">
+    <!-- Main Headset Body -->
+    <rect x="96" y="160" width="320" height="180" rx="20" ry="20" />
+    
+    <!-- Headset Strap -->
+    <path d="M96 220 C 20 220, 20 280, 96 280" fill="none" />
+    <path d="M416 220 C 492 220, 492 280, 416 280" fill="none" />
+    
+    <!-- Lenses -->
+    <circle cx="176" cy="250" r="40" fill="#111827" stroke="#6366F1" />
+    <circle cx="336" cy="250" r="40" fill="#111827" stroke="#6366F1" />
+    
+    <!-- Highlights on Lenses -->
+    <circle cx="166" cy="240" r="10" fill="#A5B4FC" stroke="none" />
+    <circle cx="326" cy="240" r="10" fill="#A5B4FC" stroke="none" />
+  </g>
+  
+  <!-- Text -->
+  <text x="256" y="380" font-family="Arial, sans-serif" font-size="48" font-weight="bold" text-anchor="middle" fill="#4F46E5">TryVR</text>
+</svg> 

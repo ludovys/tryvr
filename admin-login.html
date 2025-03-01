@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TryVR Admin - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="vr-animations.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dark-purple': {
+                            500: '#6B21A8',
+                            600: '#581C87',
+                            700: '#4C1D95',
+                            800: '#3B0764',
+                            900: '#2E1065'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-900 min-h-screen text-gray-100">
+    <div class="flex items-center justify-center min-h-screen">
+        <div class="w-full max-w-md p-8 bg-gray-800 rounded-lg shadow-lg vr-glow">
+            <div class="flex justify-center mb-6">
+                <div class="vr-float">
+                    <img src="vr-logo.svg" alt="TryVR Logo" class="h-20 w-20">
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-center mb-6">TryVR Admin Login</h1>
+            
+            <div id="login-error" class="hidden mb-4 p-3 bg-red-500 text-white rounded-lg">
+                <p class="flex items-center">
+                    <i class="fas fa-exclamation-circle mr-2"></i>
+                    <span id="error-message">Invalid username or password</span>
+                </p>
+            </div>
+            
+            <form id="login-form" class="space-y-6">
+                <div>
+                    <label for="username" class="block text-gray-300 mb-2">Username</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-user text-gray-500"></i>
+                        </div>
+                        <input type="text" id="username" name="username" class="w-full pl-10 pr-3 py-2 border bg-gray-700 text-white rounded focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Admin username" required>
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="password" class="block text-gray-300 mb-2">Password</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-lock text-gray-500"></i>
+                        </div>
+                        <input type="password" id="password" name="password" class="w-full pl-10 pr-3 py-2 border bg-gray-700 text-white rounded focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Admin password" required>
+                    </div>
+                </div>
+                
+                <div>
+                    <button type="submit" class="w-full vr-button bg-purple-700 hover:bg-purple-600 text-white py-2 px-4 rounded-lg transition">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Login
+                    </button>
+                </div>
+            </form>
+            
+            <div class="mt-6 text-center">
+                <a href="index.html" class="text-purple-400 hover:text-purple-300 transition">
+                    <i class="fas fa-arrow-left mr-2"></i>Back to TryVR
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- VR Experience Canvas (for background effects) -->
+    <canvas id="vr-background" class="fixed top-0 left-0 w-full h-full -z-10 opacity-20 pointer-events-none"></canvas>
+    
+    <footer class="bg-black text-white py-4 fixed bottom-0 w-full border-t-4 border-purple-700">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-sm text-gray-400">© 2023 TryVR Admin Portal</p>
+        </div>
+    </footer>
+    
+    <script>
+        // Simple admin authentication
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if already logged in
+            if (localStorage.getItem('tryvr_admin_auth') === 'true') {
+                window.location.href = 'admin-dashboard.html';
+            }
+            
+            // Handle login form submission
+            document.getElementById('login-form').addEventListener('submit', (event) => {
+                event.preventDefault();
+                
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                // Simple authentication - in a real app, this would be server-side
+                if (username === 'admin' && password === 'tryvr2023') {
+                    // Set authentication in localStorage
+                    localStorage.setItem('tryvr_admin_auth', 'true');
+                    
+                    // Redirect to admin dashboard
+                    window.location.href = 'admin-dashboard.html';
+                } else {
+                    // Show error message
+                    document.getElementById('login-error').classList.remove('hidden');
+                    document.getElementById('error-message').textContent = 'Invalid username or password';
+                }
+            });
+        });
+        
+        // VR Background Animation (simplified version)
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('vr-background');
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas dimensions
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            // Create particles
+            const particles = [];
+            const particleCount = 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 2 + 1,
+                    color: '#4F46E5',
+                    speedX: Math.random() * 0.5 - 0.25,
+                    speedY: Math.random() * 0.5 - 0.25
+                });
+            }
+            
+            // Animation function
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                // Clear canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw and update particles
+                particles.forEach(particle => {
+                    ctx.beginPath();
+                    ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = particle.color;
+                    ctx.fill();
+                    
+                    // Update position
+                    particle.x += particle.speedX;
+                    particle.y += particle.speedY;
+                    
+                    // Wrap around edges
+                    if (particle.x < 0) particle.x = canvas.width;
+                    if (particle.x > canvas.width) particle.x = 0;
+                    if (particle.y < 0) particle.y = canvas.height;
+                    if (particle.y > canvas.height) particle.y = 0;
+                });
+            }
+            
+            // Handle resize
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+            
+            // Start animation
+            animate();
+        });
+    </script>
+</body>
+</html> 

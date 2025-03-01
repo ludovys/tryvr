@@ -1,0 +1,132 @@
+/* Custom styles beyond Tailwind */
+
+/* Smooth scrolling for the products container */
+#products-container {
+    scrollbar-width: thin;
+    scrollbar-color: #7C3AED #e5e7eb;
+}
+
+#products-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+#products-container::-webkit-scrollbar-track {
+    background: #e5e7eb;
+    border-radius: 4px;
+}
+
+#products-container::-webkit-scrollbar-thumb {
+    background-color: #7C3AED;
+    border-radius: 4px;
+}
+
+/* Product card hover effects */
+.product-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Star rating styles */
+.star-rating {
+    color: #fbbf24;
+}
+
+.star-rating .empty {
+    color: #d1d5db;
+}
+
+/* Price tag styles */
+.price-tag {
+    background: #7C3AED;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+/* Modal animation */
+#product-modal {
+    transition: opacity 0.3s ease;
+}
+
+#product-modal.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+#product-modal:not(.hidden) {
+    opacity: 1;
+}
+
+/* Video play button styles */
+.video-play-button {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.video-play-button:hover {
+    transform: scale(1.1);
+    background-color: rgba(124, 58, 237, 0.9) !important;
+}
+
+/* Video modal styles */
+#video-modal {
+    transition: opacity 0.3s ease;
+}
+
+#video-modal.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+#video-modal:not(.hidden) {
+    opacity: 1;
+}
+
+/* Button hover effects */
+button {
+    transition: all 0.2s ease;
+}
+
+button:hover:not(:disabled) {
+    transform: translateY(-2px);
+}
+
+button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+/* Disabled button styles */
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Amazon affiliate link styles */
+.affiliate-link {
+    color: #7C3AED;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.affiliate-link:hover {
+    color: #A78BFA;
+    text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #products-container {
+        max-height: 600px;
+    }
+} 
