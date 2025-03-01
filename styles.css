@@ -129,4 +129,49 @@ button:disabled {
     #products-container {
         max-height: 600px;
     }
+}
+
+/* Product Detail Modal Styles */
+#product-detail-modal {
+    transition: opacity 0.3s ease;
+}
+
+#product-detail-modal.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+#product-detail-modal:not(.hidden) {
+    opacity: 1;
+}
+
+#product-detail-modal .relative {
+    animation: popout 0.3s ease-out;
+}
+
+@keyframes popout {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    70% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Make product cards clickable */
+.product-card {
+    cursor: pointer;
+}
+
+/* Ensure modal content is scrollable on mobile */
+@media (max-width: 768px) {
+    #product-detail-modal .flex {
+        max-height: 90vh;
+        overflow-y: auto;
+    }
 } 

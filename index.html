@@ -168,6 +168,33 @@
     <!-- VR Experience Canvas (for background effects) -->
     <canvas id="vr-background" class="fixed top-0 left-0 w-full h-full -z-10 opacity-20 pointer-events-none"></canvas>
 
+    <!-- Product Detail Modal -->
+    <div id="product-detail-modal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 hidden">
+        <div class="relative bg-gray-900 rounded-lg shadow-xl max-w-4xl w-full mx-4 overflow-hidden">
+            <button id="close-product-modal" class="absolute top-4 right-4 text-white hover:text-gray-300 z-10">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+            <div class="flex flex-col md:flex-row">
+                <div class="md:w-1/2 relative">
+                    <img id="modal-product-image" src="" alt="Product Image" class="w-full h-full object-cover">
+                    <span id="modal-product-price" class="price-tag absolute top-4 right-4"></span>
+                    <span id="modal-product-category" class="absolute top-4 left-4 bg-purple-700 text-white px-2 py-1 rounded-lg text-xs"></span>
+                </div>
+                <div class="md:w-1/2 p-6">
+                    <h2 id="modal-product-title" class="text-2xl font-bold mb-3 text-white"></h2>
+                    <div class="flex items-center mb-4">
+                        <div id="modal-product-rating" class="star-rating mr-2"></div>
+                        <span id="modal-product-rating-value" class="text-gray-400"></span>
+                    </div>
+                    <p id="modal-product-description" class="text-gray-300 mb-6"></p>
+                    <a id="modal-product-link" href="#" target="_blank" class="vr-button bg-purple-700 hover:bg-purple-600 px-4 py-2 rounded text-white inline-flex items-center">
+                        View on Amazon <i class="fas fa-external-link-alt ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <footer class="bg-black text-white py-6 mt-8 border-t-4 border-purple-700">
         <div class="container mx-auto px-4">
             <div class="flex flex-col md:flex-row justify-between items-center">

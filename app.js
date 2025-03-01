@@ -244,6 +244,18 @@ function displayProducts(products) {
         const productCard = document.createElement('div');
         productCard.className = 'product-card vr-card bg-gray-800 rounded-lg shadow-md overflow-hidden';
         
+        // Store product data as attributes for the modal
+        productCard.dataset.id = id;
+        productCard.dataset.title = title;
+        productCard.dataset.amazonUrl = amazonUrl;
+        productCard.dataset.affiliateUrl = affiliateUrl;
+        productCard.dataset.rating = rating;
+        productCard.dataset.category = category;
+        productCard.dataset.imageUrl = imageUrl;
+        productCard.dataset.price = price;
+        productCard.dataset.description = description;
+        productCard.dataset.videoUrl = videoUrl || '';
+        
         // Generate star rating HTML
         const fullStars = Math.floor(rating);
         const hasHalfStar = rating % 1 >= 0.5;
@@ -421,12 +433,28 @@ function setupEventListeners() {
     
     // Video play button click event delegation
     document.getElementById('products-container').addEventListener('click', (event) => {
+        // Handle video play button clicks
         const videoPlayButton = event.target.closest('.video-play-button');
         if (videoPlayButton) {
+            event.stopPropagation(); // Prevent product card click
             const videoUrl = videoPlayButton.dataset.videoUrl;
             if (videoUrl && videoUrl.toLowerCase().endsWith('.mp4')) {
                 openVideoModal(videoUrl);
             }
+            return;
+        }
+        
+        // Handle affiliate link clicks
+        const affiliateLink = event.target.closest('.affiliate-link');
+        if (affiliateLink) {
+            event.stopPropagation(); // Prevent product card click
+            return;
+        }
+        
+        // Handle product card clicks
+        const productCard = event.target.closest('.product-card');
+        if (productCard) {
+            openProductDetailModal(productCard);
         }
     });
     
@@ -437,6 +465,16 @@ function setupEventListeners() {
     document.getElementById('video-modal').addEventListener('click', (event) => {
         if (event.target === document.getElementById('video-modal')) {
             closeVideoModal();
+        }
+    });
+    
+    // Close product detail modal when clicking the close button
+    document.getElementById('close-product-modal').addEventListener('click', closeProductDetailModal);
+    
+    // Close product detail modal when clicking outside the modal content
+    document.getElementById('product-detail-modal').addEventListener('click', (event) => {
+        if (event.target === document.getElementById('product-detail-modal')) {
+            closeProductDetailModal();
         }
     });
     
@@ -473,4 +511,63 @@ function closeVideoModal() {
     videoModal.classList.add('hidden');
     videoPlayer.pause();
     videoPlayer.currentTime = 0;
+}
+
+// Open product detail modal
+function openProductDetailModal(productCard) {
+    // Get product data from dataset
+    const {
+        title, imageUrl, price, rating, category, description, affiliateUrl
+    } = productCard.dataset;
+    
+    // Set modal content
+    document.getElementById('modal-product-title').textContent = title;
+    document.getElementById('modal-product-image').src = imageUrl;
+    document.getElementById('modal-product-image').alt = title;
+    document.getElementById('modal-product-price').textContent = `$${parseFloat(price).toFixed(2)}`;
+    document.getElementById('modal-product-description').textContent = description;
+    document.getElementById('modal-product-link').href = affiliateUrl;
+    
+    // Prevent the affiliate link from closing the modal when clicked
+    document.getElementById('modal-product-link').onclick = (e) => {
+        e.stopPropagation();
+    };
+    
+    // Set category with icon
+    const categoryIcon = getCategoryIcon(category);
+    document.getElementById('modal-product-category').innerHTML = `${categoryIcon} ${getCategoryLabel(category)}`;
+    
+    // Generate star rating HTML
+    const ratingValue = parseFloat(rating);
+    const fullStars = Math.floor(ratingValue);
+    const hasHalfStar = ratingValue % 1 >= 0.5;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+    
+    let starsHtml = '';
+    for (let i = 0; i < fullStars; i++) {
+        starsHtml += '<i class="fas fa-star"></i>';
+    }
+    if (hasHalfStar) {
+        starsHtml += '<i class="fas fa-star-half-alt"></i>';
+    }
+    for (let i = 0; i < emptyStars; i++) {
+        starsHtml += '<i class="far fa-star empty"></i>';
+    }
+    
+    document.getElementById('modal-product-rating').innerHTML = starsHtml;
+    document.getElementById('modal-product-rating-value').textContent = ratingValue.toFixed(1);
+    
+    // Show the modal
+    document.getElementById('product-detail-modal').classList.remove('hidden');
+    
+    // Prevent scrolling on the body
+    document.body.style.overflow = 'hidden';
+}
+
+// Close product detail modal
+function closeProductDetailModal() {
+    document.getElementById('product-detail-modal').classList.add('hidden');
+    
+    // Re-enable scrolling on the body
+    document.body.style.overflow = '';
 } 
