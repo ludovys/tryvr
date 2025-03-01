@@ -379,9 +379,28 @@ function setupEventListeners() {
     });
     
     // Refresh button
-    document.getElementById('refresh-btn').addEventListener('click', () => {
+    document.getElementById('refresh-btn').addEventListener('click', async () => {
+        // Reload database from localStorage to get the latest products
+        try {
+            const savedDb = localStorage.getItem('tryvr_products_db');
+            if (savedDb) {
+                // Load SQL.js library again if needed
+                const sqlPromise = initSqlJs({
+                    locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
+                });
+                
+                const SQL = await sqlPromise;
+                const uint8Array = new Uint8Array(JSON.parse(savedDb));
+                db = new SQL.Database(uint8Array);
+                console.log('Database reloaded from localStorage');
+            }
+        } catch (error) {
+            console.error('Error reloading database from localStorage:', error);
+        }
+        
+        // Now load products from the refreshed database
         loadProducts();
-        showNotification('Products refreshed');
+        showNotification('Products refreshed from latest data');
     });
     
     // Pagination controls
