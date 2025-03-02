@@ -73,10 +73,13 @@
                     </button>
                     <div class="relative">
                         <input type="file" id="import-db-input" class="hidden" accept=".db">
-                        <button id="import-db-btn" class="w-full vr-button bg-purple-700 text-white py-2 px-4 rounded hover:bg-purple-600 transition">
+                        <button id="import-db-btn" class="w-full vr-button bg-purple-700 text-white py-2 px-4 rounded hover:bg-purple-600 transition mb-2">
                             <i class="fas fa-upload mr-2"></i>Import Database
                         </button>
                     </div>
+                    <button id="convert-images-btn" class="w-full vr-button bg-purple-700 text-white py-2 px-4 rounded hover:bg-purple-600 transition">
+                        <i class="fas fa-images mr-2"></i>Convert Images to WebP
+                    </button>
                 </div>
                 
                 <!-- API Settings -->
@@ -167,81 +170,104 @@
     </main>
 
     <!-- Product Modal -->
-    <div id="product-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden z-50 overflow-y-auto p-4">
-        <div class="bg-gray-800 rounded-lg p-6 w-full max-w-2xl vr-glow my-4 max-h-[90vh] flex flex-col">
-            <div class="flex justify-between items-center mb-4">
-                <h3 id="modal-title" class="text-xl font-bold text-white">Add New VR Product</h3>
-                <button id="close-modal" class="text-gray-400 hover:text-gray-200">
+    <div id="productModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden z-50 p-4 overflow-y-auto">
+        <div class="bg-gray-800 rounded-lg p-4 sm:p-6 w-full max-w-2xl vr-glow my-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4 sticky top-0 bg-gray-800 pt-2 z-10">
+                <h3 id="productModalLabel" class="text-xl font-bold text-white">Add Product</h3>
+                <button id="close-product-modal" class="text-gray-400 hover:text-gray-200">
                     <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
-            <div class="overflow-y-auto flex-grow pr-2 custom-scrollbar">
-                <form id="product-form" class="flex flex-col h-full">
-                    <input type="hidden" id="product-id" value="">
-                    <div class="mb-4">
-                        <label for="amazon-url" class="block text-gray-300 mb-2">Amazon Product URL</label>
-                        <input type="url" id="amazon-url" class="w-full p-2 border bg-gray-700 text-white rounded" placeholder="https://www.amazon.com/dp/..." required>
-                    </div>
-                    <div class="mb-4">
-                        <label for="fetch-amazon-details" class="block text-gray-300 mb-2">Auto-Fill Product Details</label>
-                        <button type="button" id="fetch-amazon-details" class="vr-button bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-500 transition">
-                            <i class="fas fa-cloud-download-alt mr-2"></i>Fetch Amazon Details
-                        </button>
-                        <p class="text-xs text-gray-400 mt-1">This will automatically extract product information from the Amazon URL.</p>
-                    </div>
-                    <div class="mb-4">
-                        <label for="product-title" class="block text-gray-300 mb-2">Product Title</label>
-                        <input type="text" id="product-title" class="w-full p-2 border bg-gray-700 text-white rounded" placeholder="VR Headset Name" required>
-                    </div>
-                    <div class="mb-4">
-                        <label for="product-rating" class="block text-gray-300 mb-2">Rating (1-5)</label>
-                        <input type="number" id="product-rating" class="w-full p-2 border bg-gray-700 text-white rounded" min="1" max="5" step="0.1" placeholder="4.5" required>
-                    </div>
-                    <div class="mb-4">
-                        <label for="product-category" class="block text-gray-300 mb-2">Category</label>
-                        <select id="product-category" class="w-full p-2 border bg-gray-700 text-white rounded" required>
-                            <option value="headsets">VR Headsets</option>
-                            <option value="controllers">Controllers</option>
-                            <option value="accessories">Accessories</option>
-                            <option value="games">VR Games</option>
-                        </select>
-                    </div>
-                    <div class="mb-4">
-                        <label for="product-image" class="block text-gray-300 mb-2">Image URL</label>
-                        <input type="url" id="product-image" class="w-full p-2 border bg-gray-700 text-white rounded" placeholder="https://example.com/image.jpg" required>
-                    </div>
-                    <div class="mb-4">
-                        <label for="product-price" class="block text-gray-300 mb-2">Price ($)</label>
-                        <input type="number" id="product-price" class="w-full p-2 border bg-gray-700 text-white rounded" min="0" step="0.01" placeholder="299.99" required>
-                    </div>
-                    <div class="mb-4">
-                        <label for="product-video-url" class="block text-gray-300 mb-2">Video URL (.mp4)</label>
-                        <input type="url" id="product-video-url" class="w-full p-2 border bg-gray-700 text-white rounded" placeholder="https://example.com/videos/product-demo.mp4">
-                        <p class="text-xs text-gray-400 mt-1">Optional. If provided, a play button will appear on the product card.</p>
-                    </div>
-                    <div class="mb-4">
-                        <label for="product-description" class="block text-gray-300 mb-2">Description</label>
-                        <textarea id="product-description" class="w-full p-2 border bg-gray-700 text-white rounded h-32" placeholder="VR product description..." required></textarea>
-                    </div>
-                    <div class="mb-4">
-                        <label for="ai-generate" class="block text-gray-300 mb-2">Generate Description with AI</label>
-                        <button type="button" id="ai-generate" class="vr-button bg-purple-700 text-white py-2 px-4 rounded hover:bg-purple-600 transition">
-                            <i class="fas fa-robot mr-2"></i>Generate Description
+            <form id="productForm" class="text-gray-300">
+                <input type="hidden" id="productId">
+                
+                <!-- Amazon URL Field for Auto-Fetching -->
+                <div class="mb-4">
+                    <label for="amazonUrl" class="block text-gray-300 mb-2">Amazon Product URL (Optional)</label>
+                    <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+                        <input type="url" class="w-full p-2 border bg-gray-700 text-white rounded" id="amazonUrl" placeholder="https://www.amazon.com/dp/XXXXXXXXXX">
+                        <button type="button" id="fetchDetailsBtn" class="vr-button bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-500 transition">
+                            <i class="fas fa-sync-alt mr-2"></i>Fetch
                         </button>
                     </div>
-                </form>
-            </div>
-            <div class="pt-4 mt-2 border-t border-gray-700 flex justify-end">
-                <button type="submit" form="product-form" class="vr-button bg-purple-700 text-white py-2 px-6 rounded hover:bg-purple-600 transition">
-                    Save Product
-                </button>
-            </div>
+                    <p class="text-xs text-gray-400 mt-1">Enter an Amazon URL to automatically fetch product details</p>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="productName" class="block text-gray-300 mb-2">Product Name</label>
+                    <input type="text" class="w-full p-2 border bg-gray-700 text-white rounded" id="productName" required>
+                </div>
+                <div class="mb-4">
+                    <label for="productPrice" class="block text-gray-300 mb-2">Price ($)</label>
+                    <input type="number" class="w-full p-2 border bg-gray-700 text-white rounded" id="productPrice" step="0.01" min="0" required>
+                </div>
+                <div class="mb-4">
+                    <label for="productCategory" class="block text-gray-300 mb-2">Category</label>
+                    <select class="w-full p-2 border bg-gray-700 text-white rounded" id="productCategory" required>
+                        <option value="headsets">VR Headsets</option>
+                        <option value="accessories">Accessories</option>
+                        <option value="games">Games</option>
+                        <option value="computers">VR-Ready Computers</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="productDescription" class="block text-gray-300 mb-2">Description</label>
+                    <textarea class="w-full p-2 border bg-gray-700 text-white rounded" id="productDescription" rows="3"></textarea>
+                </div>
+                <div class="mb-4">
+                    <label for="productRating" class="block text-gray-300 mb-2">Rating (0-5)</label>
+                    <input type="number" class="w-full p-2 border bg-gray-700 text-white rounded" id="productRating" step="0.1" min="0" max="5">
+                </div>
+                
+                <!-- Image Section -->
+                <div class="mb-4">
+                    <label class="block text-gray-300 mb-2">Product Image</label>
+                    
+                    <!-- Image Source Options -->
+                    <div class="mb-4">
+                        <div class="flex items-center space-x-2 mb-2">
+                            <input class="form-check-input" type="radio" name="imageSource" id="imageSourceUrl" checked>
+                            <label class="text-gray-300" for="imageSourceUrl">Use Image URL</label>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input class="form-check-input" type="radio" name="imageSource" id="imageSourceUpload">
+                            <label class="text-gray-300" for="imageSourceUpload">Upload Image</label>
+                        </div>
+                    </div>
+                    
+                    <!-- Image URL Input -->
+                    <div class="mb-4" id="productImageUrlGroup">
+                        <label for="productImageUrl" class="block text-gray-300 mb-2">Image URL</label>
+                        <input type="url" class="w-full p-2 border bg-gray-700 text-white rounded" id="productImageUrl">
+                    </div>
+                    
+                    <!-- Image File Upload -->
+                    <div class="mb-4" id="productImageFileGroup" style="display: none;">
+                        <label for="productImageFile" class="block text-gray-300 mb-2">Choose Image File</label>
+                        <input type="file" class="w-full p-2 border bg-gray-700 text-white rounded" id="productImageFile" accept="image/*">
+                    </div>
+                    
+                    <!-- Image Preview -->
+                    <div class="mt-3">
+                        <img id="imagePreview" src="" alt="Image Preview" class="max-w-full max-h-48 hidden">
+                    </div>
+                </div>
+                
+                <div class="flex justify-end space-x-4 mt-6">
+                    <button type="button" id="cancel-product" class="vr-button bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-500 transition">
+                        Cancel
+                    </button>
+                    <button type="submit" class="vr-button bg-purple-700 text-white py-2 px-4 rounded hover:bg-purple-600 transition">
+                        Save Product
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
     <!-- Delete Confirmation Modal -->
-    <div id="delete-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden z-50 p-4">
-        <div class="bg-gray-800 rounded-lg p-6 w-full max-w-md vr-glow my-4">
+    <div id="delete-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden z-50 p-4 overflow-y-auto">
+        <div class="bg-gray-800 rounded-lg p-4 sm:p-6 w-full max-w-md vr-glow my-4">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-xl font-bold text-white">Confirm Deletion</h3>
                 <button id="close-delete-modal" class="text-gray-400 hover:text-gray-200">
@@ -269,8 +295,8 @@
     </div>
 
     <!-- API Key Modal -->
-    <div id="api-key-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden z-50 p-4">
-        <div class="bg-gray-800 rounded-lg p-6 w-full max-w-md vr-glow my-4">
+    <div id="api-key-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden z-50 p-4 overflow-y-auto">
+        <div class="bg-gray-800 rounded-lg p-4 sm:p-6 w-full max-w-md vr-glow my-4">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-xl font-bold text-white">API Key Configuration</h3>
                 <button id="close-api-modal" class="text-gray-400 hover:text-gray-200">
