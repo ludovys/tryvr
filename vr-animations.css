@@ -180,4 +180,97 @@
 .custom-scrollbar {
     scrollbar-width: thin;
     scrollbar-color: rgba(139, 92, 246, 0.5) rgba(31, 41, 55, 0.5);
+}
+
+/* Enhanced Modal Animations */
+
+/* Slide-in animation for product modal on mobile */
+@keyframes modal-slide-up {
+    0% {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Fade-in animation for product modal on desktop */
+@keyframes modal-fade-in {
+    0% {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Apply different animations based on screen size */
+@media (max-width: 768px) {
+    #product-detail-modal .bg-gray-900 {
+        animation: modal-slide-up 0.4s ease-out forwards;
+    }
+}
+
+@media (min-width: 769px) {
+    #product-detail-modal .bg-gray-900 {
+        animation: modal-fade-in 0.3s ease-out forwards;
+    }
+}
+
+/* Image zoom effect on hover in product modal */
+#modal-product-image {
+    transition: transform 0.3s ease;
+}
+
+#modal-product-image:hover {
+    transform: scale(1.05);
+}
+
+/* Responsive button animation */
+#modal-product-link {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+#modal-product-link:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: white;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s ease;
+}
+
+#modal-product-link:hover:after {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+/* Smooth transition for modal content */
+#product-detail-modal .md\:w-1\/2.p-6 {
+    transition: opacity 0.3s ease 0.1s;
+    opacity: 0;
+}
+
+#product-detail-modal:not(.hidden) .md\:w-1\/2.p-6 {
+    opacity: 1;
+}
+
+/* Responsive animation timing */
+@media (prefers-reduced-motion: reduce) {
+    #product-detail-modal .bg-gray-900,
+    #modal-product-image,
+    #product-detail-modal .md\:w-1\/2.p-6 {
+        transition: none;
+        animation: none;
+    }
 } 

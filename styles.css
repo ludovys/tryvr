@@ -149,6 +149,75 @@ button:disabled {
     animation: popout 0.3s ease-out;
 }
 
+/* Enhanced responsive modal styles */
+#product-detail-modal .bg-gray-900 {
+    width: 95%;
+    max-width: 1000px;
+    max-height: 90vh;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Improved modal content layout */
+#product-detail-modal .flex.flex-col.md\:flex-row {
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+@media (min-width: 768px) {
+    #product-detail-modal .flex.flex-col.md\:flex-row {
+        flex-direction: row;
+        max-height: 80vh;
+    }
+}
+
+/* Responsive image container */
+#product-detail-modal .md\:w-1\/2.relative {
+    width: 100%;
+    position: relative;
+    height: 300px;
+}
+
+@media (min-width: 768px) {
+    #product-detail-modal .md\:w-1\/2.relative {
+        width: 50%;
+        height: auto;
+        max-height: 80vh;
+    }
+}
+
+/* Responsive product details container */
+#product-detail-modal .md\:w-1\/2.p-6 {
+    width: 100%;
+    padding: 1.5rem;
+    overflow-y: auto;
+    max-height: 50vh;
+}
+
+@media (min-width: 768px) {
+    #product-detail-modal .md\:w-1\/2.p-6 {
+        width: 50%;
+        max-height: 80vh;
+    }
+}
+
+/* Ensure modal image is properly sized and positioned */
+#modal-product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Ensure modal content is scrollable on all devices */
+#product-detail-modal .flex {
+    overflow-y: auto;
+    max-height: 90vh;
+}
+
 @keyframes popout {
     0% {
         transform: scale(0.8);
@@ -168,10 +237,42 @@ button:disabled {
     cursor: pointer;
 }
 
-/* Ensure modal content is scrollable on mobile */
-@media (max-width: 768px) {
-    #product-detail-modal .flex {
-        max-height: 90vh;
-        overflow-y: auto;
+/* Improved modal responsiveness for small screens */
+@media (max-width: 640px) {
+    #product-detail-modal .bg-gray-900 {
+        width: 95%;
+        max-width: none;
+    }
+    
+    #modal-product-image {
+        max-height: 250px;
+    }
+    
+    #modal-product-title {
+        font-size: 1.25rem;
+    }
+    
+    #product-detail-modal .md\:w-1\/2.p-6 {
+        padding: 1rem;
+    }
+}
+
+/* Improved modal responsiveness for medium screens */
+@media (min-width: 641px) and (max-width: 1024px) {
+    #product-detail-modal .bg-gray-900 {
+        width: 90%;
+    }
+    
+    #modal-product-image {
+        max-height: 350px;
+    }
+}
+
+/* Ensure buttons in modal are properly sized on mobile */
+@media (max-width: 640px) {
+    #modal-product-link {
+        width: 100%;
+        text-align: center;
+        padding: 0.75rem 1rem;
     }
 } 

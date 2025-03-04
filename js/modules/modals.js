@@ -14,7 +14,20 @@ function openProductDetailModal(productCard) {
     document.getElementById('modal-product-image').src = imageUrl;
     document.getElementById('modal-product-image').alt = title;
     document.getElementById('modal-product-price').textContent = `$${parseFloat(price).toFixed(2)}`;
-    document.getElementById('modal-product-description').textContent = description;
+    
+    // Handle description - ensure it's properly formatted for HTML
+    const descriptionElement = document.getElementById('modal-product-description');
+    descriptionElement.innerHTML = '';
+    
+    // Split description by paragraphs and create proper paragraph elements
+    const paragraphs = description.split('\n').filter(p => p.trim() !== '');
+    paragraphs.forEach(paragraph => {
+        const p = document.createElement('p');
+        p.textContent = paragraph;
+        p.className = 'mb-3';
+        descriptionElement.appendChild(p);
+    });
+    
     document.getElementById('modal-product-link').href = affiliateUrl;
     
     // Prevent the affiliate link from closing the modal when clicked
@@ -37,6 +50,23 @@ function openProductDetailModal(productCard) {
     
     // Prevent scrolling on the body
     document.body.style.overflow = 'hidden';
+    
+    // Adjust modal position for mobile devices
+    adjustModalForScreenSize();
+}
+
+// Adjust modal for different screen sizes
+function adjustModalForScreenSize() {
+    const modal = document.getElementById('product-detail-modal');
+    const modalContent = modal.querySelector('.bg-gray-900');
+    
+    // Reset any inline styles that might have been applied
+    modalContent.style.height = '';
+    
+    // For very small screens, adjust the modal height
+    if (window.innerWidth <= 480) {
+        modalContent.style.height = '95vh';
+    }
 }
 
 // Close product detail modal
@@ -92,6 +122,13 @@ function setupModalEventListeners() {
     document.getElementById('product-detail-modal').addEventListener('click', (event) => {
         if (event.target === document.getElementById('product-detail-modal')) {
             closeProductDetailModal();
+        }
+    });
+    
+    // Add resize event listener to adjust modal on window resize
+    window.addEventListener('resize', () => {
+        if (!document.getElementById('product-detail-modal').classList.contains('hidden')) {
+            adjustModalForScreenSize();
         }
     });
 }
