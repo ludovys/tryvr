@@ -400,6 +400,29 @@ function setupEventListeners() {
             reader.readAsText(file);
         });
     }
+    
+    // Add cleanup button event listener
+    const cleanupButton = document.getElementById('cleanup-button');
+    if (cleanupButton) {
+        cleanupButton.addEventListener('click', () => {
+            if (confirm('This will permanently delete Meta Quest 2 and Meta Quest 3 products. Continue?')) {
+                cleanupButton.disabled = true;
+                cleanupButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cleaning...';
+                
+                forceDeleteProductsByTitle(['Meta Quest 3', 'Meta Quest 2'])
+                    .then(count => {
+                        cleanupButton.disabled = false;
+                        cleanupButton.innerHTML = '<i class="fas fa-broom"></i> Clean Stuck Products';
+                        showNotification(`Successfully removed ${count} stuck products!`, 'success');
+                    })
+                    .catch(error => {
+                        cleanupButton.disabled = false;
+                        cleanupButton.innerHTML = '<i class="fas fa-broom"></i> Clean Stuck Products';
+                        showNotification('Error cleaning products: ' + error.message, 'error');
+                    });
+            }
+        });
+    }
 }
 
 // Initialize admin dashboard
@@ -647,6 +670,8 @@ function deleteProduct(productId) {
             productTitle = product[0].values[0][0];
         }
         
+        console.log(`Deleting product with ID: ${productId}, Title: ${productTitle}`);
+        
         // Delete the product
         const stmt = db.prepare('DELETE FROM products WHERE id = ?');
         stmt.run(productId);
@@ -654,20 +679,100 @@ function deleteProduct(productId) {
         // Save changes to localStorage
         saveDatabase();
         
-        // Reload product list
-        loadProducts();
-        
-        // Hide confirmation modal
-        document.getElementById('delete-confirmation-modal').classList.add('hidden');
-        
-        // Reset productToDelete
-        productToDelete = null;
-        
-        // Show success message
-        showNotification(`Product "${productTitle}" deleted successfully!`, 'success');
+        // Update the frontend database by sending all remaining products to the server
+        updateFrontendDatabase()
+            .then(() => {
+                console.log(`Product "${productTitle}" (ID: ${productId}) successfully deleted and frontend database updated`);
+                
+                // Reload product list
+                loadProducts();
+                
+                // Hide confirmation modal
+                document.getElementById('delete-confirmation-modal').classList.add('hidden');
+                
+                // Reset productToDelete
+                productToDelete = null;
+                
+                // Show success message
+                showNotification(`Product "${productTitle}" deleted successfully!`, 'success');
+            })
+            .catch(error => {
+                console.error(`Error updating frontend database after deleting product ${productId}:`, error);
+                showNotification('Product deleted but error updating frontend database. Please refresh the page.', 'warning');
+            });
     } catch (error) {
         console.error('Error deleting product:', error);
         showNotification('Error deleting product: ' + error.message, 'error');
+    }
+}
+
+// Update the frontend database with current products
+function updateFrontendDatabase() {
+    try {
+        const db = getDatabase();
+        
+        // Get all products
+        const result = db.exec('SELECT * FROM products');
+        
+        // Prepare data for the server
+        let products = [];
+        if (result && result[0] && result[0].values) {
+            const columns = result[0].columns;
+            
+            // Convert to array of arrays format expected by the server
+            products = result[0].values.map(row => {
+                const product = {};
+                columns.forEach((col, index) => {
+                    product[col] = row[index];
+                });
+                
+                // Format for the server API
+                return [
+                    product.id,
+                    product.title,
+                    product.amazon_url,
+                    addAffiliateTag(product.amazon_url), // Generate affiliate URL
+                    parseFloat(product.rating) || 4.5,
+                    product.category || "accessories",
+                    product.image_url || "/vr-logo.svg",
+                    parseFloat(product.price) || 0,
+                    product.description || "",
+                    null // video_url
+                ];
+            });
+        }
+        
+        console.log(`Sending ${products.length} products to server for frontend database update`);
+        
+        // Send to server
+        return fetch('/api/create-sql-db', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ products })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to update frontend database');
+            }
+            console.log('Frontend database updated successfully');
+            return response.json();
+        })
+        .then(data => {
+            console.log('Server response:', data);
+            showNotification('Frontend database updated successfully', 'success');
+            return data;
+        })
+        .catch(error => {
+            console.error('Error updating frontend database:', error);
+            showNotification('Error updating frontend database: ' + error.message, 'error');
+            throw error;
+        });
+    } catch (error) {
+        console.error('Error preparing frontend database update:', error);
+        showNotification('Error updating frontend database: ' + error.message, 'error');
+        return Promise.reject(error);
     }
 }
 
@@ -726,6 +831,9 @@ function saveProduct(productData) {
         // Save changes to localStorage
         saveToLocalStorage();
         
+        // Update the frontend database
+        updateFrontendDatabase();
+        
         // Reload product list
         loadProducts();
         
@@ -742,23 +850,59 @@ function addAffiliateTag(url) {
     try {
         if (!url) return url;
         
-        // Parse URL
-        const parsedUrl = new URL(url);
-        
-        // Remove existing tag if present
-        let search = parsedUrl.search;
-        if (search) {
-            const params = new URLSearchParams(search);
-            params.delete('tag');
-            parsedUrl.search = params.toString();
+        // Check if it's a valid URL
+        if (!url.includes('amazon.com') && !url.includes('amzn.to')) {
+            console.log('Not an Amazon URL, skipping affiliate tag');
+            return url;
         }
         
-        // Add our affiliate tag
-        const params = new URLSearchParams(parsedUrl.search);
-        params.append('tag', 'tryvr-20');
-        parsedUrl.search = params.toString();
+        // Handle short URLs
+        if (url.includes('amzn.to')) {
+            // For short URLs, we'll just append the tag as a parameter
+            if (url.includes('?')) {
+                // Already has parameters
+                if (url.includes('tag=')) {
+                    // Already has a tag, replace it
+                    return url.replace(/tag=[^&]+/, 'tag=tryvr-20');
+                } else {
+                    // Add our tag
+                    return url + '&tag=tryvr-20';
+                }
+            } else {
+                // No parameters yet
+                return url + '?tag=tryvr-20';
+            }
+        }
         
-        return parsedUrl.toString();
+        try {
+            // For full URLs, use the URL API
+            const parsedUrl = new URL(url);
+            
+            // Remove existing tag if present
+            parsedUrl.searchParams.delete('tag');
+            
+            // Add our affiliate tag
+            parsedUrl.searchParams.set('tag', 'tryvr-20');
+            
+            return parsedUrl.toString();
+        } catch (parseError) {
+            console.error('Error parsing URL:', parseError);
+            
+            // Fallback for invalid URLs: simple string manipulation
+            if (url.includes('?')) {
+                // Already has parameters
+                if (url.includes('tag=')) {
+                    // Already has a tag, replace it
+                    return url.replace(/tag=[^&]+/, 'tag=tryvr-20');
+                } else {
+                    // Add our tag
+                    return url + '&tag=tryvr-20';
+                }
+            } else {
+                // No parameters yet
+                return url + '?tag=tryvr-20';
+            }
+        }
     } catch (error) {
         console.error('Error adding affiliate tag:', error);
         showNotification('Error processing Amazon URL', 'error');
@@ -850,4 +994,70 @@ function initDatabase() {
         console.error('Error initializing database:', error);
         showNotification('Error initializing database: ' + error.message, 'error');
     }
-} 
+}
+
+// Force delete specific products by title
+function forceDeleteProductsByTitle(titles) {
+    try {
+        const db = getDatabase();
+        
+        console.log(`Force deleting products with titles: ${titles.join(', ')}`);
+        
+        // Get all products before deletion
+        const beforeCount = db.exec('SELECT COUNT(*) FROM products')[0].values[0][0];
+        
+        // Delete the products by title (case insensitive)
+        titles.forEach(title => {
+            const stmt = db.prepare("DELETE FROM products WHERE LOWER(title) LIKE ?");
+            stmt.run(`%${title.toLowerCase()}%`);
+        });
+        
+        // Get count after deletion
+        const afterCount = db.exec('SELECT COUNT(*) FROM products')[0].values[0][0];
+        const deletedCount = beforeCount - afterCount;
+        
+        console.log(`Deleted ${deletedCount} products`);
+        
+        // Save changes to localStorage
+        saveDatabase();
+        
+        // First, clear the frontend database completely
+        return fetch('/api/clear-frontend-db', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                console.warn('Failed to clear frontend database, continuing anyway');
+            } else {
+                console.log('Frontend database cleared successfully');
+            }
+            
+            // Then update with current products
+            return updateFrontendDatabase();
+        })
+        .then(() => {
+            // Reload product list
+            loadProducts();
+            
+            // Show success message
+            showNotification(`Force deleted ${deletedCount} products successfully!`, 'success');
+            return deletedCount;
+        });
+    } catch (error) {
+        console.error('Error force deleting products:', error);
+        showNotification('Error force deleting products: ' + error.message, 'error');
+        return Promise.reject(error);
+    }
+}
+
+// Add a special cleanup function to the window object for direct console access
+window.cleanupProducts = function() {
+    return forceDeleteProductsByTitle(['Meta Quest 3', 'Meta Quest 2'])
+        .then(count => {
+            console.log(`Cleanup complete. Deleted ${count} products.`);
+            return count;
+        });
+}; 
