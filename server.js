@@ -332,7 +332,7 @@ const server = http.createServer((req, res) => {
         
         req.on('end', () => {
             try {
-                const { imageUrl } = JSON.parse(body);
+                const { imageUrl, uniqueId } = JSON.parse(body);
                 
                 if (!imageUrl) {
                     res.writeHead(400, { 'Content-Type': 'application/json' });
@@ -340,8 +340,8 @@ const server = http.createServer((req, res) => {
                     return;
                 }
                 
-                // Download and convert the image
-                downloadAndConvertImage(imageUrl)
+                // Download and convert the image with uniqueId for uniqueness
+                downloadAndConvertImage(imageUrl, uniqueId)
                     .then(localPath => {
                         res.writeHead(200, { 'Content-Type': 'application/json' });
                         res.end(JSON.stringify({ localPath }));
@@ -952,15 +952,16 @@ server.listen(PORT, () => {
 });
 
 // Function to download and convert image to WebP
-async function downloadAndConvertImage(imageUrl) {
+async function downloadAndConvertImage(imageUrl, uniqueId = '') {
     return new Promise((resolve, reject) => {
         try {
             // Handle data URLs
             if (imageUrl.startsWith('data:image/')) {
                 console.log('Detected data URL, extracting and saving image data');
                 
-                // Generate a unique filename
-                const hash = crypto.createHash('md5').update(imageUrl.substring(0, 100)).digest('hex');
+                // Generate a unique filename with added uniqueId parameter to ensure uniqueness
+                const uniqueString = uniqueId || Date.now().toString();
+                const hash = crypto.createHash('md5').update(imageUrl.substring(0, 100) + uniqueString).digest('hex');
                 const webpPath = path.join(imagesDir, `${hash}.webp`);
                 const relativePath = `/images/${hash}.webp`;
                 
@@ -1025,8 +1026,9 @@ async function downloadAndConvertImage(imageUrl) {
                 return;
             }
             
-            // Generate a unique filename based on the URL
-            const hash = crypto.createHash('md5').update(imageUrl).digest('hex');
+            // Generate a unique filename based on the URL with added uniqueId parameter
+            const uniqueString = uniqueId || Date.now().toString();
+            const hash = crypto.createHash('md5').update(imageUrl + uniqueString).digest('hex');
             const tempPath = path.join(imagesDir, `${hash}_temp`);
             const webpPath = path.join(imagesDir, `${hash}.webp`);
             const relativePath = `/images/${hash}.webp`;

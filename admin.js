@@ -502,13 +502,20 @@ async function saveProduct(productData) {
             try {
                 showNotification('Downloading and converting image...', 'info');
                 
-                // Download and convert the image
+                // Create a unique ID for this image - use uniqueImageId if available, product ID if available, or timestamp
+                const uniqueId = productData.uniqueImageId || 
+                                (productData.id ? productData.id.toString() : Date.now().toString());
+                
+                // Download and convert the image with uniqueId to ensure uniqueness
                 const response = await fetch('/api/download-image', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ imageUrl: finalImageUrl })
+                    body: JSON.stringify({ 
+                        imageUrl: finalImageUrl,
+                        uniqueId: uniqueId
+                    })
                 });
                 
                 if (!response.ok) {
@@ -1318,39 +1325,56 @@ function setupEventListeners() {
                 
                 // Create a product data object
                 const productData = {
-                    id: productId ? parseInt(productId) : null,
+                    id: productId,
                     name: productName,
                     price: parseFloat(productPrice),
                     category: productCategory,
                     description: productDescription,
-                    rating: parseFloat(productRating) || 4.5,
+                    rating: productRating ? parseFloat(productRating) : 0,
                     image: productImage,
                     amazonUrl: amazonUrl
                 };
                 
-                // For Meta Quest 3S, double check price and add affiliate URL
-                if (isMetaQuest3S) {
-                    console.log("Setting Meta Quest 3S specific data");
-                    productData.price = 299.99;
-                    productData.rating = 4.5;
-                    productData.amazonUrl = "https://www.amazon.com/Meta-Quest-3S-128GB-All-One/dp/B0DDK1WM9K/";
-                    productData.affiliateUrl = addAffiliateTag(productData.amazonUrl);
+                // If we're using a file upload, add the unique ID from localStorage
+                if (!imageSourceUrl && productImage.startsWith('data:image/')) {
+                    productData.uniqueImageId = localStorage.getItem('tempImageUniqueId') || Date.now().toString();
                 }
+                
+                // Show loading notification
+                showNotification('Saving product...', 'info');
                 
                 // Save the product
                 await saveProduct(productData);
                 
-                // Close the modal
-                const productModal = document.getElementById('productModal');
-                if (productModal) {
-                    productModal.classList.add('hidden');
+                // Clear the form
+                productForm.reset();
+                document.getElementById('productId').value = '';
+                
+                // Hide the modal
+                const modal = document.getElementById('productModal');
+                if (modal) {
+                    modal.classList.add('hidden');
                 }
+                
+                // Clear the image preview
+                const imagePreview = document.getElementById('imagePreview');
+                if (imagePreview) {
+                    imagePreview.classList.add('hidden');
+                    imagePreview.src = '';
+                }
+                
+                // Clear the stored image data
+                localStorage.removeItem('tempImageDataUrl');
+                localStorage.removeItem('tempImageUniqueId');
                 
                 // Reload products
                 loadProducts();
+                
+                // Show success notification
+                showNotification('Product saved successfully!', 'success');
             } catch (error) {
                 console.error('Error saving product:', error);
-                showNotification('Failed to save product: ' + error.message, 'error');
+                showNotification(`Error saving product: ${error.message}`, 'error');
             }
         });
     }
@@ -1414,9 +1438,14 @@ function setupEventListeners() {
                     imagePreview.src = e.target.result;
                     imagePreview.classList.remove('hidden');
                     
-                    // Store the data URL for later use
+                    // Get the product ID if we're editing, or generate a timestamp for new products
+                    const productId = document.getElementById('productId').value;
+                    const uniqueId = productId || Date.now().toString();
+                    
+                    // Store the data URL for later use along with the unique ID
                     localStorage.setItem('tempImageDataUrl', e.target.result);
-                    console.log('Image preview set and data URL stored');
+                    localStorage.setItem('tempImageUniqueId', uniqueId);
+                    console.log('Image preview set and data URL stored with unique ID:', uniqueId);
                 };
                 reader.readAsDataURL(file);
             } else {
