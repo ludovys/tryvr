@@ -81,36 +81,10 @@ async function initDatabase() {
         // Load database from localStorage
         loadDatabase();
         
-        // If no products exist, add some sample products
-        if (db.products.length === 0) {
-            // Add sample products
-            db.products = [
-                {
-                    name: "Meta Quest 3",
-                    price: 499.99,
-                    category: "headsets",
-                    description: "The Meta Quest 3 is a premium all-in-one VR headset with advanced mixed reality capabilities, high-resolution displays, and powerful performance.",
-                    rating: 4.8,
-                    image: "/vr-logo.svg"
-                },
-                {
-                    name: "Meta Quest 2",
-                    price: 249.99,
-                    category: "headsets",
-                    description: "The Meta Quest 2 is a versatile all-in-one VR headset that offers an immersive experience with crisp visuals, intuitive controls, and a wide range of games and applications.",
-                    rating: 4.5,
-                    image: "/vr-logo.svg"
-                }
-            ];
-            
-            // Save to localStorage
-            saveToLocalStorage();
-        }
-        
         return true;
     } catch (error) {
         console.error('Error initializing database:', error);
-        throw error;
+        return false;
     }
 }
 
@@ -1882,7 +1856,7 @@ function clearFrontendCache() {
 // Clean up the database by removing all products
 function cleanupDatabase() {
     try {
-        if (!confirm('Are you sure you want to clean up the database? This will remove all products that might be stuck or causing issues.')) {
+        if (!confirm('Are you sure you want to clean up the database? This will remove all products.')) {
             return;
         }
         

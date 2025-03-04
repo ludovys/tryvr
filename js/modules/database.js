@@ -53,7 +53,7 @@ async function initDatabase() {
         // Check if there are any products
         const countResult = db.exec('SELECT COUNT(*) FROM products');
         if (countResult[0]?.values[0][0] === 0) {
-            // No products, try to load from localStorage or add samples
+            // No products, try to load from localStorage
             const frontendProducts = localStorage.getItem('tryvr_frontend_products');
             if (frontendProducts) {
                 try {
@@ -86,12 +86,11 @@ async function initDatabase() {
                     productsLoaded = true;
                 } catch (error) {
                     console.error('Error loading products from localStorage:', error);
-                    // If loading from localStorage fails, add sample products
-                    addSampleVRProducts();
+                    productsLoaded = true;
                 }
             } else {
-                // No saved products, add sample products
-                addSampleVRProducts();
+                // No saved products, just set productsLoaded to true
+                productsLoaded = true;
             }
         } else {
             productsLoaded = true;
@@ -135,95 +134,6 @@ async function loadProductsFromServer() {
         console.error('Error loading products from server:', error);
         return null;
     }
-}
-
-// Add sample VR products
-function addSampleVRProducts() {
-    const sampleProducts = [
-        {
-            title: "Meta Quest 3 VR Headset",
-            amazonUrl: "https://www.amazon.com/dp/B0C8JNRWBJ",
-            rating: 4.7,
-            category: "headsets",
-            imageUrl: "https://m.media-amazon.com/images/I/61J5g6hev8L._AC_SL1500_.jpg",
-            price: 499.99,
-            description: "The Meta Quest 3 is a powerful all-in-one VR headset with mixed reality capabilities. Experience immersive virtual worlds with high-resolution displays and intuitive controllers. No PC or console required.",
-            videoUrl: "https://example.com/videos/meta-quest-3-demo.mp4"
-        },
-        {
-            title: "Valve Index VR Full Kit",
-            amazonUrl: "https://www.amazon.com/dp/B07VPRVBFF",
-            rating: 4.8,
-            category: "headsets",
-            imageUrl: "https://m.media-amazon.com/images/I/61aE3I4wjvL._AC_SL1500_.jpg",
-            price: 999.00,
-            description: "The Valve Index is a premium PC-powered VR system with industry-leading display technology, off-ear audio, and advanced controllers that track individual finger movements for more natural interactions in VR.",
-            videoUrl: "https://example.com/videos/valve-index-review.mp4"
-        },
-        {
-            title: "Meta Quest 2 VR Headset",
-            amazonUrl: "https://www.amazon.com/dp/B099VMT8VZ",
-            rating: 4.6,
-            category: "headsets",
-            imageUrl: "https://m.media-amazon.com/images/I/615YaAiA-ML._AC_SL1500_.jpg",
-            price: 299.99,
-            description: "The Meta Quest 2 is an affordable all-in-one VR headset with a vast library of games and experiences. Featuring a high-resolution display and intuitive controls, it's perfect for VR beginners and enthusiasts alike."
-        },
-        {
-            title: "KIWI Design Controller Grips for Meta Quest 3",
-            amazonUrl: "https://www.amazon.com/dp/B0CJHZXQ7S",
-            rating: 4.5,
-            category: "accessories",
-            imageUrl: "https://m.media-amazon.com/images/I/61Jw-mJldaL._AC_SL1500_.jpg",
-            price: 39.99,
-            description: "Enhance your VR experience with these ergonomic controller grips for Meta Quest 3. They provide better grip, prevent controller drops, and reduce hand fatigue during extended play sessions."
-        },
-        {
-            title: "VR Cover Facial Interface for Valve Index",
-            amazonUrl: "https://www.amazon.com/dp/B07YFSZVBV",
-            rating: 4.4,
-            category: "accessories",
-            imageUrl: "https://m.media-amazon.com/images/I/71Zl+xaoYtL._AC_SL1500_.jpg",
-            price: 59.99,
-            description: "Upgrade your Valve Index comfort with this premium facial interface replacement. Made with PU leather, it's more hygienic, comfortable, and easier to clean than the original foam padding."
-        },
-        {
-            title: "Meta Quest Link Cable",
-            amazonUrl: "https://www.amazon.com/dp/B081SHD773",
-            rating: 4.5,
-            category: "accessories",
-            imageUrl: "https://m.media-amazon.com/images/I/61VVPxpBDVL._AC_SL1500_.jpg",
-            price: 79.99,
-            description: "Connect your Meta Quest headset to a gaming PC with this high-quality, 5-meter fiber optic cable. Experience PC VR games with optimal performance and minimal latency.",
-            videoUrl: "https://example.com/videos/quest-link-tutorial.mp4"
-        }
-    ];
-    
-    sampleProducts.forEach(product => {
-        const affiliateUrl = addAffiliateTag(product.amazonUrl);
-        
-        db.run(`
-            INSERT INTO products (
-                title, amazon_url, affiliate_url, rating, category, 
-                image_url, price, description, video_url
-            ) VALUES (
-                $title, $amazonUrl, $affiliateUrl, $rating, $category,
-                $imageUrl, $price, $description, $videoUrl
-            )
-        `, {
-            $title: product.title,
-            $amazonUrl: product.amazonUrl,
-            $affiliateUrl: affiliateUrl,
-            $rating: product.rating,
-            $category: product.category,
-            $imageUrl: product.imageUrl,
-            $price: product.price,
-            $description: product.description,
-            $videoUrl: product.videoUrl || null
-        });
-    });
-    
-    console.log('Sample VR products added');
 }
 
 // Add Amazon affiliate tag to URL
