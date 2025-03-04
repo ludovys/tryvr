@@ -383,24 +383,33 @@ const server = http.createServer((req, res) => {
                     // Use the scrapeAmazonProduct function with async/await to get product data
                     const productData = await scrapeAmazonProduct(asin);
                     
-                    // Use the original product data to provide context for the AI
-                    const prompt = `You are a helpful assistant that writes engaging product descriptions for VR experiences. 
-                    Here is some information about a product:
-                    
-                    Title: ${productData.title}
-                    Category: ${productData.category}
-                    Original Description: ${description}
-                    
-                    Please rewrite the description to make it more engaging and focused on the VR experience. 
-                    Highlight the immersive aspects and sensory experiences. 
-                    Keep it under 200 words and maintain a professional tone.`;
+                    // Enhanced prompt for the AI to create better descriptions
+                    const prompt = `You are a specialized copywriter for VR products with expertise in creating compelling product descriptions that convert browsers into buyers.
+
+Product Information:
+- Title: ${productData.title}
+- Category: ${productData.category}
+- Original Description: ${description}
+
+Your task is to transform the original description into a polished, customer-focused version that:
+
+1. Highlights the immersive aspects and sensory experiences of using this VR product
+2. Emphasizes the key benefits and unique selling points
+3. Uses persuasive, engaging language that evokes excitement and desire
+4. Addresses what potential customers care about most: comfort, performance, visual quality, ease of use
+5. Maintains all technical specifications and important product details from the original
+6. Uses short paragraphs and bullet points for readability
+7. Incorporates terminology that VR enthusiasts appreciate
+8. Is optimized for conversion while remaining factually accurate
+
+Keep the description under 200 words and strike a professional yet enthusiastic tone. Focus on creating a description that would make someone want to experience this VR product immediately.`;
                     
                     try {
                         // Call OpenAI API to improve the description
                         const response = await openai.chat.completions.create({
                             model: "gpt-3.5-turbo",
                             messages: [
-                                { role: "system", content: "You are a helpful assistant that writes engaging product descriptions for VR experiences." },
+                                { role: "system", content: "You are a specialist VR product copywriter whose descriptions consistently outperform others in A/B testing with 35% higher conversion rates." },
                                 { role: "user", content: prompt }
                             ],
                             max_tokens: 500,
