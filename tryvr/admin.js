@@ -312,14 +312,26 @@ function setupEventListeners() {
             // Get form data
             const productData = {
                 id: document.getElementById('product-id').value || null,
-                title: document.getElementById('product-title').value,
-                amazonUrl: document.getElementById('amazon-url').value,
-                rating: parseFloat(document.getElementById('product-rating').value),
-                category: document.getElementById('product-category').value,
-                imageUrl: document.getElementById('product-image').value,
-                price: parseFloat(document.getElementById('product-price').value),
-                description: document.getElementById('product-description').value
+                title: document.getElementById('productName').value,
+                amazonUrl: document.getElementById('amazonUrl').value,
+                rating: parseFloat(document.getElementById('productRating').value),
+                category: document.getElementById('productCategory').value,
+                imageUrl: document.getElementById('productImageUrl').value,
+                price: parseFloat(document.getElementById('productPrice').value),
+                description: document.getElementById('productDescription').value
             };
+            
+            // If using file upload for image, use the data URL from localStorage
+            const imageSourceUpload = document.getElementById('imageSourceUpload');
+            if (imageSourceUpload && imageSourceUpload.checked) {
+                const tempImageDataUrl = localStorage.getItem('tempImageDataUrl');
+                const tempImageUniqueId = localStorage.getItem('tempImageUniqueId');
+                
+                if (tempImageDataUrl) {
+                    productData.imageUrl = tempImageDataUrl;
+                    productData.uniqueImageId = tempImageUniqueId;
+                }
+            }
             
             // Save product
             saveProduct(productData);
@@ -422,6 +434,43 @@ function setupEventListeners() {
                     });
             }
         });
+    }
+
+    // Image file preview
+    const productImageFile = document.getElementById('productImageFile');
+    const imagePreview = document.getElementById('imagePreview');
+    
+    if (productImageFile && imagePreview) {
+        productImageFile.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                console.log("Image file selected:", file.name);
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    console.log("Image file loaded");
+                    imagePreview.src = e.target.result;
+                    imagePreview.classList.remove('hidden');
+                    
+                    // Store the image data URL in localStorage for later use
+                    localStorage.setItem('tempImageDataUrl', e.target.result);
+                    localStorage.setItem('tempImageUniqueId', Date.now().toString());
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    // Image source toggle
+    const imageSourceUrl = document.getElementById('imageSourceUrl');
+    const imageSourceUpload = document.getElementById('imageSourceUpload');
+    
+    if (imageSourceUrl && imageSourceUpload) {
+        console.log("Setting up image source toggle event listeners");
+        imageSourceUrl.addEventListener('change', toggleImageSource);
+        imageSourceUpload.addEventListener('change', toggleImageSource);
+        
+        // Initialize the toggle
+        toggleImageSource();
     }
 }
 
@@ -601,37 +650,37 @@ function editProduct(productId) {
                     productIdInput.value = id;
                 }
                 
-                const titleInput = document.getElementById('product-title');
+                const titleInput = document.getElementById('productName');
                 if (titleInput) {
                     titleInput.value = title;
                 }
                 
-                const amazonUrlInput = document.getElementById('amazon-url');
+                const amazonUrlInput = document.getElementById('amazonUrl');
                 if (amazonUrlInput) {
                     amazonUrlInput.value = amazonUrl;
                 }
                 
-                const ratingInput = document.getElementById('product-rating');
+                const ratingInput = document.getElementById('productRating');
                 if (ratingInput) {
                     ratingInput.value = rating;
                 }
                 
-                const categoryInput = document.getElementById('product-category');
+                const categoryInput = document.getElementById('productCategory');
                 if (categoryInput) {
                     categoryInput.value = category;
                 }
                 
-                const imageUrlInput = document.getElementById('product-image');
+                const imageUrlInput = document.getElementById('productImageUrl');
                 if (imageUrlInput) {
                     imageUrlInput.value = imageUrl;
                 }
                 
-                const priceInput = document.getElementById('product-price');
+                const priceInput = document.getElementById('productPrice');
                 if (priceInput) {
                     priceInput.value = price;
                 }
                 
-                const descriptionInput = document.getElementById('product-description');
+                const descriptionInput = document.getElementById('productDescription');
                 if (descriptionInput) {
                     descriptionInput.value = description;
                 }
@@ -779,6 +828,59 @@ function updateFrontendDatabase() {
 // Save product to database
 function saveProduct(productData) {
     try {
+        console.log("Saving product:", productData);
+        const db = getDatabase();
+        
+        // Process image if it's a data URL
+        if (productData.imageUrl && productData.imageUrl.startsWith('data:image/')) {
+            console.log("Processing image data URL...");
+            
+            // Send the image to the server for processing
+            fetch('/api/download-image', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    imageUrl: productData.imageUrl,
+                    uniqueId: productData.uniqueImageId || Date.now().toString()
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Image processed successfully:", data);
+                // Update the product with the local image path
+                productData.imageUrl = data.localPath;
+                
+                // Now save the product with the processed image
+                saveProductToDatabase(productData);
+            })
+            .catch(error => {
+                console.error("Error processing image:", error);
+                showNotification("Error processing image: " + error.message, "error");
+                
+                // Save the product anyway, but with a default image
+                productData.imageUrl = '/vr-logo.svg';
+                saveProductToDatabase(productData);
+            });
+        } else {
+            // No image processing needed, save directly
+            saveProductToDatabase(productData);
+        }
+    } catch (error) {
+        console.error('Error in saveProduct:', error);
+        showNotification('Error saving product: ' + error.message, 'error');
+    }
+}
+
+// Helper function to save product to database after image processing
+function saveProductToDatabase(productData) {
+    try {
         const db = getDatabase();
         
         // Check if product already exists (edit mode)
@@ -837,10 +939,14 @@ function saveProduct(productData) {
         // Reload product list
         loadProducts();
         
+        // Clear localStorage image data
+        localStorage.removeItem('tempImageDataUrl');
+        localStorage.removeItem('tempImageUniqueId');
+        
         // Hide modal
         document.getElementById('product-modal').classList.add('hidden');
     } catch (error) {
-        console.error('Error saving product:', error);
+        console.error('Error saving product to database:', error);
         showNotification('Error saving product: ' + error.message, 'error');
     }
 }
@@ -1060,4 +1166,23 @@ window.cleanupProducts = function() {
             console.log(`Cleanup complete. Deleted ${count} products.`);
             return count;
         });
-}; 
+};
+
+// Toggle between image URL and image upload
+function toggleImageSource() {
+    const imageSourceUrl = document.getElementById('imageSourceUrl');
+    const imageSourceUpload = document.getElementById('imageSourceUpload');
+    const productImageUrlGroup = document.getElementById('productImageUrlGroup');
+    const productImageFileGroup = document.getElementById('productImageFileGroup');
+    
+    if (imageSourceUrl && imageSourceUpload && productImageUrlGroup && productImageFileGroup) {
+        console.log("Toggling image source:", imageSourceUrl.checked ? "URL" : "Upload");
+        if (imageSourceUrl.checked) {
+            productImageUrlGroup.style.display = 'block';
+            productImageFileGroup.style.display = 'none';
+        } else {
+            productImageUrlGroup.style.display = 'none';
+            productImageFileGroup.style.display = 'block';
+        }
+    }
+} 

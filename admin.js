@@ -565,13 +565,29 @@ function saveProductToDatabase(productData) {
         // Determine image URL
         let imageUrl = productData.image || '/vr-logo.svg';
         
+        // Ensure price is a valid number
+        let price = 0;
+        if (typeof productData.price === 'string') {
+            // Remove any currency symbols and commas
+            const cleanPrice = productData.price.replace(/[$,]/g, '');
+            price = parseFloat(cleanPrice);
+        } else if (typeof productData.price === 'number') {
+            price = productData.price;
+        }
+        
+        // Validate price
+        if (isNaN(price) || price <= 0) {
+            console.warn('Invalid price detected:', productData.price);
+            price = 0;
+        }
+        
         if (productData.id === null) {
             // Add new product
             const newProduct = {
                 name: productData.name,
                 amazonUrl: amazonUrl,
                 affiliateUrl: affiliateUrl,
-                price: productData.price,
+                price: price,
                 category: productData.category,
                 description: productData.description,
                 rating: productData.rating,
@@ -588,12 +604,12 @@ function saveProductToDatabase(productData) {
                 name: productData.name,
                 amazonUrl: amazonUrl,
                 affiliateUrl: affiliateUrl,
-                price: productData.price,
+                price: price,
                 category: productData.category,
                 description: productData.description,
                 rating: productData.rating,
                 image: imageUrl,
-                videoUrl: productData.videoUrl || db.products[productData.id].videoUrl || null
+                videoUrl: productData.videoUrl || (productData.id !== null ? db.products[productData.id].videoUrl : null) || null
             };
             db.products[productData.id] = updatedProduct;
             
@@ -611,6 +627,14 @@ function saveProductToDatabase(productData) {
                 
                 // Reload products
                 loadProducts();
+                
+                // Clear the stored image data
+                localStorage.removeItem('tempImageDataUrl');
+                localStorage.removeItem('tempImageUniqueId');
+                
+                // Clear the stored video data
+                localStorage.removeItem('tempVideoDataUrl');
+                localStorage.removeItem('tempVideoUniqueId');
                 
                 resolve();
             })
@@ -655,6 +679,22 @@ function saveToSQLDatabase() {
                         }
                     }
                     
+                    // Ensure price is a valid number
+                    let price = 0;
+                    if (typeof p.price === 'string') {
+                        // Remove any currency symbols and commas
+                        const cleanPrice = p.price.replace(/[$,]/g, '');
+                        price = parseFloat(cleanPrice);
+                    } else if (typeof p.price === 'number') {
+                        price = p.price;
+                    }
+                    
+                    // Validate price
+                    if (isNaN(price) || price <= 0) {
+                        console.warn('Invalid price detected for product:', p.name, p.price);
+                        price = 0;
+                    }
+                    
                     return [
                         index, // id
                         p.name, // title
@@ -663,7 +703,7 @@ function saveToSQLDatabase() {
                         parseFloat(p.rating) || 4.5, // rating
                         p.category || "accessories", // category
                         p.image || "/vr-logo.svg", // image_url
-                        parseFloat(p.price) || 0, // price
+                        price, // price
                         p.description || "", // description
                         p.videoUrl || null // video_url
                     ];
@@ -1083,6 +1123,103 @@ function setupEventListeners() {
         addProductBtn.addEventListener('click', addProduct);
     }
     
+    // Add form submission handler
+    const productForm = document.getElementById('productForm');
+    if (productForm) {
+        productForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            try {
+                // Get form values
+                const productId = document.getElementById('productId').value;
+                const productName = document.getElementById('productName').value;
+                const productPrice = parseFloat(document.getElementById('productPrice').value);
+                const productCategory = document.getElementById('productCategory').value;
+                const productDescription = document.getElementById('productDescription').value;
+                const productRating = parseFloat(document.getElementById('productRating').value) || 4.5;
+                const amazonUrl = document.getElementById('amazonUrl').value;
+                
+                // Validate required fields
+                if (!productName) {
+                    showNotification('Product name is required', 'error');
+                    return;
+                }
+                
+                if (isNaN(productPrice) || productPrice <= 0) {
+                    showNotification('Valid price is required', 'error');
+                    return;
+                }
+                
+                // Get image URL based on source
+                let imageUrl = '/vr-logo.svg';
+                const imageSourceUrl = document.getElementById('imageSourceUrl');
+                
+                if (imageSourceUrl && imageSourceUrl.checked) {
+                    // Using URL
+                    const productImageUrl = document.getElementById('productImageUrl').value;
+                    if (productImageUrl) {
+                        imageUrl = productImageUrl;
+                    }
+                } else {
+                    // Using uploaded file
+                    const tempImageDataUrl = localStorage.getItem('tempImageDataUrl');
+                    if (tempImageDataUrl) {
+                        imageUrl = tempImageDataUrl;
+                    }
+                }
+                
+                // Get video URL based on source
+                let videoUrl = null;
+                const videoSourceUrl = document.getElementById('videoSourceUrl');
+                
+                if (videoSourceUrl && videoSourceUrl.checked) {
+                    // Using URL
+                    const productVideoUrl = document.getElementById('productVideoUrl').value;
+                    if (productVideoUrl) {
+                        videoUrl = productVideoUrl;
+                    }
+                } else {
+                    // Using uploaded file
+                    const tempVideoDataUrl = localStorage.getItem('tempVideoDataUrl');
+                    if (tempVideoDataUrl) {
+                        videoUrl = tempVideoDataUrl;
+                    }
+                }
+                
+                // Prepare product data
+                const productData = {
+                    id: productId ? parseInt(productId) : null,
+                    name: productName,
+                    price: productPrice,
+                    category: productCategory,
+                    description: productDescription,
+                    rating: productRating,
+                    amazonUrl: amazonUrl,
+                    image: imageUrl,
+                    videoUrl: videoUrl,
+                    uniqueImageId: localStorage.getItem('tempImageUniqueId'),
+                    uniqueVideoId: localStorage.getItem('tempVideoUniqueId')
+                };
+                
+                // Save product
+                await saveProduct(productData);
+                
+                // Hide modal
+                const productModal = document.getElementById('productModal');
+                if (productModal) {
+                    productModal.classList.add('hidden');
+                }
+                
+                // Reload products
+                loadProducts();
+                
+            } catch (error) {
+                console.error('Error saving product:', error);
+                showNotification('Error saving product: ' + error.message, 'error');
+            }
+        });
+    }
+    
     // Fetch product details button
     const fetchDetailsBtn = document.getElementById('fetchDetailsBtn');
     if (fetchDetailsBtn) {
@@ -1164,60 +1301,29 @@ function setupEventListeners() {
     const deleteModal = document.getElementById('delete-modal');
     const closeDeleteModal = document.getElementById('close-delete-modal');
     const cancelDelete = document.getElementById('cancel-delete');
-    const confirmDelete = document.getElementById('confirm-delete');
     
-    if (deleteModal) {
-        // Close when clicking outside the modal content
-        deleteModal.addEventListener('click', (event) => {
-            if (event.target === deleteModal) {
-                deleteModal.classList.add('hidden');
-            }
-        });
-    }
-    
-    if (closeDeleteModal) {
+    if (closeDeleteModal && cancelDelete) {
         closeDeleteModal.addEventListener('click', () => {
-            deleteModal.classList.add('hidden');
+            if (deleteModal) deleteModal.classList.add('hidden');
         });
-    }
-    
-    if (cancelDelete) {
+        
         cancelDelete.addEventListener('click', () => {
-            deleteModal.classList.add('hidden');
+            if (deleteModal) deleteModal.classList.add('hidden');
         });
     }
     
-    if (confirmDelete) {
-        confirmDelete.addEventListener('click', () => {
-            if (productToDelete !== null) {
-                try {
-                    console.log(`Confirming deletion of product ID: ${productToDelete}`);
-                    
-                    // Hide the modal first to prevent multiple clicks
-                    deleteModal.classList.add('hidden');
-                    
-                    // Show a loading indicator
-                    showNotification('Deleting product...', 'info');
-                    
-                    // Clear frontend cache
-                    clearFrontendCache();
-                    
-                    // Delete the product
-                    deleteProduct(productToDelete);
-                    
-                    // Reset the productToDelete variable
-                    productToDelete = null;
-                } catch (error) {
-                    console.error('Error in delete confirmation:', error);
-                    showNotification('Error deleting product: ' + error.message, 'error');
-                    
-                    // Reset the productToDelete variable
-                    productToDelete = null;
-                }
-            } else {
-                console.warn('No product selected for deletion');
-                showNotification('No product selected for deletion', 'warning');
-            }
+    // Setup product modal
+    const productModal = document.getElementById('productModal');
+    const closeProductModal = document.getElementById('close-product-modal');
+    const cancelProduct = document.getElementById('cancel-product');
+    
+    if (closeProductModal && cancelProduct) {
+        closeProductModal.addEventListener('click', () => {
+            if (productModal) productModal.classList.add('hidden');
+        });
+        
+        cancelProduct.addEventListener('click', () => {
+            if (productModal) productModal.classList.add('hidden');
         });
     }
     
@@ -1225,242 +1331,133 @@ function setupEventListeners() {
     const apiKeyModal = document.getElementById('api-key-modal');
     const closeApiModal = document.getElementById('close-api-modal');
     const saveApiKeyBtn = document.getElementById('save-api-key');
-    const showApiKey = document.getElementById('show-api-key');
     const apiKeyInput = document.getElementById('api-key-input');
-    
-    if (apiKeyModal) {
-        // Close when clicking outside the modal content
-        apiKeyModal.addEventListener('click', (event) => {
-            if (event.target === apiKeyModal) {
-                apiKeyModal.classList.add('hidden');
-            }
-        });
-    }
+    const apiSettingsBtn = document.getElementById('api-settings-btn');
     
     if (closeApiModal) {
         closeApiModal.addEventListener('click', () => {
-            apiKeyModal.classList.add('hidden');
+            if (apiKeyModal) apiKeyModal.classList.add('hidden');
         });
     }
     
     if (saveApiKeyBtn && apiKeyInput) {
         saveApiKeyBtn.addEventListener('click', () => {
             const apiKey = apiKeyInput.value.trim();
-            saveApiKey(apiKey);
-            apiKeyModal.classList.add('hidden');
-        });
-    }
-    
-    if (showApiKey && apiKeyInput) {
-        showApiKey.addEventListener('change', () => {
-            apiKeyInput.type = showApiKey.checked ? 'text' : 'password';
-        });
-    }
-    
-    // Setup form submission
-    const productForm = document.getElementById('productForm');
-    if (productForm) {
-        productForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            
-            try {
-                // Get form data
-                const productId = document.getElementById('productId').value;
-                const productName = document.getElementById('productName').value;
-                const productPrice = document.getElementById('productPrice').value;
-                const productCategory = document.getElementById('productCategory').value;
-                const productDescription = document.getElementById('productDescription').value;
-                const productRating = document.getElementById('productRating').value;
-                const amazonUrl = document.getElementById('amazonUrl').value;
-                
-                // Check if this is Meta Quest 3S by name or Amazon URL
-                const isMetaQuest3S = productName.includes('Meta Quest 3S') || 
-                                     productName.includes('Quest 3S') || 
-                                     (amazonUrl && amazonUrl.includes('B0DDK1WM9K'));
-                
-                // Get image URL based on the selected source
-                const imageSourceUrl = document.getElementById('imageSourceUrl').checked;
-                let productImage = '';
-                
-                if (imageSourceUrl) {
-                    productImage = document.getElementById('productImageUrl').value;
-                    
-                    // For Meta Quest 3S, ensure we use the correct image
-                    if (isMetaQuest3S && (!productImage || productImage === '/vr-logo.svg')) {
-                        productImage = "https://m.media-amazon.com/images/I/61TzjRQQO9L._AC_SL1500_.jpg";
-                    }
-                } else {
-                    const imageFile = document.getElementById('productImageFile').files[0];
-                    if (imageFile) {
-                        // Use the stored data URL for the preview image
-                        const tempImageDataUrl = localStorage.getItem('tempImageDataUrl');
-                        if (tempImageDataUrl) {
-                            productImage = tempImageDataUrl;
-                            console.log('Using uploaded image data URL');
-                        } else {
-                            // Fallback to default
-                            productImage = '/vr-logo.svg';
-                            console.log('No image data URL found, using default');
-                        }
-                    } else {
-                        // For Meta Quest 3S, ensure we use the correct image
-                        if (isMetaQuest3S) {
-                            productImage = "https://m.media-amazon.com/images/I/61TzjRQQO9L._AC_SL1500_.jpg";
-                        } else {
-                            productImage = '/vr-logo.svg'; // Default fallback
-                        }
-                    }
-                }
-                
-                // Validate required fields
-                if (!productName) {
-                    showNotification('Product name is required', 'error');
-                    return;
-                }
-                
-                if (!productPrice || isNaN(parseFloat(productPrice)) || parseFloat(productPrice) <= 0) {
-                    showNotification('Valid price is required', 'error');
-                    return;
-                }
-                
-                // Create a product data object
-                const productData = {
-                    id: productId,
-                    name: productName,
-                    price: parseFloat(productPrice),
-                    category: productCategory,
-                    description: productDescription,
-                    rating: productRating ? parseFloat(productRating) : 0,
-                    image: productImage,
-                    amazonUrl: amazonUrl
-                };
-                
-                // If we're using a file upload, add the unique ID from localStorage
-                if (!imageSourceUrl && productImage.startsWith('data:image/')) {
-                    productData.uniqueImageId = localStorage.getItem('tempImageUniqueId') || Date.now().toString();
-                }
-                
-                // Show loading notification
-                showNotification('Saving product...', 'info');
-                
-                // Save the product
-                await saveProduct(productData);
-                
-                // Clear the form
-                productForm.reset();
-                document.getElementById('productId').value = '';
-                
-                // Hide the modal
-                const modal = document.getElementById('productModal');
-                if (modal) {
-                    modal.classList.add('hidden');
-                }
-                
-                // Clear the image preview
-                const imagePreview = document.getElementById('imagePreview');
-                if (imagePreview) {
-                    imagePreview.classList.add('hidden');
-                    imagePreview.src = '';
-                }
-                
-                // Clear the stored image data
-                localStorage.removeItem('tempImageDataUrl');
-                localStorage.removeItem('tempImageUniqueId');
-                
-                // Reload products
-                loadProducts();
-                
-                // Show success notification
-                showNotification('Product saved successfully!', 'success');
-            } catch (error) {
-                console.error('Error saving product:', error);
-                showNotification(`Error saving product: ${error.message}`, 'error');
+            if (apiKey) {
+                saveApiKey(apiKey);
+                if (apiKeyModal) apiKeyModal.classList.add('hidden');
+                showNotification('API key saved successfully!', 'success');
+            } else {
+                showNotification('Please enter a valid API key', 'error');
             }
         });
     }
     
-    // Logout button
-    const logoutBtn = document.getElementById('logout-btn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
-            localStorage.removeItem('tryvr_admin_auth');
-            window.location.href = 'admin-login.html';
-        });
-    }
-    
-    // Convert images button
-    const convertImagesBtn = document.getElementById('convert-images-btn');
-    if (convertImagesBtn) {
-        convertImagesBtn.addEventListener('click', convertExternalImagesToLocal);
-    }
-    
-    // Export database button
-    const exportDbBtn = document.getElementById('export-db-btn');
-    if (exportDbBtn) {
-        exportDbBtn.addEventListener('click', exportDatabase);
-    }
-    
-    // Import database button
-    const importDbBtn = document.getElementById('import-db-btn');
-    if (importDbBtn) {
-        importDbBtn.addEventListener('click', () => {
-            document.getElementById('import-db-input').click();
-        });
-    }
-    
-    // Import database input
-    const importDbInput = document.getElementById('import-db-input');
-    if (importDbInput) {
-        importDbInput.addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                importDatabase(file);
-            }
-        });
-    }
-    
-    // API settings button
-    const apiSettingsBtn = document.getElementById('api-settings-btn');
     if (apiSettingsBtn) {
         apiSettingsBtn.addEventListener('click', showApiKeyModal);
     }
-
-    // Set up file upload handlers
-    if (document.getElementById('productImageFile')) {
-        document.getElementById('productImageFile').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            const imagePreview = document.getElementById('imagePreview');
+    
+    // Improve description button
+    const improveDescriptionBtn = document.getElementById('improveDescriptionBtn');
+    if (improveDescriptionBtn) {
+        improveDescriptionBtn.addEventListener('click', async () => {
+            const productTitle = document.getElementById('productName').value;
+            const currentDescription = document.getElementById('productDescription').value;
             
-            if (file && imagePreview) {
-                // Read the file and display a preview
+            if (!productTitle) {
+                showNotification('Please enter a product name first', 'warning');
+                return;
+            }
+            
+            // Show loading state
+            improveDescriptionBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Generating...';
+            improveDescriptionBtn.disabled = true;
+            
+            try {
+                // Generate improved description
+                const improvedDescription = await generateDescriptionWithAI(productTitle, currentDescription);
+                
+                if (improvedDescription) {
+                    document.getElementById('productDescription').value = improvedDescription;
+                    showNotification('Description improved successfully!', 'success');
+                }
+            } catch (error) {
+                console.error('Error improving description:', error);
+                showNotification('Failed to improve description: ' + error.message, 'error');
+            } finally {
+                // Reset button state
+                improveDescriptionBtn.innerHTML = '<i class="fas fa-magic mr-2"></i>Improve Description';
+                improveDescriptionBtn.disabled = false;
+            }
+        });
+    }
+    
+    // Cleanup button
+    const cleanupButton = document.getElementById('cleanup-database-btn');
+    if (cleanupButton) {
+        cleanupButton.addEventListener('click', cleanupDatabase);
+    }
+    
+    // Image source toggle
+    const imageSourceUrl = document.getElementById('imageSourceUrl');
+    const imageSourceUpload = document.getElementById('imageSourceUpload');
+    
+    if (imageSourceUrl && imageSourceUpload) {
+        imageSourceUrl.addEventListener('change', toggleImageSource);
+        imageSourceUpload.addEventListener('change', toggleImageSource);
+    }
+    
+    // Video source toggle
+    const videoSourceUrl = document.getElementById('videoSourceUrl');
+    const videoSourceUpload = document.getElementById('videoSourceUpload');
+    
+    if (videoSourceUrl && videoSourceUpload) {
+        videoSourceUrl.addEventListener('change', toggleVideoSource);
+        videoSourceUpload.addEventListener('change', toggleVideoSource);
+    }
+    
+    // Image file preview
+    const productImageFile = document.getElementById('productImageFile');
+    const imagePreview = document.getElementById('imagePreview');
+    
+    if (productImageFile && imagePreview) {
+        productImageFile.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     imagePreview.src = e.target.result;
                     imagePreview.classList.remove('hidden');
                     
-                    // Get the product ID if we're editing, or generate a timestamp for new products
-                    const productId = document.getElementById('productId').value;
-                    const uniqueId = productId || Date.now().toString();
-                    
-                    // Store the data URL for later use along with the unique ID
+                    // Store the image data URL in localStorage for later use
                     localStorage.setItem('tempImageDataUrl', e.target.result);
-                    localStorage.setItem('tempImageUniqueId', uniqueId);
-                    console.log('Image preview set and data URL stored with unique ID:', uniqueId);
+                    localStorage.setItem('tempImageUniqueId', Date.now().toString());
                 };
                 reader.readAsDataURL(file);
-            } else {
-                const imagePreview = document.getElementById('imagePreview');
-                if (imagePreview) {
-                    imagePreview.classList.add('hidden');
-                }
             }
         });
     }
-
-    // Cleanup button
-    const cleanupButton = document.getElementById('cleanup-button');
-    if (cleanupButton) {
-        cleanupButton.addEventListener('click', cleanupDatabase);
+    
+    // Video file preview
+    const productVideoFile = document.getElementById('productVideoFile');
+    const videoPreview = document.getElementById('videoPreview');
+    
+    if (productVideoFile && videoPreview) {
+        productVideoFile.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    videoPreview.src = e.target.result;
+                    videoPreview.classList.remove('hidden');
+                    
+                    // Store the video data URL in localStorage for later use
+                    localStorage.setItem('tempVideoDataUrl', e.target.result);
+                    localStorage.setItem('tempVideoUniqueId', Date.now().toString() + '-video');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
     }
 }
 
@@ -1581,6 +1578,21 @@ async function fetchAmazonProductDetails(amazonUrl) {
         
         // Add affiliate link
         productData.affiliateUrl = addAffiliateTag(amazonUrl);
+        
+        // Ensure price is a valid number
+        if (productData.price) {
+            if (typeof productData.price === 'string') {
+                // Remove any currency symbols and commas
+                const cleanPrice = productData.price.replace(/[$,]/g, '');
+                productData.price = parseFloat(cleanPrice);
+            }
+            
+            // Validate price
+            if (isNaN(productData.price) || productData.price <= 0) {
+                console.warn('Invalid price detected from Amazon:', productData.price);
+                productData.price = 0;
+            }
+        }
         
         // Special handling for Meta Quest 3S
         if (asin === "B0DDK1WM9K" || 
@@ -1751,65 +1763,72 @@ function initializeBootstrapComponents() {
     if (imageSourceUrl && imageSourceUpload) {
         imageSourceUrl.addEventListener('change', toggleImageSource);
         imageSourceUpload.addEventListener('change', toggleImageSource);
-        
-        // Add event listener for image file selection
-        const productImageFile = document.getElementById('productImageFile');
-        if (productImageFile) {
-            productImageFile.addEventListener('change', function(event) {
-                const file = event.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const imagePreview = document.getElementById('imagePreview');
-                        if (imagePreview) {
-                            imagePreview.src = e.target.result;
-                            imagePreview.classList.remove('hidden');
-                        }
-                    };
-                    reader.readAsDataURL(file);
-                } else {
-                    const imagePreview = document.getElementById('imagePreview');
-                    if (imagePreview) {
-                        imagePreview.classList.add('hidden');
-                    }
-                }
-            });
-        }
-        
-        // Add event listener for image URL input
-        const productImageUrl = document.getElementById('productImageUrl');
-        if (productImageUrl) {
-            productImageUrl.addEventListener('input', function(event) {
-                const url = event.target.value;
-                const imagePreview = document.getElementById('imagePreview');
-                if (imagePreview) {
-                    if (url) {
-                        imagePreview.src = url;
-                        imagePreview.classList.remove('hidden');
-                    } else {
-                        imagePreview.classList.add('hidden');
-                    }
-                }
-            });
-        }
     }
     
-    // Add event listener for add product button
-    const addProductBtn = document.getElementById('add-product-btn');
-    if (addProductBtn) {
-        addProductBtn.addEventListener('click', addProduct);
+    // Add event listeners for image file selection
+    const productImageFile = document.getElementById('productImageFile');
+    const imagePreview = document.getElementById('imagePreview');
+    
+    if (productImageFile && imagePreview) {
+        productImageFile.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.classList.remove('hidden');
+                    
+                    // Store the image data URL in localStorage for later use
+                    localStorage.setItem('tempImageDataUrl', e.target.result);
+                    localStorage.setItem('tempImageUniqueId', Date.now().toString());
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+    
+    // Add event listeners for video source toggle
+    const videoSourceUrl = document.getElementById('videoSourceUrl');
+    const videoSourceUpload = document.getElementById('videoSourceUpload');
+    
+    if (videoSourceUrl && videoSourceUpload) {
+        videoSourceUrl.addEventListener('change', toggleVideoSource);
+        videoSourceUpload.addEventListener('change', toggleVideoSource);
+    }
+    
+    // Add event listeners for video file selection
+    const productVideoFile = document.getElementById('productVideoFile');
+    const videoPreview = document.getElementById('videoPreview');
+    
+    if (productVideoFile && videoPreview) {
+        productVideoFile.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    videoPreview.src = e.target.result;
+                    videoPreview.classList.remove('hidden');
+                    
+                    // Store the video data URL in localStorage for later use
+                    localStorage.setItem('tempVideoDataUrl', e.target.result);
+                    localStorage.setItem('tempVideoUniqueId', Date.now().toString() + '-video');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
     }
     
     console.log('Tailwind modal components initialized');
 }
 
-// Function to toggle between image source options
+// Toggle between image URL and image upload
 function toggleImageSource() {
     const imageSourceUrl = document.getElementById('imageSourceUrl');
+    const imageSourceUpload = document.getElementById('imageSourceUpload');
     const productImageUrlGroup = document.getElementById('productImageUrlGroup');
     const productImageFileGroup = document.getElementById('productImageFileGroup');
     
-    if (imageSourceUrl && productImageUrlGroup && productImageFileGroup) {
+    if (imageSourceUrl && imageSourceUpload && productImageUrlGroup && productImageFileGroup) {
         if (imageSourceUrl.checked) {
             productImageUrlGroup.style.display = 'block';
             productImageFileGroup.style.display = 'none';
@@ -1818,22 +1837,63 @@ function toggleImageSource() {
             productImageFileGroup.style.display = 'block';
         }
     }
+    
+    // Also toggle video source if elements exist
+    toggleVideoSource();
 }
 
-// Function to open the product modal for adding a new product
+// Toggle between video URL and video upload
+function toggleVideoSource() {
+    const videoSourceUrl = document.getElementById('videoSourceUrl');
+    const videoSourceUpload = document.getElementById('videoSourceUpload');
+    const productVideoUrlGroup = document.getElementById('productVideoUrlGroup');
+    const productVideoFileGroup = document.getElementById('productVideoFileGroup');
+    
+    if (videoSourceUrl && videoSourceUpload && productVideoUrlGroup && productVideoFileGroup) {
+        if (videoSourceUrl.checked) {
+            productVideoUrlGroup.style.display = 'block';
+            productVideoFileGroup.style.display = 'none';
+        } else {
+            productVideoUrlGroup.style.display = 'none';
+            productVideoFileGroup.style.display = 'block';
+        }
+    }
+}
+
+// Add a new product
 function addProduct() {
-    // Reset the form
     const productForm = document.getElementById('productForm');
-    const productId = document.getElementById('productId');
     const productModalLabel = document.getElementById('productModalLabel');
+    const productId = document.getElementById('productId');
+    const productName = document.getElementById('productName');
+    const productPrice = document.getElementById('productPrice');
+    const productCategory = document.getElementById('productCategory');
+    const productDescription = document.getElementById('productDescription');
+    const productRating = document.getElementById('productRating');
+    const amazonUrl = document.getElementById('amazonUrl');
+    const productImageUrl = document.getElementById('productImageUrl');
     const imagePreview = document.getElementById('imagePreview');
     const imageSourceUrl = document.getElementById('imageSourceUrl');
-    const amazonUrl = document.getElementById('amazonUrl');
+    const improveDescriptionBtn = document.getElementById('improveDescriptionBtn');
+    const productVideoUrl = document.getElementById('productVideoUrl');
+    const videoPreview = document.getElementById('videoPreview');
+    const videoSourceUrl = document.getElementById('videoSourceUrl');
     
-    if (productForm && productId && productModalLabel && imagePreview && imageSourceUrl) {
+    if (productForm && productModalLabel && productId && productName && 
+        productPrice && productCategory && productDescription && 
+        productRating && amazonUrl && productImageUrl && imagePreview && 
+        imageSourceUrl && improveDescriptionBtn && productVideoUrl && 
+        videoPreview && videoSourceUrl) {
+        
+        // Set modal title
+        productModalLabel.textContent = 'Add Product';
+        
+        // Reset form
         productForm.reset();
         productId.value = '';
-        productModalLabel.textContent = 'Add Product';
+        
+        // Hide improve description button
+        improveDescriptionBtn.classList.add('hidden');
         
         // Reset Amazon URL field
         if (amazonUrl) {
@@ -1844,9 +1904,16 @@ function addProduct() {
         imagePreview.classList.add('hidden');
         imagePreview.src = '';
         
-        // Default to URL input
+        // Reset video preview
+        videoPreview.classList.add('hidden');
+        videoPreview.src = '';
+        
+        // Default to URL input for both image and video
         imageSourceUrl.checked = true;
         toggleImageSource();
+        
+        videoSourceUrl.checked = true;
+        toggleVideoSource();
         
         // Show the modal
         const modal = document.getElementById('productModal');
