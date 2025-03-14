@@ -1,5 +1,5 @@
 name = "tryvr"
-main = "src/index.js"
+main = "./functions/api/[[path]].js"
 compatibility_date = "2023-01-01"
 
 [site]
@@ -7,6 +7,9 @@ bucket = "./dist"
 
 [build]
 command = "npm run build"
+
+# Pages configuration
+pages_build_output_dir = "dist"
 
 [env.production]
 routes = [

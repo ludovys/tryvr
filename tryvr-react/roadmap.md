@@ -23,6 +23,7 @@ This document outlines the planned features and improvements for the TryVR proje
 - [x] Implement game filtering and search functionality
 - [x] Create game player component with fullscreen support
 - [x] Design responsive UI for all devices
+- [x] Deploy application to Cloudflare Pages
 
 ## Future Ideas
 

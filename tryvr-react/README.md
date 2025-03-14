@@ -2,6 +2,10 @@
 
 TryVR is a platform for discovering and playing virtual reality games directly in your browser. No downloads required - just click and play!
 
+## Live Demo
+
+Visit the live demo at [https://tryvr.pages.dev](https://tryvr.pages.dev) or [https://dev.tryvr.pages.dev](https://dev.tryvr.pages.dev)
+
 ## Features
 
 - Browse a curated collection of browser-based VR games

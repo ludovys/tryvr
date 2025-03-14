@@ -9,7 +9,7 @@
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "wrangler:dev": "wrangler pages dev --compatibility-date=2023-01-01 dist",
-    "wrangler:deploy": "wrangler pages publish dist",
+    "wrangler:deploy": "wrangler pages deploy dist",
     "start": "npm run build && npm run wrangler:dev"
   },
   "dependencies": {
