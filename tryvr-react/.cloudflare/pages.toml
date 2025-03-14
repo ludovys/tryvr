@@ -1,0 +1,21 @@
+[build]
+command = "npm run build"
+output_directory = "dist"
+base_directory = ""
+
+[build.environment]
+NODE_VERSION = "18"
+
+[site]
+bucket = "./dist"
+entry-point = "."
+
+[routes]
+"/*" = { worker = false }
+"/api/*" = { worker = "api" }
+
+[env.production]
+VITE_API_URL = "https://tryvr.pages.dev/api"
+
+[env.development]
+VITE_API_URL = "http://localhost:8788/api" 

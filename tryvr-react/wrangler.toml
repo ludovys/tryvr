@@ -1,0 +1,29 @@
+name = "tryvr"
+main = "src/index.js"
+compatibility_date = "2023-01-01"
+
+[site]
+bucket = "./dist"
+
+[build]
+command = "npm run build"
+
+[env.production]
+routes = [
+  { pattern = "/api/*", script = "api" }
+]
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "tryvr-db"
+database_id = "placeholder-id"
+
+[env.development]
+routes = [
+  { pattern = "/api/*", script = "api" }
+]
+
+[[env.development.d1_databases]]
+binding = "DB"
+database_name = "tryvr-db-dev"
+database_id = "placeholder-id" 
