@@ -36,36 +36,37 @@ const GameCard = ({ game, onPlay }) => {
 
   return (
     <div 
-      className="bg-gray-800 rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105"
+      className="game-card bg-gray-800/90 rounded-lg overflow-hidden shadow-lg transition-transform duration-300"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="relative">
+      <div className="relative overflow-hidden">
         <img 
           src={game.imageUrl} 
           alt={game.title} 
-          className="w-full h-48 object-cover"
+          className="w-full h-48 object-cover transition-transform duration-500"
         />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-70"></div>
         {game.featured && (
-          <div className="absolute top-2 left-2 bg-yellow-500 text-gray-900 text-xs font-bold px-2 py-1 rounded">
-            FEATURED
+          <div className="absolute top-2 left-2 bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+            <i className="fas fa-crown mr-1"></i> FEATURED
           </div>
         )}
-        <div className="absolute top-2 right-2 bg-purple-700 text-white text-xs px-2 py-1 rounded">
-          {game.category}
+        <div className="absolute top-2 right-2 bg-gradient-to-r from-purple-700 to-purple-500 text-white text-xs px-3 py-1 rounded-full shadow-lg">
+          {game.category.charAt(0).toUpperCase() + game.category.slice(1)}
+        </div>
+        <div className="absolute bottom-0 left-0 w-full p-3">
+          <h3 className="text-lg font-bold text-white mb-1 line-clamp-1 drop-shadow-lg">{game.title}</h3>
+          <div className="flex items-center">
+            <div className="flex mr-2 drop-shadow-lg">
+              {renderStars(game.rating)}
+            </div>
+            <span className="text-gray-200 text-sm drop-shadow-lg">{game.rating.toFixed(1)}</span>
+          </div>
         </div>
       </div>
       
       <div className="p-4">
-        <h3 className="text-lg font-semibold text-white mb-2 line-clamp-2">{game.title}</h3>
-        
-        <div className="flex items-center mb-2">
-          <div className="flex mr-2">
-            {renderStars(game.rating)}
-          </div>
-          <span className="text-gray-400 text-sm">{game.rating.toFixed(1)}</span>
-        </div>
-        
         <p className="text-gray-300 text-sm mb-4 line-clamp-3">{game.description}</p>
         
         <div className="flex items-center justify-between text-sm text-gray-400 mb-4">
@@ -75,9 +76,9 @@ const GameCard = ({ game, onPlay }) => {
         
         <button 
           onClick={() => onPlay(game)}
-          className={`w-full vr-button px-4 py-2 rounded ${
-            isHovered ? 'bg-purple-600' : 'bg-purple-700'
-          } hover:bg-purple-600 text-white transition-colors flex items-center justify-center`}
+          className={`w-full vr-button px-4 py-2 rounded-lg ${
+            isHovered ? 'pulse' : ''
+          } text-white transition-colors flex items-center justify-center`}
         >
           <i className="fas fa-play-circle mr-2"></i> Play Now
         </button>

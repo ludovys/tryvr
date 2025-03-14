@@ -1,42 +1,166 @@
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import vrLogo from '../assets/vr-logo.svg';
 
 const Header = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
+
+  // Check if the current route matches the link
+  const isActive = (path) => {
+    return location.pathname === path;
+  };
+
+  // Handle scroll event to change header appearance
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  // Toggle mobile menu
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
   return (
-    <header className="vr-header-bg shadow-lg">
-      <div className="container mx-auto px-4 py-6">
+    <header className={`vr-header-bg fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
+      isScrolled ? 'py-2 bg-opacity-90 backdrop-blur-md' : 'py-4'
+    }`}>
+      <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <div className="vr-float mr-4">
-              <img src={vrLogo} alt="TryVR Logo" className="h-16 w-16" />
+          <Link to="/" className="flex items-center group">
+            <div className={`vr-float transition-all duration-300 ${isScrolled ? 'mr-2' : 'mr-4'}`}>
+              <img 
+                src={vrLogo} 
+                alt="TryVR Logo" 
+                className={`transition-all duration-300 ${isScrolled ? 'h-12 w-12' : 'h-16 w-16'}`} 
+              />
             </div>
             <div>
-              <h1 className="text-3xl font-bold vr-text-3d">TryVR</h1>
-              <p className="mt-1">Experience Virtual Reality Like Never Before</p>
+              <h1 className={`font-bold vr-text-3d transition-all duration-300 ${isScrolled ? 'text-2xl' : 'text-3xl'}`}>
+                TryVR
+              </h1>
+              <p className={`transition-all duration-300 ${isScrolled ? 'text-sm' : 'mt-1'}`}>
+                Experience Virtual Reality Like Never Before
+              </p>
             </div>
-          </div>
+          </Link>
+          
+          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-4">
-            <Link to="/" className="vr-button px-4 py-2 rounded-lg bg-purple-700 hover:bg-purple-600 transition">
-              Home
+            <Link 
+              to="/" 
+              className={`vr-button px-4 py-2 rounded-lg transition ${
+                isActive('/') 
+                  ? 'bg-purple-600 text-white pulse' 
+                  : 'bg-gray-800/70 hover:bg-purple-700 text-gray-200'
+              }`}
+            >
+              <i className="fas fa-home mr-2"></i> Home
             </Link>
-            <Link to="/about" className="vr-button px-4 py-2 rounded-lg bg-purple-700 hover:bg-purple-600 transition">
-              About VR
+            <Link 
+              to="/games" 
+              className={`vr-button px-4 py-2 rounded-lg transition ${
+                isActive('/games') 
+                  ? 'bg-purple-600 text-white pulse' 
+                  : 'bg-gray-800/70 hover:bg-purple-700 text-gray-200'
+              }`}
+            >
+              <i className="fas fa-gamepad mr-2"></i> Games
             </Link>
-            <Link to="/contact" className="vr-button px-4 py-2 rounded-lg bg-purple-700 hover:bg-purple-600 transition">
-              Contact
+            <Link 
+              to="/about" 
+              className={`vr-button px-4 py-2 rounded-lg transition ${
+                isActive('/about') 
+                  ? 'bg-purple-600 text-white pulse' 
+                  : 'bg-gray-800/70 hover:bg-purple-700 text-gray-200'
+              }`}
+            >
+              <i className="fas fa-info-circle mr-2"></i> About VR
             </Link>
-            <Link to="/admin-login" className="vr-button px-4 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition">
-              Admin
+            <Link 
+              to="/admin-login" 
+              className="vr-button px-4 py-2 rounded-lg bg-gray-800/70 hover:bg-gray-700 transition text-gray-200"
+            >
+              <i className="fas fa-user-shield mr-2"></i> Admin
             </Link>
           </div>
+          
+          {/* Mobile Menu Button */}
           <div className="md:hidden">
-            <button className="text-white">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
+            <button 
+              onClick={toggleMobileMenu}
+              className="text-white p-2 rounded-lg hover:bg-gray-800/50 transition"
+              aria-label="Toggle menu"
+            >
+              {isMobileMenuOpen ? (
+                <i className="fas fa-times text-xl"></i>
+              ) : (
+                <i className="fas fa-bars text-xl"></i>
+              )}
             </button>
           </div>
         </div>
+        
+        {/* Mobile Menu */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden mt-4 pb-4 animate-fadeIn">
+            <div className="flex flex-col space-y-2">
+              <Link 
+                to="/" 
+                className={`vr-button px-4 py-2 rounded-lg transition ${
+                  isActive('/') 
+                    ? 'bg-purple-600 text-white' 
+                    : 'bg-gray-800/70 hover:bg-purple-700 text-gray-200'
+                }`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <i className="fas fa-home mr-2"></i> Home
+              </Link>
+              <Link 
+                to="/games" 
+                className={`vr-button px-4 py-2 rounded-lg transition ${
+                  isActive('/games') 
+                    ? 'bg-purple-600 text-white' 
+                    : 'bg-gray-800/70 hover:bg-purple-700 text-gray-200'
+                }`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <i className="fas fa-gamepad mr-2"></i> Games
+              </Link>
+              <Link 
+                to="/about" 
+                className={`vr-button px-4 py-2 rounded-lg transition ${
+                  isActive('/about') 
+                    ? 'bg-purple-600 text-white' 
+                    : 'bg-gray-800/70 hover:bg-purple-700 text-gray-200'
+                }`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <i className="fas fa-info-circle mr-2"></i> About VR
+              </Link>
+              <Link 
+                to="/admin-login" 
+                className="vr-button px-4 py-2 rounded-lg bg-gray-800/70 hover:bg-gray-700 transition text-gray-200"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <i className="fas fa-user-shield mr-2"></i> Admin
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
     </header>
   );

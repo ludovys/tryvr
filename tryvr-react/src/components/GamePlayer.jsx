@@ -5,6 +5,8 @@ const GamePlayer = ({ game, onClose }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showControls, setShowControls] = useState(true);
+  const controlsTimeoutRef = useRef(null);
 
   useEffect(() => {
     // Track when the iframe is loaded
@@ -67,34 +69,104 @@ const GamePlayer = ({ game, onClose }) => {
     };
   }, []);
 
+  // Auto-hide controls after inactivity
+  useEffect(() => {
+    const handleMouseMove = () => {
+      setShowControls(true);
+      
+      if (controlsTimeoutRef.current) {
+        clearTimeout(controlsTimeoutRef.current);
+      }
+      
+      controlsTimeoutRef.current = setTimeout(() => {
+        setShowControls(false);
+      }, 3000);
+    };
+    
+    const container = document.getElementById('game-container');
+    if (container) {
+      container.addEventListener('mousemove', handleMouseMove);
+      
+      // Initial timeout
+      controlsTimeoutRef.current = setTimeout(() => {
+        setShowControls(false);
+      }, 3000);
+    }
+    
+    return () => {
+      if (container) {
+        container.removeEventListener('mousemove', handleMouseMove);
+      }
+      
+      if (controlsTimeoutRef.current) {
+        clearTimeout(controlsTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Handle escape key to exit fullscreen or close player
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        if (document.fullscreenElement) {
+          document.exitFullscreen();
+        } else {
+          onClose();
+        }
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onClose]);
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex flex-col">
-      {/* Header */}
-      <div className="bg-gray-800 p-4 flex items-center justify-between">
+    <div className="fixed inset-0 bg-black z-50 flex flex-col">
+      {/* Header - only visible when showControls is true */}
+      <div 
+        className={`bg-gray-900/90 backdrop-blur-md p-4 flex items-center justify-between transition-opacity duration-300 ${
+          showControls ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}
+      >
         <div className="flex items-center">
           <img 
             src={game.imageUrl} 
             alt={game.title} 
-            className="h-10 w-10 rounded object-cover mr-3"
+            className="h-10 w-10 rounded-lg object-cover mr-3 border border-purple-500"
           />
-          <h2 className="text-xl font-bold text-white">{game.title}</h2>
+          <div>
+            <h2 className="text-xl font-bold text-white">{game.title}</h2>
+            <div className="flex items-center text-sm text-gray-300">
+              <span className="mr-3">
+                <i className="fas fa-gamepad mr-1"></i> {game.playCount.toLocaleString()} plays
+              </span>
+              <span className="flex items-center">
+                <i className="fas fa-star text-yellow-400 mr-1"></i> {game.rating.toFixed(1)}
+              </span>
+            </div>
+          </div>
         </div>
         <div className="flex items-center space-x-4">
           <button 
             onClick={toggleFullscreen}
-            className="text-gray-300 hover:text-white transition"
+            className="text-gray-300 hover:text-white transition p-2 rounded-full hover:bg-gray-800"
+            title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
           >
             {isFullscreen ? (
-              <i className="fas fa-compress"></i>
+              <i className="fas fa-compress text-lg"></i>
             ) : (
-              <i className="fas fa-expand"></i>
+              <i className="fas fa-expand text-lg"></i>
             )}
           </button>
           <button 
             onClick={onClose}
-            className="text-gray-300 hover:text-white transition"
+            className="text-gray-300 hover:text-white transition p-2 rounded-full hover:bg-gray-800"
+            title="Close Game"
           >
-            <i className="fas fa-times"></i>
+            <i className="fas fa-times text-lg"></i>
           </button>
         </div>
       </div>
@@ -102,24 +174,26 @@ const GamePlayer = ({ game, onClose }) => {
       {/* Game Container */}
       <div 
         id="game-container"
-        className="flex-grow relative flex items-center justify-center"
+        className="flex-grow relative flex items-center justify-center bg-black"
+        onMouseEnter={() => setShowControls(true)}
       >
         {isLoading && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-900 bg-opacity-80 z-10">
-            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-purple-500 mb-4"></div>
-            <p className="text-white text-lg">Loading game...</p>
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-900/90 backdrop-blur-md z-10">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-purple-500 mb-6"></div>
+            <p className="text-white text-xl">Loading {game.title}...</p>
+            <p className="text-gray-400 mt-2">This may take a few moments</p>
           </div>
         )}
 
         {error && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-900 bg-opacity-80 z-10">
-            <div className="text-red-500 text-6xl mb-4">
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-900/90 backdrop-blur-md z-10">
+            <div className="text-red-500 text-6xl mb-6">
               <i className="fas fa-exclamation-circle"></i>
             </div>
-            <p className="text-white text-lg mb-4">{error}</p>
+            <p className="text-white text-xl mb-4 max-w-md text-center">{error}</p>
             <button 
               onClick={onClose}
-              className="px-4 py-2 bg-purple-700 hover:bg-purple-600 rounded text-white"
+              className="vr-button px-6 py-3 rounded-lg text-white"
             >
               Back to Games
             </button>
@@ -134,25 +208,34 @@ const GamePlayer = ({ game, onClose }) => {
           allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; xr-spatial-tracking; microphone; camera"
           sandbox="allow-same-origin allow-scripts allow-forms allow-pointer-lock allow-popups"
         ></iframe>
-      </div>
-
-      {/* Footer */}
-      <div className="bg-gray-800 p-4 flex items-center justify-between">
-        <div className="text-gray-300 text-sm">
-          <span className="mr-4">
-            <i className="fas fa-gamepad mr-1"></i> {game.playCount.toLocaleString()} plays
-          </span>
-          <span>
-            <i className="fas fa-star mr-1 text-yellow-400"></i> {game.rating.toFixed(1)}
-          </span>
-        </div>
-        <div>
+        
+        {/* Floating controls - only visible when showControls is true */}
+        <div 
+          className={`absolute bottom-6 left-1/2 transform -translate-x-1/2 flex items-center space-x-4 bg-gray-900/80 backdrop-blur-md px-6 py-3 rounded-full transition-opacity duration-300 ${
+            showControls ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          }`}
+        >
           <button 
             onClick={onClose}
-            className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded text-white"
+            className="text-white hover:text-gray-300 transition"
+            title="Close Game"
           >
-            Close Game
+            <i className="fas fa-times-circle text-xl"></i>
           </button>
+          <button 
+            onClick={toggleFullscreen}
+            className="text-white hover:text-gray-300 transition"
+            title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+          >
+            {isFullscreen ? (
+              <i className="fas fa-compress-alt text-xl"></i>
+            ) : (
+              <i className="fas fa-expand-alt text-xl"></i>
+            )}
+          </button>
+          <div className="text-white text-sm">
+            Press <kbd className="bg-gray-700 px-2 py-1 rounded">ESC</kbd> to exit
+          </div>
         </div>
       </div>
     </div>
