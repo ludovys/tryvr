@@ -30,15 +30,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install Wrangler
+        run: npm install -g wrangler
+
       - name: Build
         run: npm run build
 
-      - name: Publish to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: tryvr
-          directory: dist
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref_name == 'main' && 'production' || 'preview' }} 
+      - name: Deploy to Cloudflare Pages
+        run: wrangler pages deploy dist --project-name=tryvr
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }} 

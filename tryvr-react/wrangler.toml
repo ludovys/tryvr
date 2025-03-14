@@ -1,5 +1,5 @@
 name = "tryvr"
-main = "./functions/api/[[path]].js"
+main = "./.cloudflare/workers-site/index.js"
 compatibility_date = "2023-01-01"
 
 [site]

@@ -9,10 +9,12 @@
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "wrangler:dev": "wrangler pages dev --compatibility-date=2023-01-01 dist",
-    "wrangler:deploy": "wrangler pages deploy dist",
+    "wrangler:deploy": "wrangler pages deploy dist --project-name=tryvr",
+    "deploy": "./deploy.sh",
     "start": "npm run build && npm run wrangler:dev"
   },
   "dependencies": {
+    "@cloudflare/kv-asset-handler": "^0.3.0",
     "@cloudflare/workers-types": "^4.20250313.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

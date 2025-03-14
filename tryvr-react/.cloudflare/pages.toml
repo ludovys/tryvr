@@ -1,5 +1,5 @@
 [build]
-command = "npm run build"
+command = "./.cloudflare/build-command.sh"
 output_directory = "dist"
 base_directory = ""
 
@@ -8,11 +8,11 @@ NODE_VERSION = "18"
 
 [site]
 bucket = "./dist"
-entry-point = "."
+entry-point = "./.cloudflare/workers-site"
 
 [routes]
 "/*" = { worker = false }
-"/api/*" = { worker = "api" }
+"/api/*" = { worker = true }
 
 [env.production]
 VITE_API_URL = "https://tryvr.pages.dev/api"
