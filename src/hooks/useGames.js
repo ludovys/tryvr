@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const useGames = () => {
   const [games, setGames] = useState([]);
@@ -11,46 +11,77 @@ const useGames = () => {
     itemsPerPage: 12
   });
   const [totalPages, setTotalPages] = useState(1);
+  const fetchTimeoutRef = useRef(null);
+  const isMountedRef = useRef(true);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+      if (fetchTimeoutRef.current) {
+        clearTimeout(fetchTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Fetch games from Cloudflare Worker API
   const fetchGames = async () => {
-    setLoading(true);
+    // Clear any pending fetch timeout
+    if (fetchTimeoutRef.current) {
+      clearTimeout(fetchTimeoutRef.current);
+    }
+
+    // Set loading state only if this is not a subsequent rapid call
+    if (!loading) {
+      setLoading(true);
+    }
     setError(null);
 
-    try {
-      const { category, searchTerm, page, itemsPerPage } = filters;
+    // Debounce the fetch operation
+    fetchTimeoutRef.current = setTimeout(async () => {
+      if (!isMountedRef.current) return;
       
-      // Construct query parameters
-      const params = new URLSearchParams();
-      if (category !== 'all') params.append('category', category);
-      if (searchTerm) params.append('search', searchTerm);
-      params.append('page', page.toString());
-      params.append('limit', itemsPerPage.toString());
-      
-      // Get the API base URL from environment variables or use relative path
-      const baseUrl = import.meta.env.VITE_API_BASE_URL || '';
-      const apiUrl = baseUrl ? `${baseUrl}/api/games?${params.toString()}` : `/api/games?${params.toString()}`;
-      
-      console.log('Fetching games from:', apiUrl); // Debug log
-      const response = await fetch(apiUrl);
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch games');
+      try {
+        const { category, searchTerm, page, itemsPerPage } = filters;
+        
+        // Construct query parameters
+        const params = new URLSearchParams();
+        if (category !== 'all') params.append('category', category);
+        if (searchTerm) params.append('search', searchTerm);
+        params.append('page', page.toString());
+        params.append('limit', itemsPerPage.toString());
+        
+        // Get the API base URL from environment variables or use relative path
+        const baseUrl = import.meta.env.VITE_API_BASE_URL || '';
+        const apiUrl = baseUrl ? `${baseUrl}/api/games?${params.toString()}` : `/api/games?${params.toString()}`;
+        
+        console.log('Fetching games from:', apiUrl); // Debug log
+        const response = await fetch(apiUrl);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch games');
+        }
+        
+        const data = await response.json();
+        
+        if (isMountedRef.current) {
+          setGames(data.games);
+          setTotalPages(data.totalPages);
+        }
+      } catch (err) {
+        console.error('Error fetching games:', err);
+        if (isMountedRef.current) {
+          setError(err.message);
+          
+          // For development/demo purposes, load mock data if API fails
+          loadMockGames();
+        }
+      } finally {
+        if (isMountedRef.current) {
+          setLoading(false);
+        }
       }
-      
-      const data = await response.json();
-      
-      setGames(data.games);
-      setTotalPages(data.totalPages);
-    } catch (err) {
-      console.error('Error fetching games:', err);
-      setError(err.message);
-      
-      // For development/demo purposes, load mock data if API fails
-      loadMockGames();
-    } finally {
-      setLoading(false);
-    }
+    }, 300); // 300ms debounce delay
   };
 
   // Load mock games for development/demo
