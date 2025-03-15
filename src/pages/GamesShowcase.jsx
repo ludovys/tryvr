@@ -163,6 +163,11 @@ const GamesShowcase = () => {
                 src={featured.imageUrl} 
                 alt={featured.title} 
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                style={{ maxHeight: '100%', objectFit: 'cover' }}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = 'https://via.placeholder.com/640x360?text=Game+Image';
+                }}
               />
             </div>
             
@@ -345,6 +350,7 @@ const GamesShowcase = () => {
                       src={game.imageUrl} 
                       alt={game.title} 
                       className={`w-full h-full object-cover transition-transform duration-500 ${hoveredGame === game.id ? 'scale-105' : ''}`}
+                      style={{ maxHeight: '100%', objectFit: 'cover' }}
                       onError={(e) => {
                         e.target.onerror = null;
                         e.target.src = 'https://via.placeholder.com/640x360?text=Game+Image';
