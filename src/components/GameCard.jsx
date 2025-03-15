@@ -42,11 +42,12 @@ const GameCard = ({ game, onPlay }) => {
 
   return (
     <div 
-      className="game-card bg-gray-800/90 rounded-lg overflow-hidden shadow-lg transition-transform duration-300 h-full flex flex-col"
+      className="game-card bg-gray-800/90 rounded-lg overflow-hidden shadow-lg h-full flex flex-col"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      style={{ height: '400px' }}
     >
-      <div className="relative overflow-hidden aspect-video bg-gray-800 flex items-center justify-center" style={{ height: '180px' }}>
+      <div className="relative bg-gray-800 flex items-center justify-center" style={{ height: '180px', overflow: 'hidden' }}>
         {imageError ? (
           <div className="w-full h-full bg-gray-700 flex items-center justify-center">
             <i className="fas fa-gamepad text-4xl text-gray-500"></i>
@@ -55,15 +56,11 @@ const GameCard = ({ game, onPlay }) => {
           <img 
             src={game.thumbnailUrl || game.imageUrl} 
             alt={game.title} 
-            className="object-contain transition-transform duration-500"
+            className="object-contain w-full h-full"
             style={{ 
-              width: 'auto',
-              height: 'auto',
-              maxWidth: '100%',
-              maxHeight: '100%',
-              objectFit: 'contain',
-              margin: '0 auto',
-              display: 'block'
+              maxWidth: '90%',
+              maxHeight: '90%',
+              margin: '0 auto'
             }}
             onError={handleImageError}
             loading="lazy"
@@ -90,7 +87,7 @@ const GameCard = ({ game, onPlay }) => {
       </div>
       
       <div className="p-4 flex flex-col flex-grow">
-        <p className="text-gray-300 text-sm mb-4 line-clamp-2 flex-grow h-12 overflow-hidden">{game.description}</p>
+        <p className="text-gray-300 text-sm mb-4 line-clamp-2 h-10 overflow-hidden">{game.description}</p>
         
         <div className="flex items-center justify-between text-sm text-gray-400 mb-4">
           <span><i className="fas fa-gamepad mr-1"></i> {game.playCount.toLocaleString()} plays</span>
@@ -105,9 +102,7 @@ const GameCard = ({ game, onPlay }) => {
               onPlay(game);
             }
           }}
-          className={`w-full vr-button px-4 py-2 rounded-lg ${
-            isHovered ? 'pulse' : ''
-          } text-white transition-colors flex items-center justify-center`}
+          className="w-full vr-button px-4 py-2 rounded-lg text-white transition-colors flex items-center justify-center mt-auto"
         >
           <i className="fas fa-play-circle mr-2"></i> Play Now
         </button>

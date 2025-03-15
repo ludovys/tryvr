@@ -44,29 +44,25 @@ const GameGrid = ({ games, onPlay }) => {
   };
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
       {games.map(game => (
         <div 
           key={game.id}
-          className="game-thumbnail bg-gray-800/90 rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:-translate-y-2 h-full flex flex-col"
+          className="game-thumbnail bg-gray-800/90 rounded-lg overflow-hidden shadow-lg h-full flex flex-col"
           onMouseEnter={() => setHoveredGame(game.id)}
           onMouseLeave={() => setHoveredGame(null)}
-          style={{ minHeight: '360px' }}
+          style={{ height: '400px' }}
         >
           <Link to={`/game/${game.id}`} className="block">
-            <div className="relative aspect-video overflow-hidden bg-gray-800 flex items-center justify-center" style={{ height: '180px' }}>
+            <div className="relative bg-gray-800 flex items-center justify-center" style={{ height: '180px', overflow: 'hidden' }}>
               <img 
                 src={game.thumbnailUrl || game.imageUrl} 
                 alt={game.title} 
-                className="object-contain transition-transform duration-500"
+                className="object-contain w-full h-full"
                 style={{ 
-                  width: 'auto',
-                  height: 'auto',
-                  maxWidth: '100%',
-                  maxHeight: '100%',
-                  objectFit: 'contain',
-                  margin: '0 auto',
-                  display: 'block'
+                  maxWidth: '90%',
+                  maxHeight: '90%',
+                  margin: '0 auto'
                 }}
                 onError={(e) => {
                   e.target.onerror = null;
@@ -102,11 +98,11 @@ const GameGrid = ({ games, onPlay }) => {
               <span><i className="fas fa-gamepad mr-1"></i> {game.playCount.toLocaleString()}</span>
             </div>
             
+            <p className="text-gray-300 text-sm mb-4 line-clamp-2 h-10 overflow-hidden">{game.description}</p>
+            
             <button 
               onClick={() => playGame(game)}
-              className={`w-full vr-button px-3 py-2 rounded-lg text-sm ${
-                hoveredGame === game.id ? 'pulse' : ''
-              } text-white transition-colors flex items-center justify-center mt-auto`}
+              className="w-full vr-button px-3 py-2 rounded-lg text-sm text-white transition-colors flex items-center justify-center mt-auto"
             >
               <i className="fas fa-play-circle mr-2"></i> Play Now
             </button>

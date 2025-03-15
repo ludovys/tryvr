@@ -161,19 +161,15 @@ const GameDetail = () => {
         <div className="flex flex-col lg:flex-row gap-4 lg:gap-8">
           {/* Main Content */}
           <div className="w-full lg:w-2/3">
-            <div className="relative aspect-video overflow-hidden rounded-lg shadow-2xl mb-4 lg:mb-6 bg-gray-800 flex items-center justify-center" style={{ height: '360px' }}>
+            <div className="relative rounded-lg shadow-2xl mb-4 lg:mb-6 bg-gray-800 flex items-center justify-center" style={{ height: '360px', overflow: 'hidden' }}>
               <img 
                 src={game.thumbnailUrl || game.imageUrl} 
                 alt={game.title} 
-                className="object-contain"
+                className="object-contain w-full h-full"
                 style={{ 
-                  width: 'auto',
-                  height: 'auto',
                   maxWidth: '90%',
                   maxHeight: '90%',
-                  objectFit: 'contain',
-                  margin: '0 auto',
-                  display: 'block'
+                  margin: '0 auto'
                 }}
                 onError={(e) => {
                   e.target.onerror = null;
@@ -183,7 +179,7 @@ const GameDetail = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
               <button 
                 onClick={handlePlayGame}
-                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 vr-button w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center pulse"
+                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 vr-button w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center"
               >
                 <i className="fas fa-play text-2xl md:text-3xl"></i>
               </button>
@@ -247,19 +243,15 @@ const GameDetail = () => {
                     to={`/game/${relatedGame.id}`}
                     className="block bg-gray-800 rounded-lg overflow-hidden hover:bg-gray-700 transition-colors"
                   >
-                    <div className="relative aspect-video bg-gray-800 flex items-center justify-center" style={{ height: '120px' }}>
+                    <div className="relative bg-gray-800 flex items-center justify-center" style={{ height: '120px', overflow: 'hidden' }}>
                       <img 
                         src={relatedGame.thumbnailUrl || relatedGame.imageUrl} 
                         alt={relatedGame.title} 
-                        className="object-contain"
+                        className="object-contain w-full h-full"
                         style={{ 
-                          width: 'auto',
-                          height: 'auto',
                           maxWidth: '90%',
                           maxHeight: '90%',
-                          objectFit: 'contain',
-                          margin: '0 auto',
-                          display: 'block'
+                          margin: '0 auto'
                         }}
                         onError={(e) => {
                           e.target.onerror = null;
