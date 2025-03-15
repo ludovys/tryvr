@@ -273,3 +273,9 @@ button:disabled:hover {
 .pulse {
   animation: pulse 2s infinite;
 }
+
+/* Shadow glow effect for game cards */
+.shadow-glow {
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.5), 0 0 30px rgba(139, 92, 246, 0.3);
+  transform: translateY(-2px);
+}
