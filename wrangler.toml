@@ -15,11 +15,6 @@ binding = "DB"
 database_name = "tryvr"
 database_id = "1e9a1ae1-42dc-41da-ae5e-6c4f4daff98e"
 
-# Simple routes configuration
-routes = [
-  { pattern = "/*", zone_name = "tryvr.pages.dev" }
-]
-
 # Environment-specific configurations
 [env.production]
 [env.production.vars]
@@ -31,11 +26,6 @@ binding = "DB"
 database_name = "tryvr-db"
 database_id = "placeholder-id"
 
-# Routes for production
-routes = [
-  { pattern = "/api/*", zone_name = "tryvr.pages.dev" }
-]
-
 [env.preview]
 [env.preview.vars]
 API_KEY = "your-preview-api-key"
@@ -44,9 +34,4 @@ DEBUG = "true"
 [[env.preview.d1_databases]]
 binding = "DB"
 database_name = "tryvr-db-dev"
-database_id = "placeholder-id"
-
-# Routes for preview
-routes = [
-  { pattern = "/api/*", zone_name = "tryvr.pages.dev" }
-] 
+database_id = "placeholder-id" 
