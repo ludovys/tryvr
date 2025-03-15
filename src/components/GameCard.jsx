@@ -49,61 +49,62 @@ const GameCard = React.memo(({ game, onPlay }) => {
   };
 
   return (
-    <div className="game-card">
-      <div className="game-card-inner">
-        {/* Card Header with Image */}
-        <div className="relative overflow-hidden rounded-t-lg">
-          {game.featured && (
-            <div className="absolute top-0 right-0 bg-gradient-to-l from-indigo-600 to-purple-600 text-white text-xs uppercase font-bold py-1 px-3 rounded-bl-lg shadow-md z-10 m-2">
-              Featured
-            </div>
-          )}
-          
-          <img 
-            src={game.imageUrl} 
-            alt={game.title}
-            className="game-card-image w-full h-48 object-cover transition-transform"
-            loading="lazy"
-          />
-          
-          <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
-            <button
-              onClick={handlePlay}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full p-3 transform hover:scale-110 transition-transform shadow-lg"
-              aria-label={`Play ${game.title}`}
-            >
-              <i className="fas fa-play text-xl"></i>
-            </button>
-          </div>
+    <div className="game-card rounded-lg overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-xl">
+      {/* Card Image with Play Button Overlay */}
+      <div className="relative">
+        {/* Featured Badge */}
+        {game.featured && (
+          <span className="absolute top-2 right-2 bg-indigo-600 text-white text-xs px-2 py-1 rounded-full z-10">
+            Featured
+          </span>
+        )}
+        
+        {/* Game Image */}
+        <img 
+          src={game.imageUrl} 
+          alt={game.title}
+          className="w-full aspect-[16/9] object-cover"
+          loading="lazy"
+        />
+        
+        {/* Play Button Overlay */}
+        <div 
+          className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 hover:bg-opacity-30 transition-all duration-200 cursor-pointer"
+          onClick={handlePlay}
+        >
+          <button className="play-button opacity-0 transform scale-75 group-hover:scale-100 group-hover:opacity-100 transition-all duration-200 bg-white text-indigo-600 rounded-full p-3 shadow-lg hover:bg-indigo-600 hover:text-white">
+            <i className="fas fa-play"></i>
+          </button>
+        </div>
+      </div>
+      
+      {/* Card Content */}
+      <div className="p-3 bg-white">
+        <h3 className="text-base font-semibold text-gray-800 mb-1 line-clamp-1">
+          {game.title}
+        </h3>
+        
+        <div className="flex items-center text-xs text-gray-500 mb-2">
+          <span className="bg-gray-100 text-gray-600 rounded px-2 py-0.5">
+            {game.category}
+          </span>
+          <span className="ml-2 flex items-center">
+            <i className="fas fa-star text-yellow-400 mr-1"></i>
+            {game.rating.toFixed(1)}
+          </span>
         </div>
         
-        {/* Card Content */}
-        <div className="p-5">
-          <div className="flex justify-between items-start mb-2">
-            <h3 className="text-xl font-bold text-white line-clamp-1">{game.title}</h3>
-            <span className="bg-purple-700 text-white text-xs px-2 py-1 rounded">
-              {game.category}
-            </span>
-          </div>
-          
-          <div className="flex items-center mb-3">
-            <div className="flex mr-2">
-              {renderStars(game.rating)}
-            </div>
-            <span className="text-sm text-white">
-              ({game.rating.toFixed(1)})
-            </span>
-          </div>
-          
-          <p className="text-gray-300 text-sm mb-4 line-clamp-2">
-            {game.description}
-          </p>
-          
-          <div className="flex justify-between items-center text-xs text-white">
-            <span><i className="far fa-calendar-alt mr-1"></i> {formattedDate}</span>
-            <span><i className="fas fa-users mr-1"></i> {game.players || 0} players</span>
-          </div>
-        </div>
+        <p className="text-xs text-gray-600 line-clamp-2 mb-2">
+          {game.description}
+        </p>
+        
+        {/* Action Button */}
+        <button 
+          onClick={handlePlay}
+          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium py-2 rounded transition-colors duration-200"
+        >
+          Play Now
+        </button>
       </div>
     </div>
   );
