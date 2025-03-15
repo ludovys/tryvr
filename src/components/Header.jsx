@@ -19,7 +19,7 @@ const Header = () => {
   // Handle scroll event to change header appearance
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 50) {
+      if (window.scrollY > 20) {
         setIsScrolled(true);
       } else {
         setIsScrolled(false);
@@ -39,171 +39,173 @@ const Header = () => {
   };
 
   return (
-    <header className={`vr-header-bg fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
-      isScrolled ? 'py-2 bg-opacity-90 backdrop-blur-md' : 'py-4'
-    }`}>
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between">
-          <Link to="/" className="flex items-center group">
-            <div className={`vr-float transition-all duration-300 ${isScrolled ? 'mr-2' : 'mr-4'}`}>
+    <header className={`site-header ${isScrolled ? 'scrolled' : ''}`}>
+      <div className="page-container">
+        <div className="flex items-center justify-between py-4">
+          {/* Logo */}
+          <Link to="/" className="flex items-center space-x-3 group">
+            <div className="logo-float">
               <img 
                 src={vrLogo} 
                 alt="TryVR Logo" 
-                className={`transition-all duration-300 ${isScrolled ? 'h-12 w-12' : 'h-16 w-16'}`} 
+                className="h-10 w-10"
               />
             </div>
             <div>
-              <h1 className={`font-bold vr-text-3d transition-all duration-300 ${isScrolled ? 'text-2xl' : 'text-3xl'}`}>
+              <h1 className="text-2xl font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">
                 TryVR
               </h1>
-              <p className={`transition-all duration-300 ${isScrolled ? 'text-sm' : 'mt-1'}`}>
-                Experience Virtual Reality Like Never Before
+              <p className="text-sm text-gray-500 hidden sm:block">
+                Browser-based VR experiences
               </p>
             </div>
           </Link>
           
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-4">
+          <nav className="hidden md:flex items-center space-x-1">
             <Link 
               to="/" 
-              className={`vr-button px-4 py-2 rounded-lg transition ${
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 isActive('/') 
-                  ? 'bg-purple-500 text-white pulse' 
-                  : 'bg-gray-200 hover:bg-purple-400 text-gray-800'
+                  ? 'bg-indigo-50 text-indigo-700' 
+                  : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600'
               }`}
             >
               <i className="fas fa-home mr-2"></i> Home
             </Link>
             <Link 
               to="/games" 
-              className={`vr-button px-4 py-2 rounded-lg transition ${
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 isActive('/games') 
-                  ? 'bg-purple-500 text-white pulse' 
-                  : 'bg-gray-200 hover:bg-purple-400 text-gray-800'
+                  ? 'bg-indigo-50 text-indigo-700' 
+                  : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600'
               }`}
             >
               <i className="fas fa-gamepad mr-2"></i> Games
             </Link>
             <Link 
               to="/games-showcase" 
-              className={`vr-button px-4 py-2 rounded-lg transition ${
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 isActive('/games-showcase') 
-                  ? 'bg-purple-500 text-white pulse' 
-                  : 'bg-gray-200 hover:bg-purple-400 text-gray-800'
+                  ? 'bg-indigo-50 text-indigo-700' 
+                  : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600'
               }`}
             >
-              <i className="fas fa-th-large mr-2"></i> Games Showcase
-            </Link>
-            <Link 
-              to="/games-without-images" 
-              className={`vr-button px-4 py-2 rounded-lg transition ${
-                isActive('/games-without-images') 
-                  ? 'bg-purple-500 text-white pulse' 
-                  : 'bg-gray-200 hover:bg-purple-400 text-gray-800'
-              }`}
-            >
-              <i className="fas fa-image-slash mr-2"></i> Missing Images
+              <i className="fas fa-th-large mr-2"></i> Showcase
             </Link>
             <Link 
               to="/about" 
-              className={`vr-button px-4 py-2 rounded-lg transition ${
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 isActive('/about') 
-                  ? 'bg-purple-500 text-white pulse' 
-                  : 'bg-gray-200 hover:bg-purple-400 text-gray-800'
+                  ? 'bg-indigo-50 text-indigo-700' 
+                  : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600'
               }`}
             >
-              <i className="fas fa-info-circle mr-2"></i> About VR
+              <i className="fas fa-info-circle mr-2"></i> About
             </Link>
+          </nav>
+          
+          {/* Right side - Login & CTA */}
+          <div className="hidden md:flex items-center space-x-3">
             <Link 
               to="/admin-login" 
-              className="vr-button px-4 py-2 rounded-lg bg-gray-800/70 hover:bg-gray-700 transition text-gray-200"
+              className="text-sm font-medium text-gray-700 hover:text-indigo-600 px-3 py-2"
             >
               <i className="fas fa-user-shield mr-2"></i> Admin
+            </Link>
+            <Link
+              to="/games"
+              className="btn btn-primary"
+            >
+              <i className="fas fa-vr-cardboard mr-2"></i> Try VR Now
             </Link>
           </div>
           
           {/* Mobile Menu Button */}
-          <div className="md:hidden">
-            <button 
-              onClick={toggleMobileMenu}
-              className="text-white p-2 rounded-lg hover:bg-gray-800/50 transition"
-              aria-label="Toggle menu"
-            >
-              {isMobileMenuOpen ? (
-                <i className="fas fa-times text-xl"></i>
-              ) : (
-                <i className="fas fa-bars text-xl"></i>
-              )}
-            </button>
-          </div>
+          <button 
+            onClick={toggleMobileMenu}
+            className="md:hidden p-2 rounded-md text-gray-700 hover:text-indigo-600 hover:bg-gray-50 focus:outline-none"
+            aria-label="Toggle menu"
+          >
+            {isMobileMenuOpen ? (
+              <i className="fas fa-times text-xl"></i>
+            ) : (
+              <i className="fas fa-bars text-xl"></i>
+            )}
+          </button>
         </div>
         
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden mt-4 pb-4 animate-fadeIn">
-            <div className="flex flex-col space-y-2">
+          <nav className="md:hidden py-3 border-t border-gray-100 animate-fadeIn">
+            <div className="space-y-1 py-2">
               <Link 
                 to="/" 
-                className={`vr-button px-4 py-2 rounded-lg transition ${
+                className={`flex items-center px-4 py-3 rounded-md text-base font-medium transition-colors ${
                   isActive('/') 
-                    ? 'bg-purple-600 text-white' 
-                    : 'bg-gray-800/70 hover:bg-purple-700 text-gray-200'
+                    ? 'bg-indigo-50 text-indigo-700' 
+                    : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600'
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                <i className="fas fa-home mr-2"></i> Home
+                <i className="fas fa-home mr-3 w-5 text-center"></i> Home
               </Link>
               <Link 
                 to="/games" 
-                className={`vr-button px-4 py-2 rounded-lg transition ${
+                className={`flex items-center px-4 py-3 rounded-md text-base font-medium transition-colors ${
                   isActive('/games') 
-                    ? 'bg-purple-600 text-white' 
-                    : 'bg-gray-800/70 hover:bg-purple-700 text-gray-200'
+                    ? 'bg-indigo-50 text-indigo-700' 
+                    : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600'
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                <i className="fas fa-gamepad mr-2"></i> Games
+                <i className="fas fa-gamepad mr-3 w-5 text-center"></i> Games
               </Link>
               <Link 
                 to="/games-showcase" 
-                className={`vr-button px-4 py-2 rounded-lg transition ${
+                className={`flex items-center px-4 py-3 rounded-md text-base font-medium transition-colors ${
                   isActive('/games-showcase') 
-                    ? 'bg-purple-600 text-white' 
-                    : 'bg-gray-800/70 hover:bg-purple-700 text-gray-200'
+                    ? 'bg-indigo-50 text-indigo-700' 
+                    : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600'
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                <i className="fas fa-th-large mr-2"></i> Games Showcase
-              </Link>
-              <Link 
-                to="/games-without-images" 
-                className={`vr-button px-4 py-3 rounded-lg text-lg transition ${
-                  isActive('/games-without-images') ? 'bg-purple-600 text-white pulse' : 'bg-gray-800/70 text-gray-200'
-                }`}
-                onClick={toggleMobileMenu}
-              >
-                <i className="fas fa-image-slash mr-2"></i> Missing Images
+                <i className="fas fa-th-large mr-3 w-5 text-center"></i> Showcase
               </Link>
               <Link 
                 to="/about" 
-                className={`vr-button px-4 py-2 rounded-lg transition ${
+                className={`flex items-center px-4 py-3 rounded-md text-base font-medium transition-colors ${
                   isActive('/about') 
-                    ? 'bg-purple-600 text-white' 
-                    : 'bg-gray-800/70 hover:bg-purple-700 text-gray-200'
+                    ? 'bg-indigo-50 text-indigo-700' 
+                    : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600'
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                <i className="fas fa-info-circle mr-2"></i> About VR
+                <i className="fas fa-info-circle mr-3 w-5 text-center"></i> About
               </Link>
-              <Link 
-                to="/admin-login" 
-                className="vr-button px-4 py-2 rounded-lg bg-gray-800/70 hover:bg-gray-700 transition text-gray-200"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <i className="fas fa-user-shield mr-2"></i> Admin
-              </Link>
+              
+              <div className="pt-4 pb-2">
+                <div className="flex items-center px-4">
+                  <Link 
+                    to="/admin-login" 
+                    className="flex items-center text-base font-medium text-gray-700 hover:text-indigo-600 px-3 py-2"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <i className="fas fa-user-shield mr-2"></i> Admin
+                  </Link>
+                </div>
+                <div className="mt-3 px-4">
+                  <Link
+                    to="/games"
+                    className="btn btn-primary w-full justify-center"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <i className="fas fa-vr-cardboard mr-2"></i> Try VR Now
+                  </Link>
+                </div>
+              </div>
             </div>
-          </div>
+          </nav>
         )}
       </div>
     </header>

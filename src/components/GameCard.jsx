@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const GameCard = ({ game, onPlay }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -18,91 +19,92 @@ const GameCard = ({ game, onPlay }) => {
     
     // Add full stars
     for (let i = 0; i < fullStars; i++) {
-      stars.push(<i key={`full-${i}`} className="fas fa-star text-yellow-400"></i>);
+      stars.push(<i key={`full-${i}`} className="fas fa-star"></i>);
     }
     
     // Add half star if needed
     if (hasHalfStar) {
-      stars.push(<i key="half" className="fas fa-star-half-alt text-yellow-400"></i>);
+      stars.push(<i key="half" className="fas fa-star-half-alt"></i>);
     }
     
     // Add empty stars
     const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
     for (let i = 0; i < emptyStars; i++) {
-      stars.push(<i key={`empty-${i}`} className="far fa-star text-yellow-400"></i>);
+      stars.push(<i key={`empty-${i}`} className="far fa-star"></i>);
     }
     
     return stars;
   };
 
-  // Handle image load error
-  const handleImageError = () => {
-    setImageError(true);
+  // Play the game in a new window
+  const playGame = () => {
+    window.open(game.gameUrl, '_blank', 'width=1280,height=720,fullscreen=yes');
+    // If there's a function to increment play count passed as prop
+    if (typeof onPlay === 'function') {
+      onPlay(game);
+    }
   };
 
   return (
     <div 
-      className="game-card bg-gray-100 rounded-lg overflow-hidden shadow-md h-full flex flex-col"
+      className="game-card"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      style={{ height: '400px' }}
     >
-      <div className="relative bg-gray-200 flex items-center justify-center" style={{ height: '180px', overflow: 'hidden' }}>
+      <div className="game-card-image">
         {imageError ? (
-          <div className="w-full h-full bg-gray-300 flex items-center justify-center">
-            <i className="fas fa-gamepad text-4xl text-gray-500"></i>
+          <div className="w-full h-full flex items-center justify-center bg-gray-100">
+            <i className="fas fa-gamepad text-4xl text-gray-400"></i>
           </div>
         ) : (
           <img 
             src={game.thumbnailUrl || game.imageUrl} 
             alt={game.title} 
-            className="object-contain w-full h-full"
-            style={{ 
-              maxWidth: '90%',
-              maxHeight: '90%',
-              margin: '0 auto'
-            }}
-            onError={handleImageError}
+            onError={() => setImageError(true)}
             loading="lazy"
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-gray-400/70 to-transparent opacity-50"></div>
+        
         {game.featured && (
-          <div className="absolute top-2 left-2 bg-gradient-to-r from-yellow-400 to-amber-400 text-gray-800 text-xs font-bold px-3 py-1 rounded-full shadow-md">
+          <div className="featured-badge">
             <i className="fas fa-crown mr-1"></i> FEATURED
           </div>
         )}
-        <div className="absolute top-2 right-2 bg-gradient-to-r from-purple-400 to-purple-300 text-gray-800 text-xs px-3 py-1 rounded-full shadow-md">
+        
+        <div className="absolute top-2 right-2 bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded-full">
           {game.category.charAt(0).toUpperCase() + game.category.slice(1)}
-        </div>
-        <div className="absolute bottom-0 left-0 w-full p-3">
-          <h3 className="text-lg font-bold text-gray-800 mb-1 line-clamp-1 drop-shadow-md">{game.title}</h3>
-          <div className="flex items-center">
-            <div className="flex mr-2 drop-shadow-md">
-              {renderStars(game.rating)}
-            </div>
-            <span className="text-gray-700 text-sm drop-shadow-md">{game.rating.toFixed(1)}</span>
-          </div>
         </div>
       </div>
       
-      <div className="p-4 flex flex-col flex-grow bg-white">
-        <p className="text-gray-700 text-sm mb-4 line-clamp-2 h-10 overflow-hidden">{game.description}</p>
+      <div className="game-card-content">
+        <Link to={`/game/${game.id}`}>
+          <h3 className="game-card-title">{game.title}</h3>
+        </Link>
         
-        <div className="flex items-center justify-between text-sm text-gray-600 mb-4">
-          <span><i className="fas fa-gamepad mr-1"></i> {game.playCount.toLocaleString()} plays</span>
-          <span><i className="far fa-calendar-alt mr-1"></i> {formatDate(game.createdAt)}</span>
+        <div className="game-card-meta">
+          <div className="star-rating">
+            {renderStars(game.rating)}
+            <span className="ml-1">{game.rating.toFixed(1)}</span>
+          </div>
+          <span className="text-xs">
+            {formatDate(game.createdAt)}
+          </span>
+        </div>
+        
+        <p className="game-card-description">{game.description}</p>
+        
+        <div className="flex justify-between items-center mt-4 text-xs text-gray-500 mb-3">
+          <span>
+            <i className="fas fa-gamepad mr-1"></i> {game.playCount.toLocaleString()} plays
+          </span>
+          <span>
+            <i className="far fa-calendar-alt mr-1"></i> {formatDate(game.createdAt)}
+          </span>
         </div>
         
         <button 
-          onClick={() => {
-            window.open(game.gameUrl, '_blank', 'width=1280,height=720,fullscreen=yes');
-            // If there's a function to increment play count passed as prop
-            if (typeof onPlay === 'function') {
-              onPlay(game);
-            }
-          }}
-          className="w-full vr-button px-4 py-2 rounded-lg text-white transition-colors flex items-center justify-center mt-auto"
+          onClick={playGame}
+          className="btn btn-primary game-card-button"
         >
           <i className="fas fa-play-circle mr-2"></i> Play Now
         </button>
