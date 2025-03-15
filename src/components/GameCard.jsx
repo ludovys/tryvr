@@ -1,116 +1,97 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React from 'react';
+import { format } from 'date-fns';
 
-const GameCard = ({ game, onPlay }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const [imageError, setImageError] = useState(false);
+const GameCard = React.memo(({ game, onPlay }) => {
+  // Format the date
+  const formattedDate = format(new Date(game.releaseDate), 'MMM d, yyyy');
   
-  // Format date
-  const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'short', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
-  };
-
-  // Render stars for rating
+  // Render stars for the rating
   const renderStars = (rating) => {
     const stars = [];
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
     
-    // Add full stars
-    for (let i = 0; i < fullStars; i++) {
-      stars.push(<i key={`full-${i}`} className="fas fa-star"></i>);
-    }
-    
-    // Add half star if needed
-    if (hasHalfStar) {
-      stars.push(<i key="half" className="fas fa-star-half-alt"></i>);
-    }
-    
-    // Add empty stars
-    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-    for (let i = 0; i < emptyStars; i++) {
-      stars.push(<i key={`empty-${i}`} className="far fa-star"></i>);
+    for (let i = 1; i <= 5; i++) {
+      if (i <= fullStars) {
+        stars.push(<i key={i} className="fas fa-star text-yellow-400"></i>);
+      } else if (i === fullStars + 1 && hasHalfStar) {
+        stars.push(<i key={i} className="fas fa-star-half-alt text-yellow-400"></i>);
+      } else {
+        stars.push(<i key={i} className="far fa-star text-yellow-400"></i>);
+      }
     }
     
     return stars;
   };
-
-  // Play the game in a new window
-  const playGame = () => {
-    window.open(game.gameUrl, '_blank', 'width=1280,height=720,fullscreen=yes');
-    // If there's a function to increment play count passed as prop
-    if (typeof onPlay === 'function') {
+  
+  // Handle playing the game
+  const handlePlay = () => {
+    if (onPlay) {
       onPlay(game);
+    } else {
+      window.open(game.playUrl, '_blank');
     }
   };
 
   return (
-    <div 
-      className="game-card"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <div className="game-card-image">
-        {imageError ? (
-          <div className="w-full h-full flex items-center justify-center bg-gray-100">
-            <i className="fas fa-gamepad text-4xl text-gray-400"></i>
-          </div>
-        ) : (
+    <div className="game-card">
+      <div className="game-card-inner">
+        {/* Card Header with Image */}
+        <div className="relative overflow-hidden rounded-t-lg">
+          {game.featured && (
+            <div className="absolute top-0 right-0 bg-gradient-to-l from-indigo-600 to-purple-600 text-white text-xs uppercase font-bold py-1 px-3 rounded-bl-lg shadow-md z-10 m-2">
+              Featured
+            </div>
+          )}
+          
           <img 
-            src={game.thumbnailUrl || game.imageUrl} 
-            alt={game.title} 
-            onError={() => setImageError(true)}
+            src={game.imageUrl} 
+            alt={game.title}
+            className="game-card-image w-full h-48 object-cover transition-transform"
             loading="lazy"
           />
-        )}
-        
-        {game.featured && (
-          <div className="featured-badge">
-            <i className="fas fa-crown mr-1"></i> FEATURED
+          
+          <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
+            <button
+              onClick={handlePlay}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full p-3 transform hover:scale-110 transition-transform shadow-lg"
+              aria-label={`Play ${game.title}`}
+            >
+              <i className="fas fa-play text-xl"></i>
+            </button>
           </div>
-        )}
-        
-        <div className="absolute top-2 right-2 bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded-full">
-          {game.category.charAt(0).toUpperCase() + game.category.slice(1)}
         </div>
-      </div>
-      
-      <div className="game-card-content">
-        <Link to={`/game/${game.id}`}>
-          <h3 className="game-card-title">{game.title}</h3>
-        </Link>
         
-        <div className="game-card-meta">
-          <div className="star-rating">
-            {renderStars(game.rating)}
-            <span className="ml-1">{game.rating.toFixed(1)}</span>
+        {/* Card Content */}
+        <div className="p-5">
+          <div className="flex justify-between items-start mb-2">
+            <h3 className="text-xl font-bold text-gray-900 line-clamp-1">{game.title}</h3>
+            <span className="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded">
+              {game.category}
+            </span>
           </div>
-          <span className="text-xs">
-            {formatDate(game.createdAt)}
-          </span>
+          
+          <div className="flex items-center mb-3">
+            <div className="flex mr-2">
+              {renderStars(game.rating)}
+            </div>
+            <span className="text-sm text-gray-500">
+              ({game.rating.toFixed(1)})
+            </span>
+          </div>
+          
+          <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+            {game.description}
+          </p>
+          
+          <div className="flex justify-between items-center text-xs text-gray-500">
+            <span><i className="far fa-calendar-alt mr-1"></i> {formattedDate}</span>
+            <span><i className="fas fa-users mr-1"></i> {game.players} players</span>
+          </div>
         </div>
-        
-        <p className="game-card-description">{game.description}</p>
-        
-        <div className="flex justify-between items-center mt-4 text-xs text-gray-500 mb-3">
-          <span>
-            <i className="fas fa-gamepad mr-1"></i> {game.playCount.toLocaleString()} plays
-          </span>
-          <span>
-            <i className="far fa-calendar-alt mr-1"></i> {formatDate(game.createdAt)}
-          </span>
-        </div>
-        
-        <button 
-          onClick={playGame}
-          className="btn btn-primary game-card-button"
-        >
-          <i className="fas fa-play-circle mr-2"></i> Play Now
-        </button>
       </div>
     </div>
   );
-};
+});
 
 export default GameCard; 

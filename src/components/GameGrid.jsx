@@ -65,11 +65,15 @@ const GameGrid = ({ games, onPlay }) => {
                 className="w-full h-full object-contain"
               />
               
-              {game.featured && (
-                <div className="featured-badge">
-                  <i className="fas fa-crown"></i>
-                </div>
-              )}
+              {/* Render badges */}
+              <div className="absolute top-0 left-0 p-2 flex gap-2">
+                {game.featured && (
+                  <div className="featured-badge">
+                    <i className="fas fa-crown mr-1"></i>
+                    Featured
+                  </div>
+                )}
+              </div>
             </div>
           </Link>
           
@@ -83,7 +87,7 @@ const GameGrid = ({ games, onPlay }) => {
                 {renderStars(game.rating)}
                 <span className="ml-1">{game.rating.toFixed(1)}</span>
               </div>
-              <span className="text-xs">
+              <span className="text-xs flex items-center">
                 <i className="fas fa-gamepad mr-1"></i> {game.playCount.toLocaleString()}
               </span>
             </div>
@@ -97,6 +101,7 @@ const GameGrid = ({ games, onPlay }) => {
             <button 
               onClick={() => playGame(game)}
               className="btn btn-primary game-card-button mt-auto"
+              aria-label={`Play ${game.title}`}
             >
               <i className="fas fa-play-circle mr-2"></i> Play Now
             </button>
