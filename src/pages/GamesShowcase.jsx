@@ -157,23 +157,14 @@ const GamesShowcase = () => {
           <div className="ml-4 h-1 flex-grow bg-gradient-to-r from-purple-400 to-pink-600 rounded-full"></div>
         </div>
         
-        <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-purple-900/40 to-blue-900/40 backdrop-blur-sm">
+        <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-purple-900/40 to-blue-900/40 backdrop-blur-sm shadow-xl">
           <div className="absolute inset-0 bg-cover bg-center opacity-20" style={{ backgroundImage: `url(${featured.thumbnailUrl || featured.imageUrl})` }}></div>
-          <div className="relative z-10 flex flex-col md:flex-row p-4 md:p-8 gap-4 md:gap-8">
-            <div className="w-full md:w-1/2 aspect-video overflow-hidden rounded-lg shadow-2xl bg-gray-800 flex items-center justify-center" style={{ height: '280px' }}>
+          <div className="relative z-10 flex flex-col md:flex-row p-6 md:p-8 gap-6 md:gap-10">
+            <div className="w-full md:w-1/2 aspect-video overflow-hidden rounded-lg shadow-2xl bg-gray-800 flex items-center justify-center" style={{ height: '340px' }}>
               <img 
                 src={featured.thumbnailUrl || featured.imageUrl} 
                 alt={featured.title} 
-                className="object-contain hover:scale-105 transition-transform duration-500"
-                style={{ 
-                  width: 'auto',
-                  height: 'auto',
-                  maxWidth: '90%',
-                  maxHeight: '90%',
-                  objectFit: 'contain',
-                  margin: '0 auto',
-                  display: 'block'
-                }}
+                className="object-cover w-full h-full hover:scale-105 transition-transform duration-500"
                 onError={(e) => {
                   e.target.onerror = null;
                   e.target.src = 'https://via.placeholder.com/640x360?text=Game+Image';
@@ -181,41 +172,35 @@ const GamesShowcase = () => {
               />
             </div>
             
-            <div className="w-full md:w-1/2 flex flex-col">
-              <div className="flex flex-wrap items-center gap-2 mb-2">
-                <span className="bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+            <div className="w-full md:w-1/2 flex flex-col justify-center">
+              <div className="flex flex-wrap items-center gap-3 mb-4">
+                <span className="bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 text-sm font-bold px-3 py-1 rounded-full shadow-lg">
                   <i className="fas fa-crown mr-1"></i> FEATURED
                 </span>
-                <span className="bg-gradient-to-r from-purple-700 to-purple-500 text-white text-xs px-3 py-1 rounded-full shadow-lg">
+                <span className="bg-gradient-to-r from-purple-700 to-purple-500 text-white text-sm px-3 py-1 rounded-full shadow-lg">
                   {featured.category.charAt(0).toUpperCase() + featured.category.slice(1)}
                 </span>
               </div>
               
-              <h3 className="text-xl md:text-3xl font-bold text-white mb-2">{featured.title}</h3>
+              <h3 className="text-2xl md:text-4xl font-bold text-white mb-4">{featured.title}</h3>
               
-              <div className="flex items-center mb-4">
-                <div className="flex mr-2">
+              <div className="flex items-center mb-8">
+                <div className="flex mr-3 scale-125 origin-left">
                   {renderStars(featured.rating)}
                 </div>
-                <span className="text-gray-300">{featured.rating.toFixed(1)}</span>
+                <span className="text-gray-300 text-lg">{featured.rating.toFixed(1)}</span>
               </div>
               
-              <p className="text-gray-300 mb-6 text-sm md:text-base">{featured.description}</p>
-              
-              <div className="flex flex-wrap gap-4 mb-6">
+              <div className="flex flex-wrap gap-4">
                 <button 
                   onClick={() => handlePlayGame(featured)}
-                  className="vr-button px-4 md:px-6 py-2 md:py-3 rounded-lg flex items-center"
+                  className="vr-button px-6 md:px-8 py-4 rounded-lg flex items-center text-base font-medium"
                 >
                   <i className="fas fa-play-circle mr-2"></i> Play Now
                 </button>
-                
-                <button className="px-4 md:px-6 py-2 md:py-3 bg-gray-700 hover:bg-gray-600 rounded-lg flex items-center transition-colors">
-                  <i className="fas fa-info-circle mr-2"></i> Details
-                </button>
               </div>
               
-              <div className="flex items-center justify-between text-sm text-gray-400 mt-auto">
+              <div className="flex items-center gap-6 mt-8 text-sm text-gray-400">
                 <span><i className="fas fa-gamepad mr-1"></i> {featured.playCount.toLocaleString()} plays</span>
                 <span><i className="far fa-calendar-alt mr-1"></i> {formatDate(featured.createdAt)}</span>
               </div>
@@ -355,57 +340,50 @@ const GamesShowcase = () => {
                   onMouseEnter={() => setHoveredGame(game.id)}
                   onMouseLeave={() => setHoveredGame(null)}
                 >
-                  <div className="relative bg-gray-800 flex items-center justify-center" style={{ height: '180px', overflow: 'hidden' }}>
+                  <div className="relative bg-gray-800 flex items-center justify-center" style={{ height: '240px', overflow: 'hidden' }}>
                     <img 
                       src={game.thumbnailUrl || game.imageUrl} 
                       alt={game.title} 
-                      className="object-contain w-full h-full"
-                      style={{ 
-                        maxWidth: '90%',
-                        maxHeight: '90%',
-                        margin: '0 auto'
-                      }}
+                      className="object-cover w-full h-full object-center transition-transform duration-300 hover:scale-110"
                       onError={(e) => {
                         e.target.onerror = null;
                         e.target.src = 'https://via.placeholder.com/300x169?text=Game+Thumbnail';
                       }}
                       loading="lazy"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-80"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
                     
                     {game.featured && (
-                      <div className="absolute top-2 left-2 bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 text-xs font-bold px-2 py-1 rounded-full shadow-lg">
-                        <i className="fas fa-crown mr-1"></i>
+                      <div className="absolute top-2 right-2 bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 text-xs font-bold px-2 py-1 rounded-full shadow-lg">
+                        <i className="fas fa-crown mr-1"></i> FEATURED
                       </div>
                     )}
-                    
-                    <div className="absolute bottom-0 left-0 w-full p-3">
-                      <h3 className="text-sm font-bold text-white mb-1 line-clamp-1 drop-shadow-lg">{game.title}</h3>
-                      <div className="flex items-center">
-                        <div className="flex mr-2 drop-shadow-lg scale-75 origin-left">
-                          {renderStars(game.rating)}
-                        </div>
-                        <span className="text-gray-200 text-xs drop-shadow-lg">{game.rating.toFixed(1)}</span>
-                      </div>
-                    </div>
                   </div>
                   
-                  <div className="p-3 flex flex-col flex-grow">
-                    <div className="flex items-center justify-between text-xs text-gray-400 mb-3">
-                      <span className="bg-gray-700 px-2 py-1 rounded-full">
+                  <div className="p-4 flex flex-col flex-grow">
+                    <h3 className="text-lg font-bold text-white mb-2 line-clamp-1">{game.title}</h3>
+                    
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center">
+                        <div className="flex mr-2">
+                          {renderStars(game.rating)}
+                        </div>
+                        <span className="text-gray-300 text-sm">{game.rating.toFixed(1)}</span>
+                      </div>
+                      
+                      <span className="bg-purple-700/70 px-2 py-1 rounded-full text-white text-xs">
                         {game.category.charAt(0).toUpperCase() + game.category.slice(1)}
                       </span>
-                      <span><i className="fas fa-gamepad mr-1"></i> {game.playCount.toLocaleString()}</span>
                     </div>
                     
-                    <p className="text-gray-300 text-sm mb-4 line-clamp-2 h-10 overflow-hidden">{game.description}</p>
-                    
-                    <button 
-                      onClick={() => handlePlayGame(game)}
-                      className="w-full vr-button px-3 py-2 rounded-lg text-sm text-white transition-colors flex items-center justify-center mt-auto"
-                    >
-                      <i className="fas fa-play-circle mr-2"></i> Play Now
-                    </button>
+                    <div className="mt-auto">
+                      <button 
+                        onClick={() => handlePlayGame(game)}
+                        className="vr-button w-full px-4 py-3 rounded-lg text-sm font-medium text-white flex items-center justify-center"
+                      >
+                        <i className="fas fa-play-circle mr-2"></i> Play Now
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
