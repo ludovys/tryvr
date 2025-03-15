@@ -17,6 +17,7 @@ This document outlines the planned features and improvements for the TryVR proje
 
 ## Completed Tasks
 
+- [x] Improve responsive design for better mobile and tablet experience
 - [x] Fix image styling to prevent stretching and maintain aspect ratio
 - [x] Fix image sizes to use thumbnails instead of full-sized images
 - [x] Create a page to identify games with missing or invalid images

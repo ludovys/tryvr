@@ -158,15 +158,19 @@ const GameDetail = () => {
         </div>
         
         {/* Game Detail */}
-        <div className="flex flex-col lg:flex-row gap-8">
+        <div className="flex flex-col lg:flex-row gap-4 lg:gap-8">
           {/* Main Content */}
           <div className="w-full lg:w-2/3">
-            <div className="relative aspect-video overflow-hidden rounded-lg shadow-2xl mb-6">
+            <div className="relative aspect-video overflow-hidden rounded-lg shadow-2xl mb-4 lg:mb-6">
               <img 
                 src={game.thumbnailUrl || game.imageUrl} 
                 alt={game.title} 
                 className="w-full object-cover"
-                style={{ maxHeight: '100%', objectFit: 'cover' }}
+                style={{ 
+                  height: 'auto', 
+                  aspectRatio: '16/9',
+                  objectPosition: 'center'
+                }}
                 onError={(e) => {
                   e.target.onerror = null;
                   e.target.src = 'https://via.placeholder.com/640x360?text=Game+Image';
@@ -175,14 +179,14 @@ const GameDetail = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
               <button 
                 onClick={handlePlayGame}
-                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 vr-button w-20 h-20 rounded-full flex items-center justify-center pulse"
+                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 vr-button w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center pulse"
               >
-                <i className="fas fa-play text-3xl"></i>
+                <i className="fas fa-play text-2xl md:text-3xl"></i>
               </button>
             </div>
             
-            <div className="flex items-center mb-4">
-              <h1 className="text-3xl font-bold mr-4">{game.title}</h1>
+            <div className="flex flex-wrap items-center gap-2 mb-4">
+              <h1 className="text-2xl md:text-3xl font-bold">{game.title}</h1>
               {game.featured && (
                 <span className="bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 text-xs font-bold px-3 py-1 rounded-full shadow-lg">
                   <i className="fas fa-crown mr-1"></i> FEATURED
@@ -190,8 +194,8 @@ const GameDetail = () => {
               )}
             </div>
             
-            <div className="flex items-center mb-6">
-              <span className="bg-gradient-to-r from-purple-700 to-purple-500 text-white text-xs px-3 py-1 rounded-full shadow-lg mr-4">
+            <div className="flex flex-wrap items-center gap-4 mb-6">
+              <span className="bg-gradient-to-r from-purple-700 to-purple-500 text-white text-xs px-3 py-1 rounded-full shadow-lg">
                 {game.category.charAt(0).toUpperCase() + game.category.slice(1)}
               </span>
               <div className="flex items-center">
@@ -205,30 +209,30 @@ const GameDetail = () => {
             
             <div className="mb-8">
               <h2 className="text-xl font-bold mb-3">Description</h2>
-              <p className="text-gray-300 leading-relaxed">{game.description}</p>
+              <p className="text-gray-300 leading-relaxed text-sm md:text-base">{game.description}</p>
             </div>
             
-            <div className="flex gap-4 mb-8">
+            <div className="flex flex-wrap gap-4 mb-8">
               <button 
                 onClick={handlePlayGame}
-                className="vr-button px-6 py-3 rounded-lg flex items-center"
+                className="vr-button px-4 md:px-6 py-2 md:py-3 rounded-lg flex items-center"
               >
                 <i className="fas fa-play-circle mr-2"></i> Play Now
               </button>
               
-              <button className="px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg flex items-center transition-colors">
+              <button className="px-4 md:px-6 py-2 md:py-3 bg-gray-700 hover:bg-gray-600 rounded-lg flex items-center transition-colors">
                 <i className="fas fa-share-alt mr-2"></i> Share
               </button>
             </div>
             
-            <div className="flex items-center justify-between text-sm text-gray-400 border-t border-gray-700 pt-4">
+            <div className="flex flex-wrap items-center justify-between text-sm text-gray-400 border-t border-gray-700 pt-4">
               <span><i className="far fa-calendar-alt mr-1"></i> Added on {formatDate(game.createdAt)}</span>
               <span><i className="fas fa-vr-cardboard mr-1"></i> WebXR Compatible</span>
             </div>
           </div>
           
           {/* Sidebar */}
-          <div className="w-full lg:w-1/3">
+          <div className="w-full lg:w-1/3 mt-8 lg:mt-0">
             <h2 className="text-xl font-bold mb-4">Related Games</h2>
             
             {relatedGames.length > 0 ? (
@@ -244,7 +248,11 @@ const GameDetail = () => {
                         src={relatedGame.thumbnailUrl || relatedGame.imageUrl} 
                         alt={relatedGame.title} 
                         className="w-full object-cover"
-                        style={{ maxHeight: '100%', objectFit: 'cover' }}
+                        style={{ 
+                          height: 'auto', 
+                          aspectRatio: '16/9',
+                          objectPosition: 'center'
+                        }}
                         onError={(e) => {
                           e.target.onerror = null;
                           e.target.src = 'https://via.placeholder.com/300x169?text=Game+Thumbnail';

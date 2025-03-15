@@ -157,13 +157,17 @@ const GamesShowcase = () => {
         
         <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-purple-900/40 to-blue-900/40 backdrop-blur-sm">
           <div className="absolute inset-0 bg-cover bg-center opacity-20" style={{ backgroundImage: `url(${featured.thumbnailUrl || featured.imageUrl})` }}></div>
-          <div className="relative z-10 flex flex-col md:flex-row p-8 gap-8">
+          <div className="relative z-10 flex flex-col md:flex-row p-4 md:p-8 gap-4 md:gap-8">
             <div className="w-full md:w-1/2 aspect-video overflow-hidden rounded-lg shadow-2xl">
               <img 
                 src={featured.thumbnailUrl || featured.imageUrl} 
                 alt={featured.title} 
                 className="w-full object-cover hover:scale-105 transition-transform duration-500"
-                style={{ maxHeight: '100%', objectFit: 'cover' }}
+                style={{ 
+                  height: 'auto', 
+                  aspectRatio: '16/9',
+                  objectPosition: 'center'
+                }}
                 onError={(e) => {
                   e.target.onerror = null;
                   e.target.src = 'https://via.placeholder.com/640x360?text=Game+Image';
@@ -172,8 +176,8 @@ const GamesShowcase = () => {
             </div>
             
             <div className="w-full md:w-1/2 flex flex-col">
-              <div className="flex items-center mb-2">
-                <span className="bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 text-xs font-bold px-3 py-1 rounded-full shadow-lg mr-3">
+              <div className="flex flex-wrap items-center gap-2 mb-2">
+                <span className="bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 text-xs font-bold px-3 py-1 rounded-full shadow-lg">
                   <i className="fas fa-crown mr-1"></i> FEATURED
                 </span>
                 <span className="bg-gradient-to-r from-purple-700 to-purple-500 text-white text-xs px-3 py-1 rounded-full shadow-lg">
@@ -181,7 +185,7 @@ const GamesShowcase = () => {
                 </span>
               </div>
               
-              <h3 className="text-3xl font-bold text-white mb-2">{featured.title}</h3>
+              <h3 className="text-xl md:text-3xl font-bold text-white mb-2">{featured.title}</h3>
               
               <div className="flex items-center mb-4">
                 <div className="flex mr-2">
@@ -190,17 +194,17 @@ const GamesShowcase = () => {
                 <span className="text-gray-300">{featured.rating.toFixed(1)}</span>
               </div>
               
-              <p className="text-gray-300 mb-6">{featured.description}</p>
+              <p className="text-gray-300 mb-6 text-sm md:text-base">{featured.description}</p>
               
-              <div className="flex gap-4 mb-6">
+              <div className="flex flex-wrap gap-4 mb-6">
                 <button 
                   onClick={() => handlePlayGame(featured)}
-                  className="vr-button px-6 py-3 rounded-lg flex items-center"
+                  className="vr-button px-4 md:px-6 py-2 md:py-3 rounded-lg flex items-center"
                 >
                   <i className="fas fa-play-circle mr-2"></i> Play Now
                 </button>
                 
-                <button className="px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg flex items-center transition-colors">
+                <button className="px-4 md:px-6 py-2 md:py-3 bg-gray-700 hover:bg-gray-600 rounded-lg flex items-center transition-colors">
                   <i className="fas fa-info-circle mr-2"></i> Details
                 </button>
               </div>
@@ -341,7 +345,7 @@ const GamesShowcase = () => {
               {games.filter(game => !game.featured || activeCategory !== 'all').map((game, index) => (
                 <div 
                   key={game.id}
-                  className={`flex flex-col ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} gap-8 bg-gray-800/60 hover:bg-gray-800/80 rounded-xl p-6 transition-all duration-300 ${hoveredGame === game.id ? 'shadow-glow' : 'shadow-lg'}`}
+                  className={`flex flex-col ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} gap-4 md:gap-8 bg-gray-800/60 hover:bg-gray-800/80 rounded-xl p-4 md:p-6 transition-all duration-300 ${hoveredGame === game.id ? 'shadow-glow' : 'shadow-lg'}`}
                   onMouseEnter={() => setHoveredGame(game.id)}
                   onMouseLeave={() => setHoveredGame(null)}
                 >
@@ -349,8 +353,12 @@ const GamesShowcase = () => {
                     <img 
                       src={game.thumbnailUrl || game.imageUrl} 
                       alt={game.title} 
-                      className={`w-full h-full object-cover transition-transform duration-500 ${hoveredGame === game.id ? 'scale-105' : ''}`}
-                      style={{ maxHeight: '100%', objectFit: 'cover' }}
+                      className={`w-full object-cover transition-transform duration-500 ${hoveredGame === game.id ? 'scale-105' : ''}`}
+                      style={{ 
+                        height: 'auto', 
+                        aspectRatio: '16/9',
+                        objectPosition: 'center'
+                      }}
                       onError={(e) => {
                         e.target.onerror = null;
                         e.target.src = 'https://via.placeholder.com/300x169?text=Game+Thumbnail';
@@ -359,18 +367,18 @@ const GamesShowcase = () => {
                   </div>
                   
                   <div className="w-full md:w-3/5 flex flex-col">
-                    <div className="flex items-center mb-2">
+                    <div className="flex flex-wrap items-center gap-2 mb-2">
                       <span className="bg-gradient-to-r from-purple-700 to-purple-500 text-white text-xs px-3 py-1 rounded-full shadow-lg">
                         {game.category.charAt(0).toUpperCase() + game.category.slice(1)}
                       </span>
                       {game.featured && (
-                        <span className="ml-2 bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                        <span className="bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 text-xs font-bold px-3 py-1 rounded-full shadow-lg">
                           <i className="fas fa-crown mr-1"></i> FEATURED
                         </span>
                       )}
                     </div>
                     
-                    <h3 className="text-2xl font-bold text-white mb-2">{game.title}</h3>
+                    <h3 className="text-xl md:text-2xl font-bold text-white mb-2">{game.title}</h3>
                     
                     <div className="flex items-center mb-4">
                       <div className="flex mr-2">
@@ -379,17 +387,17 @@ const GamesShowcase = () => {
                       <span className="text-gray-300">{game.rating.toFixed(1)}</span>
                     </div>
                     
-                    <p className="text-gray-300 mb-6">{game.description}</p>
+                    <p className="text-gray-300 mb-6 text-sm md:text-base">{game.description}</p>
                     
-                    <div className="flex gap-4 mb-6">
+                    <div className="flex flex-wrap gap-4 mb-6">
                       <button 
                         onClick={() => handlePlayGame(game)}
-                        className={`vr-button px-6 py-3 rounded-lg flex items-center ${hoveredGame === game.id ? 'pulse' : ''}`}
+                        className={`vr-button px-4 md:px-6 py-2 md:py-3 rounded-lg flex items-center ${hoveredGame === game.id ? 'pulse' : ''}`}
                       >
                         <i className="fas fa-play-circle mr-2"></i> Play Now
                       </button>
                       
-                      <button className="px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg flex items-center transition-colors">
+                      <button className="px-4 md:px-6 py-2 md:py-3 bg-gray-700 hover:bg-gray-600 rounded-lg flex items-center transition-colors">
                         <i className="fas fa-info-circle mr-2"></i> Details
                       </button>
                     </div>

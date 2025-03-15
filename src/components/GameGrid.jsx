@@ -40,7 +40,7 @@ const GameGrid = ({ games, onPlay }) => {
       {games.map(game => (
         <div 
           key={game.id}
-          className="game-thumbnail bg-gray-800/90 rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:-translate-y-2"
+          className="game-thumbnail bg-gray-800/90 rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:-translate-y-2 h-full flex flex-col"
           onMouseEnter={() => setHoveredGame(game.id)}
           onMouseLeave={() => setHoveredGame(null)}
         >
@@ -50,7 +50,11 @@ const GameGrid = ({ games, onPlay }) => {
                 src={game.thumbnailUrl || game.imageUrl} 
                 alt={game.title} 
                 className="w-full object-cover transition-transform duration-500"
-                style={{ maxHeight: '100%', objectFit: 'cover' }}
+                style={{ 
+                  height: 'auto', 
+                  aspectRatio: '16/9',
+                  objectPosition: 'center'
+                }}
                 onError={(e) => {
                   e.target.onerror = null;
                   e.target.src = 'https://via.placeholder.com/300x169?text=Game+Thumbnail';
@@ -77,7 +81,7 @@ const GameGrid = ({ games, onPlay }) => {
             </div>
           </Link>
           
-          <div className="p-3">
+          <div className="p-3 flex flex-col flex-grow">
             <div className="flex items-center justify-between text-xs text-gray-400 mb-3">
               <span className="bg-gray-700 px-2 py-1 rounded-full">
                 {game.category.charAt(0).toUpperCase() + game.category.slice(1)}
@@ -89,7 +93,7 @@ const GameGrid = ({ games, onPlay }) => {
               onClick={() => onPlay(game)}
               className={`w-full vr-button px-3 py-2 rounded-lg text-sm ${
                 hoveredGame === game.id ? 'pulse' : ''
-              } text-white transition-colors flex items-center justify-center`}
+              } text-white transition-colors flex items-center justify-center mt-auto`}
             >
               <i className="fas fa-play-circle mr-2"></i> Play Now
             </button>

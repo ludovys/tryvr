@@ -42,7 +42,7 @@ const GameCard = ({ game, onPlay }) => {
 
   return (
     <div 
-      className="game-card bg-gray-800/90 rounded-lg overflow-hidden shadow-lg transition-transform duration-300"
+      className="game-card bg-gray-800/90 rounded-lg overflow-hidden shadow-lg transition-transform duration-300 h-full flex flex-col"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -56,7 +56,11 @@ const GameCard = ({ game, onPlay }) => {
             src={game.thumbnailUrl || game.imageUrl} 
             alt={game.title} 
             className="w-full object-cover transition-transform duration-500"
-            style={{ maxHeight: '100%', objectFit: 'cover' }}
+            style={{ 
+              height: 'auto', 
+              aspectRatio: '16/9',
+              objectPosition: 'center'
+            }}
             onError={handleImageError}
             loading="lazy"
           />
@@ -81,8 +85,8 @@ const GameCard = ({ game, onPlay }) => {
         </div>
       </div>
       
-      <div className="p-4">
-        <p className="text-gray-300 text-sm mb-4 line-clamp-3">{game.description}</p>
+      <div className="p-4 flex flex-col flex-grow">
+        <p className="text-gray-300 text-sm mb-4 line-clamp-3 flex-grow">{game.description}</p>
         
         <div className="flex items-center justify-between text-sm text-gray-400 mb-4">
           <span><i className="fas fa-gamepad mr-1"></i> {game.playCount.toLocaleString()} plays</span>
