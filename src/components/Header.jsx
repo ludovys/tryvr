@@ -95,6 +95,16 @@ const Header = () => {
               <i className="fas fa-th-large mr-2"></i> Games Showcase
             </Link>
             <Link 
+              to="/games-without-images" 
+              className={`vr-button px-4 py-2 rounded-lg transition ${
+                isActive('/games-without-images') 
+                  ? 'bg-purple-600 text-white pulse' 
+                  : 'bg-gray-800/70 hover:bg-purple-700 text-gray-200'
+              }`}
+            >
+              <i className="fas fa-image-slash mr-2"></i> Missing Images
+            </Link>
+            <Link 
               to="/about" 
               className={`vr-button px-4 py-2 rounded-lg transition ${
                 isActive('/about') 
@@ -164,6 +174,15 @@ const Header = () => {
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 <i className="fas fa-th-large mr-2"></i> Games Showcase
+              </Link>
+              <Link 
+                to="/games-without-images" 
+                className={`vr-button px-4 py-3 rounded-lg text-lg transition ${
+                  isActive('/games-without-images') ? 'bg-purple-600 text-white pulse' : 'bg-gray-800/70 text-gray-200'
+                }`}
+                onClick={toggleMobileMenu}
+              >
+                <i className="fas fa-image-slash mr-2"></i> Missing Images
               </Link>
               <Link 
                 to="/about" 

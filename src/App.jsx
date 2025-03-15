@@ -10,6 +10,7 @@ import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import NotFound from './pages/NotFound';
 import GamesShowcase from './pages/GamesShowcase';
+import GamesWithoutImages from './pages/GamesWithoutImages';
 
 // Import context
 import { AuthProvider } from './context/AuthContext';
@@ -23,6 +24,7 @@ function App() {
           <Route path="/games" element={<Games />} />
           <Route path="/game/:gameId" element={<GameDetail />} />
           <Route path="/games-showcase" element={<GamesShowcase />} />
+          <Route path="/games-without-images" element={<GamesWithoutImages />} />
           <Route path="/admin-login" element={<AdminLogin />} />
           <Route path="/admin-dashboard" element={<AdminDashboard />} />
           <Route path="*" element={<NotFound />} />

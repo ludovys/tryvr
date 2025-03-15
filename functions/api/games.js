@@ -1,5 +1,5 @@
 // Mock database of VR games
-const mockGames = [
+export const mockGames = [
   {
     id: 1,
     title: 'Space Explorer VR',
