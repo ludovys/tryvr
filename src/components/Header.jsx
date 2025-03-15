@@ -9,6 +9,10 @@ const Header = () => {
 
   // Check if the current route matches the link
   const isActive = (path) => {
+    if (path === '/games') {
+      // Also highlight for game detail pages
+      return location.pathname === path || location.pathname.startsWith('/game/');
+    }
     return location.pathname === path;
   };
 
@@ -71,16 +75,6 @@ const Header = () => {
               <i className="fas fa-home mr-2"></i> Home
             </Link>
             <Link 
-              to="/games-showcase" 
-              className={`vr-button px-4 py-2 rounded-lg transition ${
-                isActive('/games-showcase') 
-                  ? 'bg-purple-600 text-white pulse' 
-                  : 'bg-gray-800/70 hover:bg-purple-700 text-gray-200'
-              }`}
-            >
-              <i className="fas fa-th-large mr-2"></i> Games Showcase
-            </Link>
-            <Link 
               to="/games" 
               className={`vr-button px-4 py-2 rounded-lg transition ${
                 isActive('/games') 
@@ -89,6 +83,16 @@ const Header = () => {
               }`}
             >
               <i className="fas fa-gamepad mr-2"></i> Games
+            </Link>
+            <Link 
+              to="/games-showcase" 
+              className={`vr-button px-4 py-2 rounded-lg transition ${
+                isActive('/games-showcase') 
+                  ? 'bg-purple-600 text-white pulse' 
+                  : 'bg-gray-800/70 hover:bg-purple-700 text-gray-200'
+              }`}
+            >
+              <i className="fas fa-th-large mr-2"></i> Games Showcase
             </Link>
             <Link 
               to="/about" 
@@ -140,17 +144,6 @@ const Header = () => {
                 <i className="fas fa-home mr-2"></i> Home
               </Link>
               <Link 
-                to="/games-showcase" 
-                className={`vr-button px-4 py-2 rounded-lg transition ${
-                  isActive('/games-showcase') 
-                    ? 'bg-purple-600 text-white' 
-                    : 'bg-gray-800/70 hover:bg-purple-700 text-gray-200'
-                }`}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <i className="fas fa-th-large mr-2"></i> Games Showcase
-              </Link>
-              <Link 
                 to="/games" 
                 className={`vr-button px-4 py-2 rounded-lg transition ${
                   isActive('/games') 
@@ -160,6 +153,17 @@ const Header = () => {
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 <i className="fas fa-gamepad mr-2"></i> Games
+              </Link>
+              <Link 
+                to="/games-showcase" 
+                className={`vr-button px-4 py-2 rounded-lg transition ${
+                  isActive('/games-showcase') 
+                    ? 'bg-purple-600 text-white' 
+                    : 'bg-gray-800/70 hover:bg-purple-700 text-gray-200'
+                }`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <i className="fas fa-th-large mr-2"></i> Games Showcase
               </Link>
               <Link 
                 to="/about" 

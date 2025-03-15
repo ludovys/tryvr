@@ -17,6 +17,7 @@ This document outlines the planned features and improvements for the TryVR proje
 
 ## Completed Tasks
 
+- [x] Create a 5-column grid layout for games with individual game pages
 - [x] Create a new Games Showcase page with an alternative layout for displaying games
 - [x] Fix Cloudflare Functions deployment issue by renaming DB binding to DATABASE
 - [x] Fix wrangler.toml configuration by removing unsupported routes
