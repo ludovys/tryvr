@@ -117,6 +117,7 @@ const AdminDashboard = () => {
       description: formData.get('description'),
       category: formData.get('category'),
       imageUrl: formData.get('imageUrl'),
+      thumbnailUrl: formData.get('thumbnailUrl'),
       gameUrl: formData.get('gameUrl'),
       featured: formData.get('featured') === 'on',
       rating: parseFloat(formData.get('rating')),
@@ -529,6 +530,17 @@ const AdminDashboard = () => {
                     defaultValue={currentGame?.imageUrl || ''}
                     className="w-full bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 focus:outline-none focus:border-purple-500"
                     required
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-gray-300 mb-1">Thumbnail URL (Optional)</label>
+                  <input
+                    type="url"
+                    name="thumbnailUrl"
+                    defaultValue={currentGame?.thumbnailUrl || ''}
+                    className="w-full bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 focus:outline-none focus:border-purple-500"
+                    placeholder="Leave empty to use Image URL as thumbnail"
                   />
                 </div>
                 
