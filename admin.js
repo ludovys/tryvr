@@ -4,12 +4,13 @@ const ITEMS_PER_PAGE = 10; // Fewer items per page for the admin table view
 let currentPage = 1;
 let totalProducts = 0;
 let productToDelete = null;
+const DB_STORAGE_KEY = 'tryvr_products_db'; // Consistent storage key
 
 // Your Amazon affiliate ID
 const AFFILIATE_ID = "tryvr-20";
 
 // Check authentication
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     // Check if user is logged in
     if (localStorage.getItem('tryvr_admin_auth') !== 'true') {
         // Redirect to login page
@@ -17,21 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
     
-    // Initialize the application
-    initDatabase()
-        .then(() => {
-            loadProducts();
-            setupEventListeners();
-            checkApiKey();
-        })
-        .catch(error => {
-            console.error('Failed to initialize the application:', error);
-            showNotification('Failed to initialize the application', 'error');
-        });
-});
-
-// Initialize SQLite database
-async function initDatabase() {
     try {
         // Load SQL.js library
         const sqlPromise = initSqlJs({
@@ -41,7 +27,7 @@ async function initDatabase() {
         const SQL = await sqlPromise;
         
         // Try to load existing database from localStorage
-        const savedDb = localStorage.getItem('tryvr_products_db');
+        const savedDb = localStorage.getItem(DB_STORAGE_KEY);
         
         if (savedDb) {
             try {
@@ -49,28 +35,33 @@ async function initDatabase() {
                 db = new SQL.Database(uint8Array);
                 console.log('Database loaded from localStorage');
             } catch (error) {
-                console.error('Error loading database from localStorage:', error);
+                console.error('Error parsing database:', error);
                 // Create new database if loading fails
-                db = new SQL.Database();
-                createProductsTable();
+                createNewDatabase(SQL);
             }
         } else {
             // Create new database if none exists
-            db = new SQL.Database();
-            createProductsTable();
+            createNewDatabase(SQL);
         }
         
         console.log('Database initialized successfully');
-        return true;
+        
+        // Load products after database is initialized
+        loadProducts();
+        setupEventListeners();
+        checkApiKey();
     } catch (error) {
         console.error('Failed to initialize database:', error);
         showNotification('Failed to initialize the database', 'error');
-        return false;
     }
-}
+});
 
-// Helper function to create the products table
-function createProductsTable() {
+// Create a new database
+function createNewDatabase(SQL) {
+    console.log('Creating new database...');
+    // Create new database if none exists
+    db = new SQL.Database();
+    // Create products table
     db.run(`
         CREATE TABLE IF NOT EXISTS products (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -86,6 +77,34 @@ function createProductsTable() {
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     `);
+    // Save the new database
+    saveToLocalStorage();
+}
+
+// Get database instance
+function getDatabase() {
+    try {
+        // Get database from localStorage - Use consistent key
+        const base64 = localStorage.getItem(DB_STORAGE_KEY);
+        if (!base64) {
+            throw new Error('Database not found in localStorage');
+        }
+        
+        // Convert base64 to Uint8Array
+        const binary = atob(base64);
+        const len = binary.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+            bytes[i] = binary.charCodeAt(i);
+        }
+        
+        // Create database from Uint8Array
+        return new SQL.Database(bytes);
+    } catch (error) {
+        console.error('Error getting database:', error);
+        showNotification('Error accessing database: ' + error.message, 'error');
+        return null;
+    }
 }
 
 // Load products from the database
@@ -255,7 +274,8 @@ function displayProducts(products) {
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="flex items-center">
                             <div class="flex-shrink-0 h-10 w-10">
-                                <img class="h-10 w-10 rounded-md object-cover" src="${imageUrl}" alt="${title}" onerror="this.src='vr-logo.svg'">
+                                <img class="h-10 w-10 rounded-md object-cover" src="${imageUrl}" alt="${title}" 
+                                     onerror="this.onerror=null; this.src='vr-logo.svg'; this.classList.add('bg-gray-200', 'p-1', 'rounded');">
                             </div>
                             <div class="ml-4">
                                 <div class="text-sm font-medium text-white">${title}</div>
@@ -361,60 +381,59 @@ function addAffiliateTag(amazonUrl) {
 // Save product to database
 function saveProduct(productData) {
     try {
-        // Add affiliate tag to Amazon URL
-        const affiliateUrl = addAffiliateTag(productData.amazonUrl);
+        const database = getDatabase();
+        if (!database) {
+            throw new Error('Database not found');
+        }
         
+        // Check if product already exists (edit mode)
         if (productData.id) {
             // Update existing product
-            db.run(`
-                UPDATE products SET
-                    title = $title,
-                    amazon_url = $amazonUrl,
-                    affiliate_url = $affiliateUrl,
-                    rating = $rating,
-                    category = $category,
-                    image_url = $imageUrl,
-                    price = $price,
-                    description = $description,
-                    video_url = $videoUrl
-                WHERE id = $id
-            `, {
-                $id: productData.id,
-                $title: productData.title,
-                $amazonUrl: productData.amazonUrl,
-                $affiliateUrl: affiliateUrl,
-                $rating: productData.rating,
-                $category: productData.category,
-                $imageUrl: productData.imageUrl,
-                $price: productData.price,
-                $description: productData.description,
-                $videoUrl: productData.videoUrl
-            });
+            const stmt = database.prepare(`
+                UPDATE products 
+                SET title = ?, 
+                    amazon_url = ?, 
+                    rating = ?, 
+                    category = ?, 
+                    image_url = ?, 
+                    price = ?, 
+                    description = ? 
+                WHERE id = ?
+            `);
             
-            showNotification('VR product updated successfully!', 'success');
+            stmt.run(
+                productData.title,
+                productData.amazonUrl,
+                productData.rating,
+                productData.category,
+                productData.imageUrl,
+                productData.price,
+                productData.description,
+                productData.id
+            );
+            
+            showNotification(`Product "${productData.title}" updated successfully!`, 'success');
         } else {
             // Insert new product
-            db.run(`
+            const stmt = database.prepare(`
                 INSERT INTO products (
-                    title, amazon_url, affiliate_url, rating, category, 
-                    image_url, price, description, video_url
+                    title, amazon_url, rating, category, image_url, price, description
                 ) VALUES (
-                    $title, $amazonUrl, $affiliateUrl, $rating, $category,
-                    $imageUrl, $price, $description, $videoUrl
+                    ?, ?, ?, ?, ?, ?, ?
                 )
-            `, {
-                $title: productData.title,
-                $amazonUrl: productData.amazonUrl,
-                $affiliateUrl: affiliateUrl,
-                $rating: productData.rating,
-                $category: productData.category,
-                $imageUrl: productData.imageUrl,
-                $price: productData.price,
-                $description: productData.description,
-                $videoUrl: productData.videoUrl
-            });
+            `);
             
-            showNotification('VR product added successfully!', 'success');
+            stmt.run(
+                productData.title,
+                productData.amazonUrl,
+                productData.rating,
+                productData.category,
+                productData.imageUrl,
+                productData.price,
+                productData.description
+            );
+            
+            showNotification(`Product "${productData.title}" added successfully!`, 'success');
         }
         
         // Save database to localStorage
@@ -434,19 +453,41 @@ function saveProduct(productData) {
 // Delete product from database
 function deleteProduct(productId) {
     try {
-        db.run('DELETE FROM products WHERE id = ?', [productId]);
+        const database = getDatabase();
+        if (!database) {
+            throw new Error('Database not found');
+        }
         
-        // Save database to localStorage
+        // Get product title before deletion for the notification
+        const product = database.exec(`SELECT title FROM products WHERE id = ${productId}`);
+        let productTitle = "Product";
+        if (product && product[0] && product[0].values && product[0].values[0]) {
+            productTitle = product[0].values[0][0];
+        }
+        
+        // Delete the product
+        const stmt = database.prepare('DELETE FROM products WHERE id = ?');
+        stmt.run(productId);
+        
+        // Save changes to localStorage
         saveToLocalStorage();
         
         // Reload products
         loadProducts();
         
-        showNotification('VR product deleted successfully!', 'success');
+        // Hide confirmation modal
+        document.getElementById('delete-confirmation-modal').classList.add('hidden');
+        
+        // Reset productToDelete
+        productToDelete = null;
+        
+        // Show success message
+        showNotification(`Product "${productTitle}" deleted successfully!`, 'success');
+        
         return true;
     } catch (error) {
         console.error('Error deleting product:', error);
-        showNotification('Failed to delete VR product', 'error');
+        showNotification('Error deleting product: ' + error.message, 'error');
         return false;
     }
 }
@@ -454,39 +495,91 @@ function deleteProduct(productId) {
 // Edit product
 function editProduct(productId) {
     try {
-        const result = db.exec('SELECT * FROM products WHERE id = ?', [productId]);
-        if (result[0] && result[0].values.length > 0) {
-            const [id, title, amazonUrl, affiliateUrl, rating, category, imageUrl, price, description, videoUrl] = result[0].values[0];
+        const database = getDatabase();
+        if (!database) {
+            throw new Error('Database not found');
+        }
+        
+        const result = database.exec(`SELECT * FROM products WHERE id = ${productId}`);
+        
+        if (result.length > 0 && result[0].values.length > 0) {
+            const product = result[0].values[0];
+            const [id, title, amazonUrl, affiliateUrl, rating, category, imageUrl, price, description, videoUrl] = product;
             
-            // Set form values
-            document.getElementById('product-id').value = id;
-            document.getElementById('product-title').value = title;
-            document.getElementById('amazon-url').value = amazonUrl;
-            document.getElementById('product-rating').value = rating;
-            document.getElementById('product-category').value = category;
-            document.getElementById('product-image').value = imageUrl;
-            document.getElementById('product-price').value = price;
-            document.getElementById('product-description').value = description;
-            document.getElementById('product-video-url').value = videoUrl || '';
-            
-            // Update modal title
-            document.getElementById('modal-title').textContent = 'Edit VR Product';
-            
-            // Show modal
-            document.getElementById('product-modal').classList.remove('hidden');
+            // Fill form with product data
+            const productForm = document.getElementById('product-form');
+            if (productForm) {
+                const productIdInput = document.getElementById('product-id');
+                if (productIdInput) {
+                    productIdInput.value = id;
+                }
+                
+                const titleInput = document.getElementById('product-title');
+                if (titleInput) {
+                    titleInput.value = title;
+                }
+                
+                const amazonUrlInput = document.getElementById('amazon-url');
+                if (amazonUrlInput) {
+                    amazonUrlInput.value = amazonUrl;
+                }
+                
+                const ratingInput = document.getElementById('product-rating');
+                if (ratingInput) {
+                    ratingInput.value = rating;
+                }
+                
+                const categoryInput = document.getElementById('product-category');
+                if (categoryInput) {
+                    categoryInput.value = category;
+                }
+                
+                const imageUrlInput = document.getElementById('product-image');
+                if (imageUrlInput) {
+                    imageUrlInput.value = imageUrl;
+                }
+                
+                const priceInput = document.getElementById('product-price');
+                if (priceInput) {
+                    priceInput.value = price;
+                }
+                
+                const descriptionInput = document.getElementById('product-description');
+                if (descriptionInput) {
+                    descriptionInput.value = description;
+                }
+                
+                const videoUrlInput = document.getElementById('product-video-url');
+                if (videoUrlInput) {
+                    videoUrlInput.value = videoUrl || '';
+                }
+                
+                // Update modal title
+                const modalTitle = document.getElementById('modal-title');
+                if (modalTitle) {
+                    modalTitle.textContent = 'Edit VR Product';
+                }
+                
+                // Show modal
+                const productModal = document.getElementById('product-modal');
+                if (productModal) {
+                    productModal.classList.remove('hidden');
+                }
+            }
         } else {
-            showNotification('Product not found', 'error');
+            console.error('Product not found:', productId);
+            alert('Product not found');
         }
     } catch (error) {
         console.error('Error editing product:', error);
-        showNotification('Failed to load product details', 'error');
+        alert('Error editing product');
     }
 }
 
 // Show delete confirmation
 function showDeleteConfirmation(productId) {
     productToDelete = productId;
-    document.getElementById('delete-modal').classList.remove('hidden');
+    document.getElementById('delete-confirmation-modal').classList.remove('hidden');
 }
 
 // Generate product description with AI
@@ -584,9 +677,9 @@ function saveToLocalStorage() {
     try {
         const data = db.export();
         const array = Array.from(data);
-        localStorage.setItem('tryvr_products_db', JSON.stringify(array));
+        localStorage.setItem(DB_STORAGE_KEY, JSON.stringify(array));
     } catch (error) {
-        console.error('Error saving database to localStorage:', error);
+        console.error('Error saving to localStorage:', error);
     }
 }
 
@@ -757,12 +850,12 @@ function setupEventListeners() {
     });
     
     document.getElementById('close-delete-modal').addEventListener('click', () => {
-        document.getElementById('delete-modal').classList.add('hidden');
+        document.getElementById('delete-confirmation-modal').classList.add('hidden');
         productToDelete = null;
     });
     
     document.getElementById('cancel-delete').addEventListener('click', () => {
-        document.getElementById('delete-modal').classList.add('hidden');
+        document.getElementById('delete-confirmation-modal').classList.add('hidden');
         productToDelete = null;
     });
     
@@ -770,7 +863,7 @@ function setupEventListeners() {
     document.getElementById('confirm-delete').addEventListener('click', () => {
         if (productToDelete) {
             deleteProduct(productToDelete);
-            document.getElementById('delete-modal').classList.add('hidden');
+            document.getElementById('delete-confirmation-modal').classList.add('hidden');
             productToDelete = null;
         }
     });
@@ -900,9 +993,9 @@ function setupEventListeners() {
         }
     });
     
-    document.getElementById('delete-modal').addEventListener('click', (event) => {
-        if (event.target === document.getElementById('delete-modal')) {
-            document.getElementById('delete-modal').classList.add('hidden');
+    document.getElementById('delete-confirmation-modal').addEventListener('click', (event) => {
+        if (event.target === document.getElementById('delete-confirmation-modal')) {
+            document.getElementById('delete-confirmation-modal').classList.add('hidden');
             productToDelete = null;
         }
     });

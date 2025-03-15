@@ -5,6 +5,8 @@ let currentPage = 1;
 let totalPages = 1;
 let productsPerPage = 10;
 let productToDelete = null;
+// Define a consistent storage key
+const DB_STORAGE_KEY = 'tryvr_products_db';
 
 // Check authentication and initialize database
 document.addEventListener('DOMContentLoaded', async () => {
@@ -23,7 +25,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const SQL = await sqlPromise;
         
         // Try to load existing database from localStorage
-        const savedDb = localStorage.getItem('tryvr_products_db');
+        const savedDb = localStorage.getItem(DB_STORAGE_KEY);
         if (savedDb) {
             const uint8Array = new Uint8Array(JSON.parse(savedDb));
             db = new SQL.Database(uint8Array);
@@ -61,7 +63,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 function getDatabase() {
     try {
         // Get database from localStorage
-        const base64 = localStorage.getItem('vrProductsDB');
+        const base64 = localStorage.getItem(DB_STORAGE_KEY);
         if (!base64) {
             throw new Error('Database not found in localStorage');
         }
@@ -98,8 +100,8 @@ function saveDatabase() {
         // Convert Uint8Array to base64
         const base64 = btoa(String.fromCharCode.apply(null, buffer));
         
-        // Save to localStorage
-        localStorage.setItem('vrProductsDB', base64);
+        // Save to localStorage using the consistent storage key
+        localStorage.setItem(DB_STORAGE_KEY, base64);
     } catch (error) {
         console.error('Error saving database:', error);
         showNotification('Error saving database: ' + error.message, 'error');
@@ -175,7 +177,7 @@ function saveToLocalStorage() {
     try {
         const data = db.export();
         const array = Array.from(data);
-        localStorage.setItem('tryvr_products_db', JSON.stringify(array));
+        localStorage.setItem(DB_STORAGE_KEY, JSON.stringify(array));
     } catch (error) {
         console.error('Error saving to localStorage:', error);
     }
@@ -349,7 +351,7 @@ function setupEventListeners() {
     if (exportDbButton) {
         exportDbButton.addEventListener('click', () => {
             try {
-                const dbData = localStorage.getItem('vrProductsDB');
+                const dbData = localStorage.getItem(DB_STORAGE_KEY);
                 if (!dbData) {
                     throw new Error('No database found');
                 }
@@ -389,7 +391,7 @@ function setupEventListeners() {
             reader.onload = (event) => {
                 try {
                     const dbData = event.target.result;
-                    localStorage.setItem('vrProductsDB', dbData);
+                    localStorage.setItem(DB_STORAGE_KEY, dbData);
                     loadProducts();
                     showNotification('Database imported successfully', 'success');
                 } catch (error) {
@@ -401,27 +403,6 @@ function setupEventListeners() {
         });
     }
 }
-
-// Initialize admin dashboard
-function initAdminDashboard() {
-    // Check if user is authenticated
-    if (!localStorage.getItem('adminAuthenticated')) {
-        window.location.href = 'admin-login.html';
-        return;
-    }
-    
-    // Initialize database
-    initDatabase();
-    
-    // Setup event listeners
-    setupEventListeners();
-    
-    // Load products
-    loadProducts();
-}
-
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', initAdminDashboard);
 
 // Display products in the admin table
 function displayProducts(result) {
@@ -468,7 +449,8 @@ function displayProducts(result) {
             <td class="px-4 py-2">${productObj.id}</td>
             <td class="px-4 py-2">
                 <div class="flex items-center">
-                    <img src="${productObj.image_url}" alt="${productObj.title}" class="w-10 h-10 object-cover mr-2">
+                    <img src="${productObj.image_url}" alt="${productObj.title}" class="w-10 h-10 object-cover mr-2"
+                         onerror="this.onerror=null; this.src='vr-logo.svg'; this.classList.add('bg-gray-200', 'p-1', 'rounded');">
                     <span class="font-medium">${productObj.title}</span>
                 </div>
             </td>
@@ -769,9 +751,11 @@ function addAffiliateTag(url) {
 // Show delete confirmation modal
 function showDeleteConfirmation(productId) {
     productToDelete = productId;
-    const deleteModal = document.getElementById('delete-modal');
+    const deleteModal = document.getElementById('delete-confirmation-modal');
     if (deleteModal) {
         deleteModal.classList.remove('hidden');
+    } else {
+        console.error('Delete confirmation modal not found');
     }
 }
 
@@ -811,43 +795,4 @@ function showNotification(message, type = 'success') {
             notification.classList.add('translate-y-20', 'opacity-0');
         }, 300);
     }, 3000);
-}
-
-function initDatabase() {
-    try {
-        // Check if database exists in localStorage
-        if (!localStorage.getItem('vrProductsDB')) {
-            console.log('Creating new database...');
-            
-            // Create new database
-            const db = new SQL.Database();
-            
-            // Create products table
-            db.run(`
-                CREATE TABLE IF NOT EXISTS products (
-                    id INTEGER PRIMARY KEY,
-                    title TEXT,
-                    amazon_url TEXT,
-                    rating REAL,
-                    category TEXT,
-                    image_url TEXT,
-                    price REAL,
-                    description TEXT
-                )
-            `);
-            
-            // Save empty database to localStorage
-            const data = db.export();
-            const buffer = new Uint8Array(data);
-            const base64 = btoa(String.fromCharCode.apply(null, buffer));
-            localStorage.setItem('vrProductsDB', base64);
-            
-            showNotification('Database initialized successfully', 'success');
-        } else {
-            console.log('Database already exists');
-        }
-    } catch (error) {
-        console.error('Error initializing database:', error);
-        showNotification('Error initializing database: ' + error.message, 'error');
-    }
 } 
