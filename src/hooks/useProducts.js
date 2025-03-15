@@ -14,20 +14,25 @@ const useProducts = () => {
 
   // Fetch products from Cloudflare Worker API
   const fetchProducts = async () => {
-    setLoading(true);
-    setError(null);
-
     try {
+      setLoading(true);
+      setError(null);
+      
       const { category, searchTerm, page, itemsPerPage } = filters;
       
-      // Build query parameters
+      // Construct query parameters
       const params = new URLSearchParams();
       if (category !== 'all') params.append('category', category);
       if (searchTerm) params.append('search', searchTerm);
       params.append('page', page.toString());
       params.append('limit', itemsPerPage.toString());
       
-      const response = await fetch(`/api/products?${params.toString()}`);
+      // Get the API base URL from environment variables or use relative path
+      const baseUrl = import.meta.env.VITE_API_BASE_URL || '';
+      const apiUrl = `${baseUrl}/api/products?${params.toString()}`;
+      
+      console.log('Fetching products from:', apiUrl); // Debug log
+      const response = await fetch(apiUrl);
       
       if (!response.ok) {
         throw new Error('Failed to fetch products');
