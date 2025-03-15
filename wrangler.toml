@@ -23,9 +23,10 @@ API_KEY = "your-api-key"
 DEBUG = "false"
 
 # Routes
-[routes]
-"/*" = { worker = false }
-"/api/*" = { worker = true }
+routes = [
+  { pattern = "/*", worker = false },
+  { pattern = "/api/*", worker = true }
+]
 
 # Environment-specific configurations
 [env.production]
