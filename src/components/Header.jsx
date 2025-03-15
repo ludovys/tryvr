@@ -1,20 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import vrLogo from '../assets/vr-logo.svg';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const location = useLocation();
-
-  // Check if the current route matches the link
-  const isActive = (path) => {
-    if (path === '/games') {
-      // Also highlight for game detail pages
-      return location.pathname === path || location.pathname.startsWith('/game/');
-    }
-    return location.pathname === path;
-  };
 
   // Handle scroll event to change header appearance
   useEffect(() => {
@@ -33,16 +22,11 @@ const Header = () => {
     };
   }, []);
 
-  // Toggle mobile menu
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
-
   return (
     <header className={`site-header ${isScrolled ? 'scrolled' : ''}`}>
       <div className="page-container">
-        <div className="flex items-center justify-between py-4">
-          {/* Logo */}
+        <div className="flex items-center justify-center py-4">
+          {/* Logo Only */}
           <Link to="/" className="flex items-center space-x-3 group">
             <div className="logo-float">
               <img 
@@ -60,115 +44,7 @@ const Header = () => {
               </p>
             </div>
           </Link>
-          
-          {/* Desktop Navigation - Simplified */}
-          <nav className="hidden md:flex items-center space-x-4">
-            <Link 
-              to="/" 
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                isActive('/') 
-                  ? 'bg-indigo-50 text-indigo-700' 
-                  : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600'
-              }`}
-            >
-              Home
-            </Link>
-            <Link 
-              to="/games" 
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                isActive('/games') 
-                  ? 'bg-indigo-50 text-indigo-700' 
-                  : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600'
-              }`}
-            >
-              Games
-            </Link>
-            <Link 
-              to="/about" 
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                isActive('/about') 
-                  ? 'bg-indigo-50 text-indigo-700' 
-                  : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600'
-              }`}
-            >
-              About
-            </Link>
-          </nav>
-          
-          {/* Right side - Primary CTA only */}
-          <div className="hidden md:flex items-center">
-            <Link
-              to="/games"
-              className="btn btn-primary"
-            >
-              <i className="fas fa-vr-cardboard mr-2"></i> Try VR Now
-            </Link>
-          </div>
-          
-          {/* Mobile Menu Button */}
-          <button 
-            onClick={toggleMobileMenu}
-            className="md:hidden p-2 rounded-md text-gray-700 hover:text-indigo-600 hover:bg-gray-50 focus:outline-none"
-            aria-label="Toggle menu"
-          >
-            {isMobileMenuOpen ? (
-              <i className="fas fa-times text-xl"></i>
-            ) : (
-              <i className="fas fa-bars text-xl"></i>
-            )}
-          </button>
         </div>
-        
-        {/* Mobile Menu - Simplified */}
-        {isMobileMenuOpen && (
-          <nav className="md:hidden py-3 border-t border-gray-100 animate-fadeIn">
-            <div className="space-y-1 py-2">
-              <Link 
-                to="/" 
-                className={`flex items-center px-4 py-3 rounded-md text-base font-medium transition-colors ${
-                  isActive('/') 
-                    ? 'bg-indigo-50 text-indigo-700' 
-                    : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600'
-                }`}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <i className="fas fa-home mr-3 w-5 text-center"></i> Home
-              </Link>
-              <Link 
-                to="/games" 
-                className={`flex items-center px-4 py-3 rounded-md text-base font-medium transition-colors ${
-                  isActive('/games') 
-                    ? 'bg-indigo-50 text-indigo-700' 
-                    : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600'
-                }`}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <i className="fas fa-gamepad mr-3 w-5 text-center"></i> Games
-              </Link>
-              <Link 
-                to="/about" 
-                className={`flex items-center px-4 py-3 rounded-md text-base font-medium transition-colors ${
-                  isActive('/about') 
-                    ? 'bg-indigo-50 text-indigo-700' 
-                    : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600'
-                }`}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <i className="fas fa-info-circle mr-3 w-5 text-center"></i> About
-              </Link>
-              
-              <div className="mt-3 px-4">
-                <Link
-                  to="/games"
-                  className="btn btn-primary w-full justify-center"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <i className="fas fa-vr-cardboard mr-2"></i> Try VR Now
-                </Link>
-              </div>
-            </div>
-          </nav>
-        )}
       </div>
     </header>
   );
