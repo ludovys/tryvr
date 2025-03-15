@@ -82,6 +82,31 @@
   transform: scale(1.1);
 }
 
+/* Game player styles */
+#game-container {
+  isolation: isolate;
+}
+
+#game-container iframe {
+  max-width: 100%;
+  max-height: 100%;
+  display: block;
+  background-color: black;
+}
+
+:fullscreen, ::backdrop {
+  background-color: black;
+}
+
+/* Set fullscreen sizing for iframe */
+:fullscreen #game-container iframe {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
 /* Notification styles */
 .notification-enter {
   animation: slideUp 0.3s forwards;
@@ -111,6 +136,20 @@
     transform: translateY(20px);
     opacity: 0;
   }
+}
+
+/* Loading skeleton animation */
+@keyframes pulse-bg {
+  0%, 100% {
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.animate-pulse {
+  animation: pulse-bg 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 /* Custom scrollbar */
@@ -193,6 +232,22 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 2px solid #a855f7;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+button:disabled:hover {
+  border-color: transparent;
+  background-color: #1a1a1a;
+  transform: none;
+}
+
+/* Fix for image aspect ratio */
+.aspect-video {
+  aspect-ratio: 16 / 9;
 }
 
 /* Responsive adjustments */

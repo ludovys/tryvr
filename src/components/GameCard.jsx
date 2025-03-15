@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 const GameCard = ({ game, onPlay }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [imageError, setImageError] = useState(false);
   
   // Format date
   const formatDate = (dateString) => {
@@ -34,18 +35,31 @@ const GameCard = ({ game, onPlay }) => {
     return stars;
   };
 
+  // Handle image load error
+  const handleImageError = () => {
+    setImageError(true);
+  };
+
   return (
     <div 
       className="game-card bg-gray-800/90 rounded-lg overflow-hidden shadow-lg transition-transform duration-300"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="relative overflow-hidden">
-        <img 
-          src={game.imageUrl} 
-          alt={game.title} 
-          className="w-full h-48 object-cover transition-transform duration-500"
-        />
+      <div className="relative overflow-hidden aspect-video">
+        {imageError ? (
+          <div className="w-full h-48 bg-gray-700 flex items-center justify-center">
+            <i className="fas fa-gamepad text-4xl text-gray-500"></i>
+          </div>
+        ) : (
+          <img 
+            src={game.imageUrl} 
+            alt={game.title} 
+            className="w-full h-full object-cover transition-transform duration-500"
+            onError={handleImageError}
+            loading="lazy"
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-70"></div>
         {game.featured && (
           <div className="absolute top-2 left-2 bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 text-xs font-bold px-3 py-1 rounded-full shadow-lg">

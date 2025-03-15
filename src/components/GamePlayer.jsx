@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 
 const GamePlayer = ({ game, onClose }) => {
   const iframeRef = useRef(null);
+  const containerRef = useRef(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -42,16 +43,47 @@ const GamePlayer = ({ game, onClose }) => {
 
   // Handle fullscreen toggle
   const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      const container = document.getElementById('game-container');
-      if (container && container.requestFullscreen) {
-        container.requestFullscreen().catch(err => {
+    const container = containerRef.current;
+    
+    if (!document.fullscreenElement && container) {
+      if (container.requestFullscreen) {
+        container.requestFullscreen().then(() => {
+          setIsFullscreen(true);
+        }).catch(err => {
+          console.error(`Error attempting to enable fullscreen: ${err.message}`);
+        });
+      } else if (container.webkitRequestFullscreen) { /* Safari */
+        container.webkitRequestFullscreen().then(() => {
+          setIsFullscreen(true);
+        }).catch(err => {
+          console.error(`Error attempting to enable fullscreen: ${err.message}`);
+        });
+      } else if (container.msRequestFullscreen) { /* IE11 */
+        container.msRequestFullscreen().then(() => {
+          setIsFullscreen(true);
+        }).catch(err => {
           console.error(`Error attempting to enable fullscreen: ${err.message}`);
         });
       }
     } else {
       if (document.exitFullscreen) {
-        document.exitFullscreen();
+        document.exitFullscreen().then(() => {
+          setIsFullscreen(false);
+        }).catch(err => {
+          console.error(`Error attempting to exit fullscreen: ${err.message}`);
+        });
+      } else if (document.webkitExitFullscreen) { /* Safari */
+        document.webkitExitFullscreen().then(() => {
+          setIsFullscreen(false);
+        }).catch(err => {
+          console.error(`Error attempting to exit fullscreen: ${err.message}`);
+        });
+      } else if (document.msExitFullscreen) { /* IE11 */
+        document.msExitFullscreen().then(() => {
+          setIsFullscreen(false);
+        }).catch(err => {
+          console.error(`Error attempting to exit fullscreen: ${err.message}`);
+        });
       }
     }
   };
@@ -63,9 +95,15 @@ const GamePlayer = ({ game, onClose }) => {
     };
 
     document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
     
     return () => {
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
     };
   }, []);
 
@@ -83,7 +121,7 @@ const GamePlayer = ({ game, onClose }) => {
       }, 3000);
     };
     
-    const container = document.getElementById('game-container');
+    const container = containerRef.current;
     if (container) {
       container.addEventListener('mousemove', handleMouseMove);
       
@@ -136,6 +174,10 @@ const GamePlayer = ({ game, onClose }) => {
             src={game.imageUrl} 
             alt={game.title} 
             className="h-10 w-10 rounded-lg object-cover mr-3 border border-purple-500"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNhODU1ZjciIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0iZmVhdGhlciBmZWF0aGVyLWdhbWVwYWQiPjxsaW5lIHgxPSI2IiB5MT0iMTIiIHgyPSIxMCIgeTI9IjEyIj48L2xpbmU+PGxpbmUgeDE9IjgiIHkxPSIxMCIgeDI9IjgiIHkyPSIxNCI+PC9saW5lPjxsaW5lIHgxPSIxNSIgeTE9IjEzIiB4Mj0iMTUuMDEiIHkyPSIxMyI+PC9saW5lPjxsaW5lIHgxPSIxOCIgeTE9IjExIiB4Mj0iMTguMDEiIHkyPSIxMSI+PC9saW5lPjxwYXRoIGQ9Ik0xNyA4aC0yYTIgMiAwIDAgMC0yIDJ2OGEyIDIgMCAwIDAgMiAyaDJhMiAyIDAgMCAwIDItMnYtOGEyIDIgMCAwIDAtMi0yeiI+PC9wYXRoPjxwYXRoIGQ9Ik05IDhoLTJhMiAyIDAgMCAwLTIgMnY4YTIgMiAwIDAgMCAyIDJoMmEyIDIgMCAwIDAgMi0ydi04YTIgMiAwIDAgMC0yLTJ6Ij48L3BhdGg+PC9zdmc+';
+            }}
           />
           <div>
             <h2 className="text-xl font-bold text-white">{game.title}</h2>
@@ -174,7 +216,8 @@ const GamePlayer = ({ game, onClose }) => {
       {/* Game Container */}
       <div 
         id="game-container"
-        className="flex-grow relative flex items-center justify-center bg-black"
+        ref={containerRef}
+        className={`flex-grow relative flex items-center justify-center bg-black ${isFullscreen ? 'w-screen h-screen' : 'w-full h-full'}`}
         onMouseEnter={() => setShowControls(true)}
       >
         {isLoading && (
@@ -204,14 +247,15 @@ const GamePlayer = ({ game, onClose }) => {
           ref={iframeRef}
           src={game.gameUrl}
           title={game.title}
-          className="w-full h-full border-0"
-          allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; xr-spatial-tracking; microphone; camera"
-          sandbox="allow-same-origin allow-scripts allow-forms allow-pointer-lock allow-popups"
+          className={`w-full h-full border-0 ${!isLoading ? 'z-10' : ''}`}
+          allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; xr-spatial-tracking; microphone; camera; fullscreen"
+          allowFullScreen
+          sandbox="allow-same-origin allow-scripts allow-forms allow-pointer-lock allow-popups allow-presentation allow-orientation-lock"
         ></iframe>
         
         {/* Floating controls - only visible when showControls is true */}
         <div 
-          className={`absolute bottom-6 left-1/2 transform -translate-x-1/2 flex items-center space-x-4 bg-gray-900/80 backdrop-blur-md px-6 py-3 rounded-full transition-opacity duration-300 ${
+          className={`absolute bottom-6 left-1/2 transform -translate-x-1/2 flex items-center space-x-4 bg-gray-900/80 backdrop-blur-md px-6 py-3 rounded-full transition-opacity duration-300 z-20 ${
             showControls ? 'opacity-100' : 'opacity-0 pointer-events-none'
           }`}
         >

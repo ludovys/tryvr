@@ -170,6 +170,26 @@ const Home = () => {
     );
   };
 
+  // Render loading skeleton for GameCard
+  const renderGameCardSkeleton = () => {
+    return Array(filters.itemsPerPage || 8).fill().map((_, index) => (
+      <div key={`skeleton-${index}`} className="bg-gray-800/90 rounded-lg overflow-hidden shadow-lg animate-pulse">
+        <div className="aspect-video bg-gray-700"></div>
+        <div className="p-4">
+          <div className="h-6 bg-gray-700 rounded w-3/4 mb-4"></div>
+          <div className="h-4 bg-gray-700 rounded w-full mb-2"></div>
+          <div className="h-4 bg-gray-700 rounded w-full mb-2"></div>
+          <div className="h-4 bg-gray-700 rounded w-5/6 mb-4"></div>
+          <div className="flex justify-between mb-4">
+            <div className="h-3 bg-gray-700 rounded w-1/4"></div>
+            <div className="h-3 bg-gray-700 rounded w-1/4"></div>
+          </div>
+          <div className="h-10 bg-gray-700 rounded w-full"></div>
+        </div>
+      </div>
+    ));
+  };
+
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col">
       <Header />
@@ -202,6 +222,7 @@ const Home = () => {
                 className={`px-4 py-2 rounded-lg transition-colors ${
                   filters.category === 'all' ? 'bg-purple-700 text-white' : 'bg-gray-700 hover:bg-gray-600'
                 }`}
+                disabled={loading}
               >
                 All Games
               </button>
@@ -210,6 +231,7 @@ const Home = () => {
                 className={`px-4 py-2 rounded-lg transition-colors ${
                   filters.category === 'action' ? 'bg-purple-700 text-white' : 'bg-gray-700 hover:bg-gray-600'
                 }`}
+                disabled={loading}
               >
                 <i className="fas fa-fist-raised mr-1"></i> Action
               </button>
@@ -218,6 +240,7 @@ const Home = () => {
                 className={`px-4 py-2 rounded-lg transition-colors ${
                   filters.category === 'adventure' ? 'bg-purple-700 text-white' : 'bg-gray-700 hover:bg-gray-600'
                 }`}
+                disabled={loading}
               >
                 <i className="fas fa-mountain mr-1"></i> Adventure
               </button>
@@ -226,6 +249,7 @@ const Home = () => {
                 className={`px-4 py-2 rounded-lg transition-colors ${
                   filters.category === 'simulation' ? 'bg-purple-700 text-white' : 'bg-gray-700 hover:bg-gray-600'
                 }`}
+                disabled={loading}
               >
                 <i className="fas fa-rocket mr-1"></i> Simulation
               </button>
@@ -234,6 +258,7 @@ const Home = () => {
                 className={`px-4 py-2 rounded-lg transition-colors ${
                   filters.category === 'puzzle' ? 'bg-purple-700 text-white' : 'bg-gray-700 hover:bg-gray-600'
                 }`}
+                disabled={loading}
               >
                 <i className="fas fa-puzzle-piece mr-1"></i> Puzzle
               </button>
@@ -242,6 +267,7 @@ const Home = () => {
                 className={`px-4 py-2 rounded-lg transition-colors ${
                   filters.category === 'racing' ? 'bg-purple-700 text-white' : 'bg-gray-700 hover:bg-gray-600'
                 }`}
+                disabled={loading}
               >
                 <i className="fas fa-flag-checkered mr-1"></i> Racing
               </button>
@@ -250,91 +276,88 @@ const Home = () => {
                 className={`px-4 py-2 rounded-lg transition-colors ${
                   filters.category === 'sports' ? 'bg-purple-700 text-white' : 'bg-gray-700 hover:bg-gray-600'
                 }`}
+                disabled={loading}
               >
                 <i className="fas fa-basketball-ball mr-1"></i> Sports
               </button>
-              <button
-                onClick={() => handleCategoryChange('shooter')}
-                className={`px-4 py-2 rounded-lg transition-colors ${
-                  filters.category === 'shooter' ? 'bg-purple-700 text-white' : 'bg-gray-700 hover:bg-gray-600'
-                }`}
-              >
-                <i className="fas fa-crosshairs mr-1"></i> Shooter
-              </button>
             </div>
             
-            <form onSubmit={handleSearch} className="flex w-full md:w-auto">
-              <input
-                type="text"
-                name="search"
-                placeholder="Search games..."
-                defaultValue={filters.searchTerm}
-                className="flex-grow md:w-64 px-4 py-2 bg-gray-700 border border-gray-600 rounded-l-lg focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
-              />
-              <button
-                type="submit"
-                className="px-4 py-2 bg-purple-700 hover:bg-purple-600 rounded-r-lg transition-colors"
-              >
-                <i className="fas fa-search"></i>
-              </button>
+            <form onSubmit={handleSearch} className="w-full md:w-auto">
+              <div className="relative">
+                <input
+                  type="text"
+                  name="search"
+                  placeholder="Search games..."
+                  className="w-full md:w-64 bg-gray-700 text-white px-4 py-2 pl-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  defaultValue={filters.searchTerm}
+                  disabled={loading}
+                />
+                <button 
+                  type="submit" 
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  disabled={loading}
+                >
+                  <i className="fas fa-search"></i>
+                </button>
+              </div>
             </form>
           </div>
         </section>
         
-        {/* Featured Games */}
-        {filters.category === 'all' && filters.page === 1 && !filters.searchTerm && renderFeaturedGames()}
+        {/* Featured Games Section */}
+        {!loading && games.some(game => game.featured) && renderFeaturedGames()}
         
-        {/* All Games */}
+        {/* All Games Section */}
         <section>
           <div className="flex items-center mb-8">
-            <h2 className="text-3xl font-bold">
-              {filters.category === 'all' ? 'All Games' : `${filters.category.charAt(0).toUpperCase() + filters.category.slice(1)} Games`}
-              {filters.searchTerm && ` matching "${filters.searchTerm}"`}
+            <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
+              {filters.category === 'all' 
+                ? 'All Games' 
+                : `${filters.category.charAt(0).toUpperCase() + filters.category.slice(1)} Games`}
             </h2>
-            <div className="ml-4 h-1 flex-grow bg-gray-700 rounded-full"></div>
+            <div className="ml-4 h-1 flex-grow bg-gradient-to-r from-purple-400 to-pink-600 rounded-full"></div>
           </div>
           
           {loading ? (
-            <div className="flex flex-col justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-purple-500 mb-4"></div>
-              <p className="text-gray-400 text-lg">Loading amazing VR games...</p>
-            </div>
-          ) : games.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {games.filter(game => !game.featured || filters.category !== 'all' || filters.page !== 1 || filters.searchTerm).map(game => (
-                <GameCard 
-                  key={game.id} 
-                  game={game} 
+              {renderGameCardSkeleton()}
+            </div>
+          ) : games.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20 text-center">
+              <div className="text-gray-500 text-8xl mb-6">
+                <i className="fas fa-ghost"></i>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-300 mb-4">No Games Found</h3>
+              <p className="text-gray-400 mb-8 max-w-md">
+                We couldn't find any games matching your search criteria. Try adjusting your filters or search query.
+              </p>
+              <button
+                onClick={() => updateFilters({ category: 'all', searchTerm: '', page: 1 })}
+                className="vr-button px-6 py-3 rounded-lg"
+              >
+                <i className="fas fa-redo mr-2"></i> Show All Games
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              {games.filter(game => !game.featured).map(game => (
+                <GameCard
+                  key={game.id}
+                  game={game}
                   onPlay={handlePlayGame}
                 />
               ))}
             </div>
-          ) : (
-            <div className="text-center py-16 bg-gray-800/50 backdrop-blur-sm rounded-xl">
-              <div className="text-6xl text-gray-600 mb-4">
-                <i className="fas fa-search"></i>
-              </div>
-              <h3 className="text-2xl font-semibold mb-2">No games found</h3>
-              <p className="text-gray-400 max-w-md mx-auto">
-                Try adjusting your search or filter to find what you're looking for, or check out our featured games.
-              </p>
-              <button
-                onClick={() => updateFilters({ category: 'all', searchTerm: '' })}
-                className="mt-6 px-6 py-2 bg-purple-700 hover:bg-purple-600 rounded-lg transition-colors"
-              >
-                View All Games
-              </button>
-            </div>
           )}
           
           {/* Pagination */}
-          {renderPagination()}
+          {!loading && games.length > 0 && renderPagination()}
         </section>
       </main>
       
       <Footer />
       
-      {/* Game Player */}
+      {/* Game Player Modal */}
       {currentGame && (
         <GamePlayer 
           game={currentGame} 
@@ -344,8 +367,8 @@ const Home = () => {
       
       {/* Notification */}
       {notification && (
-        <Notification
-          message={notification.message}
+        <Notification 
+          message={notification.message} 
           type={notification.type}
           onClose={() => setNotification(null)}
         />
