@@ -35,14 +35,23 @@ const GameGrid = ({ games, onPlay }) => {
     return stars;
   };
 
+  // Function to handle playing game in new window
+  const playGame = (game) => {
+    window.open(game.gameUrl, '_blank', 'width=1280,height=720,fullscreen=yes');
+    if (typeof onPlay === 'function') {
+      onPlay(game);
+    }
+  };
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
       {games.map(game => (
         <div 
           key={game.id}
           className="game-thumbnail bg-gray-800/90 rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:-translate-y-2 h-full flex flex-col"
           onMouseEnter={() => setHoveredGame(game.id)}
           onMouseLeave={() => setHoveredGame(null)}
+          style={{ minHeight: '360px' }}
         >
           <Link to={`/game/${game.id}`} className="block">
             <div className="relative aspect-video overflow-hidden bg-gray-800 flex items-center justify-center" style={{ height: '180px' }}>
@@ -94,7 +103,7 @@ const GameGrid = ({ games, onPlay }) => {
             </div>
             
             <button 
-              onClick={() => onPlay(game)}
+              onClick={() => playGame(game)}
               className={`w-full vr-button px-3 py-2 rounded-lg text-sm ${
                 hoveredGame === game.id ? 'pulse' : ''
               } text-white transition-colors flex items-center justify-center mt-auto`}

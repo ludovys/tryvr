@@ -73,12 +73,12 @@ const GameDetail = () => {
   // Handle play game
   const handlePlayGame = () => {
     if (game) {
-      setIsPlaying(true);
+      window.open(game.gameUrl, '_blank', 'width=1280,height=720,fullscreen=yes');
       incrementPlayCount(game.id);
     }
   };
 
-  // Close game player
+  // Close game player - no longer needed but keeping for backward compatibility
   const handleCloseGame = () => {
     setIsPlaying(false);
   };

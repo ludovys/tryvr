@@ -73,11 +73,13 @@ const GamesShowcase = () => {
 
   // Handle game play
   const handlePlayGame = (game) => {
-    setCurrentGame(game);
-    incrementPlayCount(game.id);
+    if (game) {
+      window.open(game.gameUrl, '_blank', 'width=1280,height=720,fullscreen=yes');
+      incrementPlayCount(game.id);
+    }
   };
 
-  // Close game player
+  // Close game player - no longer needed but keeping for backward compatibility
   const handleCloseGame = () => {
     setCurrentGame(null);
   };
@@ -345,19 +347,20 @@ const GamesShowcase = () => {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-12">
-              {games.filter(game => !game.featured || activeCategory !== 'all').map((game, index) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+              {games.filter(game => !game.featured || activeCategory !== 'all').map((game) => (
                 <div 
                   key={game.id}
-                  className={`flex flex-col ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} gap-4 md:gap-8 bg-gray-800/60 hover:bg-gray-800/80 rounded-xl p-4 md:p-6 transition-all duration-300 ${hoveredGame === game.id ? 'shadow-glow' : 'shadow-lg'}`}
+                  className="game-card bg-gray-800/90 rounded-lg overflow-hidden shadow-lg transition-transform duration-300 h-full flex flex-col hover:-translate-y-2"
                   onMouseEnter={() => setHoveredGame(game.id)}
                   onMouseLeave={() => setHoveredGame(null)}
+                  style={{ minHeight: '360px' }}
                 >
-                  <div className="w-full md:w-2/5 aspect-video overflow-hidden rounded-lg bg-gray-800 flex items-center justify-center" style={{ height: '220px' }}>
+                  <div className="relative overflow-hidden aspect-video bg-gray-800 flex items-center justify-center" style={{ height: '180px' }}>
                     <img 
                       src={game.thumbnailUrl || game.imageUrl} 
                       alt={game.title} 
-                      className={`object-contain transition-transform duration-500 ${hoveredGame === game.id ? 'scale-105' : ''}`}
+                      className="object-contain transition-transform duration-500"
                       style={{ 
                         width: 'auto',
                         height: 'auto',
@@ -372,48 +375,43 @@ const GamesShowcase = () => {
                         e.target.src = 'https://via.placeholder.com/300x169?text=Game+Thumbnail';
                       }}
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-80"></div>
+                    
+                    {game.featured && (
+                      <div className="absolute top-2 left-2 bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 text-xs font-bold px-2 py-1 rounded-full shadow-lg">
+                        <i className="fas fa-crown mr-1"></i> FEATURED
+                      </div>
+                    )}
+                    
+                    <div className="absolute bottom-0 left-0 w-full p-3">
+                      <h3 className="text-sm font-bold text-white mb-1 line-clamp-1 drop-shadow-lg">{game.title}</h3>
+                      <div className="flex items-center">
+                        <div className="flex mr-2 drop-shadow-lg scale-75 origin-left">
+                          {renderStars(game.rating)}
+                        </div>
+                        <span className="text-gray-200 text-xs drop-shadow-lg">{game.rating.toFixed(1)}</span>
+                      </div>
+                    </div>
                   </div>
                   
-                  <div className="w-full md:w-3/5 flex flex-col">
-                    <div className="flex flex-wrap items-center gap-2 mb-2">
-                      <span className="bg-gradient-to-r from-purple-700 to-purple-500 text-white text-xs px-3 py-1 rounded-full shadow-lg">
+                  <div className="p-3 flex flex-col flex-grow">
+                    <div className="flex items-center justify-between text-xs text-gray-400 mb-3">
+                      <span className="bg-gray-700 px-2 py-1 rounded-full">
                         {game.category.charAt(0).toUpperCase() + game.category.slice(1)}
                       </span>
-                      {game.featured && (
-                        <span className="bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-                          <i className="fas fa-crown mr-1"></i> FEATURED
-                        </span>
-                      )}
+                      <span><i className="fas fa-gamepad mr-1"></i> {game.playCount.toLocaleString()}</span>
                     </div>
                     
-                    <h3 className="text-xl md:text-2xl font-bold text-white mb-2">{game.title}</h3>
+                    <p className="text-gray-300 text-sm mb-4 line-clamp-2 flex-grow">{game.description}</p>
                     
-                    <div className="flex items-center mb-4">
-                      <div className="flex mr-2">
-                        {renderStars(game.rating)}
-                      </div>
-                      <span className="text-gray-300">{game.rating.toFixed(1)}</span>
-                    </div>
-                    
-                    <p className="text-gray-300 mb-6 text-sm md:text-base line-clamp-3">{game.description}</p>
-                    
-                    <div className="flex flex-wrap gap-4 mb-6">
-                      <button 
-                        onClick={() => handlePlayGame(game)}
-                        className={`vr-button px-4 md:px-6 py-2 md:py-3 rounded-lg flex items-center ${hoveredGame === game.id ? 'pulse' : ''}`}
-                      >
-                        <i className="fas fa-play-circle mr-2"></i> Play Now
-                      </button>
-                      
-                      <button className="px-4 md:px-6 py-2 md:py-3 bg-gray-700 hover:bg-gray-600 rounded-lg flex items-center transition-colors">
-                        <i className="fas fa-info-circle mr-2"></i> Details
-                      </button>
-                    </div>
-                    
-                    <div className="flex items-center justify-between text-sm text-gray-400 mt-auto">
-                      <span><i className="fas fa-gamepad mr-1"></i> {game.playCount.toLocaleString()} plays</span>
-                      <span><i className="far fa-calendar-alt mr-1"></i> {formatDate(game.createdAt)}</span>
-                    </div>
+                    <button 
+                      onClick={() => handlePlayGame(game)}
+                      className={`w-full vr-button px-3 py-2 rounded-lg text-sm ${
+                        hoveredGame === game.id ? 'pulse' : ''
+                      } text-white transition-colors flex items-center justify-center mt-auto`}
+                    >
+                      <i className="fas fa-play-circle mr-2"></i> Play Now
+                    </button>
                   </div>
                 </div>
               ))}

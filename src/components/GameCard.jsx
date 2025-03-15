@@ -98,7 +98,13 @@ const GameCard = ({ game, onPlay }) => {
         </div>
         
         <button 
-          onClick={() => onPlay(game)}
+          onClick={() => {
+            window.open(game.gameUrl, '_blank', 'width=1280,height=720,fullscreen=yes');
+            // If there's a function to increment play count passed as prop
+            if (typeof onPlay === 'function') {
+              onPlay(game);
+            }
+          }}
           className={`w-full vr-button px-4 py-2 rounded-lg ${
             isHovered ? 'pulse' : ''
           } text-white transition-colors flex items-center justify-center`}
