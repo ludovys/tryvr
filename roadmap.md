@@ -9,6 +9,7 @@
 - ✅ Improved content layout for better display and responsiveness
 - ✅ Enhanced card component design for games
 - ✅ Fixed build by adding missing date-fns dependency
+- ✅ Fixed blank page issue by adding robust date validation
 
 ## Current Tasks
 - 🔄 Further optimize website performance
