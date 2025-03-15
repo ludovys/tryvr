@@ -1,9 +1,13 @@
 name = "tryvr"
 compatibility_date = "2023-01-01"
-compatibility_flags = []
 
 # Pages configuration
 pages_build_output_dir = "dist"
+
+# Environment variables
+[vars]
+API_KEY = "your-api-key"
+DEBUG = "false"
 
 # D1 Database configuration
 [[d1_databases]]
@@ -16,11 +20,6 @@ database_id = "1e9a1ae1-42dc-41da-ae5e-6c4f4daff98e"
 binding = "BUCKET"
 bucket_name = "tryvr"
 preview_bucket_name = "tryvr-preview"
-
-# Environment variables
-[vars]
-API_KEY = "your-api-key"
-DEBUG = "false"
 
 # Routes
 routes = [
