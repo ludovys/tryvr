@@ -156,11 +156,11 @@ const GamesShowcase = () => {
         </div>
         
         <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-purple-900/40 to-blue-900/40 backdrop-blur-sm">
-          <div className="absolute inset-0 bg-cover bg-center opacity-20" style={{ backgroundImage: `url(${featured.imageUrl})` }}></div>
+          <div className="absolute inset-0 bg-cover bg-center opacity-20" style={{ backgroundImage: `url(${featured.thumbnailUrl || featured.imageUrl})` }}></div>
           <div className="relative z-10 flex flex-col md:flex-row p-8 gap-8">
             <div className="w-full md:w-1/2 aspect-video overflow-hidden rounded-lg shadow-2xl">
               <img 
-                src={featured.imageUrl} 
+                src={featured.thumbnailUrl || featured.imageUrl} 
                 alt={featured.title} 
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                 style={{ maxHeight: '100%', objectFit: 'cover' }}
@@ -347,13 +347,13 @@ const GamesShowcase = () => {
                 >
                   <div className="w-full md:w-2/5 aspect-video overflow-hidden rounded-lg">
                     <img 
-                      src={game.imageUrl} 
+                      src={game.thumbnailUrl || game.imageUrl} 
                       alt={game.title} 
                       className={`w-full h-full object-cover transition-transform duration-500 ${hoveredGame === game.id ? 'scale-105' : ''}`}
                       style={{ maxHeight: '100%', objectFit: 'cover' }}
                       onError={(e) => {
                         e.target.onerror = null;
-                        e.target.src = 'https://via.placeholder.com/640x360?text=Game+Image';
+                        e.target.src = 'https://via.placeholder.com/300x169?text=Game+Thumbnail';
                       }}
                     />
                   </div>

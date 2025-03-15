@@ -166,9 +166,10 @@ const GameDetail = () => {
                 src={game.imageUrl} 
                 alt={game.title} 
                 className="w-full h-full object-cover"
+                style={{ maxHeight: '100%', objectFit: 'cover' }}
                 onError={(e) => {
                   e.target.onerror = null;
-                  e.target.src = 'https://via.placeholder.com/1280x720?text=Game+Image';
+                  e.target.src = 'https://via.placeholder.com/640x360?text=Game+Image';
                 }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
@@ -240,7 +241,7 @@ const GameDetail = () => {
                   >
                     <div className="relative aspect-video">
                       <img 
-                        src={relatedGame.imageUrl} 
+                        src={relatedGame.thumbnailUrl || relatedGame.imageUrl} 
                         alt={relatedGame.title} 
                         className="w-full h-full object-cover"
                         onError={(e) => {

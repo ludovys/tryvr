@@ -47,7 +47,7 @@ const GameGrid = ({ games, onPlay }) => {
           <Link to={`/game/${game.id}`} className="block">
             <div className="relative aspect-video overflow-hidden">
               <img 
-                src={game.imageUrl} 
+                src={game.thumbnailUrl || game.imageUrl} 
                 alt={game.title} 
                 className="w-full h-full object-cover transition-transform duration-500"
                 style={{ maxHeight: '100%', objectFit: 'cover' }}
