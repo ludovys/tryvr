@@ -357,7 +357,16 @@ const AdminDashboard = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="h-10 w-10 flex-shrink-0">
-                          <img className="h-10 w-10 rounded object-cover" src={game.imageUrl} alt={game.title} />
+                          <img 
+                            className="h-10 w-10 rounded object-contain" 
+                            src={game.thumbnailUrl || game.imageUrl} 
+                            alt={game.title}
+                            style={{
+                              imageRendering: 'auto',
+                              maxWidth: '100%',
+                              maxHeight: '100%'
+                            }}
+                          />
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-medium text-white">{game.title}</div>
