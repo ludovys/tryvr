@@ -9,7 +9,6 @@ pages_build_output_dir = "dist"
 
 [site]
 bucket = "./dist"
-entry-point = "functions"
 
 [build]
 command = "npm run build"
