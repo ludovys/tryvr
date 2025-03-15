@@ -4,6 +4,7 @@ This document outlines the planned features and improvements for the TryVR proje
 
 ## Current Tasks
 
+- [ ] Fix Cloudflare Functions deployment issue
 - [ ] Implement user authentication and profiles
 - [ ] Add game rating functionality
 - [ ] Create game comments/reviews system
