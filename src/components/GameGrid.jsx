@@ -48,7 +48,7 @@ const GameGrid = ({ games, onPlay }) => {
       {games.map(game => (
         <div 
           key={game.id}
-          className="game-card"
+          className="game-card h-full"
           onMouseEnter={() => setHoveredGame(game.id)}
           onMouseLeave={() => setHoveredGame(null)}
         >
@@ -62,6 +62,7 @@ const GameGrid = ({ games, onPlay }) => {
                   e.target.src = 'https://via.placeholder.com/300x169?text=Game+Thumbnail';
                 }}
                 loading="lazy"
+                className="w-full h-full object-contain"
               />
               
               {game.featured && (
@@ -74,7 +75,7 @@ const GameGrid = ({ games, onPlay }) => {
           
           <div className="game-card-content">
             <Link to={`/game/${game.id}`}>
-              <h3 className="game-card-title">{game.title}</h3>
+              <h3 className="game-card-title line-clamp-1">{game.title}</h3>
             </Link>
             
             <div className="game-card-meta">
@@ -91,11 +92,11 @@ const GameGrid = ({ games, onPlay }) => {
               {game.category.charAt(0).toUpperCase() + game.category.slice(1)}
             </div>
             
-            <p className="game-card-description">{game.description}</p>
+            <p className="game-card-description line-clamp-2">{game.description}</p>
             
             <button 
               onClick={() => playGame(game)}
-              className="btn btn-primary game-card-button"
+              className="btn btn-primary game-card-button mt-auto"
             >
               <i className="fas fa-play-circle mr-2"></i> Play Now
             </button>

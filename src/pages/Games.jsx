@@ -84,9 +84,9 @@ const Games = () => {
   // Render loading skeleton
   const renderSkeleton = () => {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 animate-pulse">
+      <div className="games-grid">
         {Array(15).fill().map((_, index) => (
-          <div key={index} className="bg-gray-800/90 rounded-lg overflow-hidden shadow-lg">
+          <div key={index} className="bg-gray-800/90 rounded-lg overflow-hidden shadow-lg h-full">
             <div className="aspect-video bg-gray-700"></div>
             <div className="p-3">
               <div className="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>

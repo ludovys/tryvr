@@ -157,7 +157,7 @@ const Home = () => {
           <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">Featured Games</h2>
           <div className="ml-4 h-1 flex-grow bg-gradient-to-r from-purple-400 to-pink-600 rounded-full"></div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <div className="games-grid">
           {featuredGames.map(game => (
             <GameCard 
               key={game.id} 
@@ -339,7 +339,7 @@ const Home = () => {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <div className="games-grid">
               {games.filter(game => !game.featured).map(game => (
                 <GameCard
                   key={game.id}

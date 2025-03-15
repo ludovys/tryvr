@@ -61,8 +61,8 @@ const Header = () => {
             </div>
           </Link>
           
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-1">
+          {/* Desktop Navigation - Simplified */}
+          <nav className="hidden md:flex items-center space-x-4">
             <Link 
               to="/" 
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
@@ -71,7 +71,7 @@ const Header = () => {
                   : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600'
               }`}
             >
-              <i className="fas fa-home mr-2"></i> Home
+              Home
             </Link>
             <Link 
               to="/games" 
@@ -81,17 +81,7 @@ const Header = () => {
                   : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600'
               }`}
             >
-              <i className="fas fa-gamepad mr-2"></i> Games
-            </Link>
-            <Link 
-              to="/games-showcase" 
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                isActive('/games-showcase') 
-                  ? 'bg-indigo-50 text-indigo-700' 
-                  : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600'
-              }`}
-            >
-              <i className="fas fa-th-large mr-2"></i> Showcase
+              Games
             </Link>
             <Link 
               to="/about" 
@@ -101,18 +91,12 @@ const Header = () => {
                   : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600'
               }`}
             >
-              <i className="fas fa-info-circle mr-2"></i> About
+              About
             </Link>
           </nav>
           
-          {/* Right side - Login & CTA */}
-          <div className="hidden md:flex items-center space-x-3">
-            <Link 
-              to="/admin-login" 
-              className="text-sm font-medium text-gray-700 hover:text-indigo-600 px-3 py-2"
-            >
-              <i className="fas fa-user-shield mr-2"></i> Admin
-            </Link>
+          {/* Right side - Primary CTA only */}
+          <div className="hidden md:flex items-center">
             <Link
               to="/games"
               className="btn btn-primary"
@@ -135,7 +119,7 @@ const Header = () => {
           </button>
         </div>
         
-        {/* Mobile Menu */}
+        {/* Mobile Menu - Simplified */}
         {isMobileMenuOpen && (
           <nav className="md:hidden py-3 border-t border-gray-100 animate-fadeIn">
             <div className="space-y-1 py-2">
@@ -162,17 +146,6 @@ const Header = () => {
                 <i className="fas fa-gamepad mr-3 w-5 text-center"></i> Games
               </Link>
               <Link 
-                to="/games-showcase" 
-                className={`flex items-center px-4 py-3 rounded-md text-base font-medium transition-colors ${
-                  isActive('/games-showcase') 
-                    ? 'bg-indigo-50 text-indigo-700' 
-                    : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600'
-                }`}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <i className="fas fa-th-large mr-3 w-5 text-center"></i> Showcase
-              </Link>
-              <Link 
                 to="/about" 
                 className={`flex items-center px-4 py-3 rounded-md text-base font-medium transition-colors ${
                   isActive('/about') 
@@ -184,25 +157,14 @@ const Header = () => {
                 <i className="fas fa-info-circle mr-3 w-5 text-center"></i> About
               </Link>
               
-              <div className="pt-4 pb-2">
-                <div className="flex items-center px-4">
-                  <Link 
-                    to="/admin-login" 
-                    className="flex items-center text-base font-medium text-gray-700 hover:text-indigo-600 px-3 py-2"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <i className="fas fa-user-shield mr-2"></i> Admin
-                  </Link>
-                </div>
-                <div className="mt-3 px-4">
-                  <Link
-                    to="/games"
-                    className="btn btn-primary w-full justify-center"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <i className="fas fa-vr-cardboard mr-2"></i> Try VR Now
-                  </Link>
-                </div>
+              <div className="mt-3 px-4">
+                <Link
+                  to="/games"
+                  className="btn btn-primary w-full justify-center"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <i className="fas fa-vr-cardboard mr-2"></i> Try VR Now
+                </Link>
               </div>
             </div>
           </nav>

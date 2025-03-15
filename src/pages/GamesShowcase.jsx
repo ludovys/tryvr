@@ -347,14 +347,13 @@ const GamesShowcase = () => {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            <div className="games-grid">
               {games.filter(game => !game.featured || activeCategory !== 'all').map((game) => (
                 <div 
                   key={game.id}
                   className="game-card bg-gray-800/90 rounded-lg overflow-hidden shadow-lg h-full flex flex-col"
                   onMouseEnter={() => setHoveredGame(game.id)}
                   onMouseLeave={() => setHoveredGame(null)}
-                  style={{ height: '400px' }}
                 >
                   <div className="relative bg-gray-800 flex items-center justify-center" style={{ height: '180px', overflow: 'hidden' }}>
                     <img 
