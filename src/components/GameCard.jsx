@@ -99,7 +99,7 @@ const GameCard = React.memo(({ game, onPlay }) => {
             {game.description}
           </p>
           
-          <div className="flex justify-between items-center text-xs text-gray-300">
+          <div className="flex justify-between items-center text-xs text-white">
             <span><i className="far fa-calendar-alt mr-1"></i> {formattedDate}</span>
             <span><i className="fas fa-users mr-1"></i> {game.players || 0} players</span>
           </div>
