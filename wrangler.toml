@@ -1,17 +1,40 @@
 name = "tryvr"
 main = "./.cloudflare/workers-site/index.js"
 compatibility_date = "2023-01-01"
-
-[site]
-bucket = "./dist"
-
-[build]
-command = "npm run build"
+compatibility_flags = []
+workers_dev = true
 
 # Pages configuration
 pages_build_output_dir = "dist"
 
+[site]
+bucket = "./dist"
+entry-point = "functions"
+
+[build]
+command = "npm run build"
+
+# D1 Database configuration
+[[d1_databases]]
+binding = "DB"
+database_name = "tryvr"
+database_id = "1e9a1ae1-42dc-41da-ae5e-6c4f4daff98e"
+
+# R2 Storage configuration
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "tryvr"
+preview_bucket_name = "tryvr-preview"
+
+# Environment variables
+[vars]
+API_KEY = "your-api-key"
+DEBUG = "false"
+
 [env.production]
+workers_dev = false
+route = "tryvr.pages.dev/*"
+zone_id = ""
 routes = [
   { pattern = "/api/*", script = "api" }
 ]
@@ -22,6 +45,7 @@ database_name = "tryvr-db"
 database_id = "placeholder-id"
 
 [env.development]
+workers_dev = true
 routes = [
   { pattern = "/api/*", script = "api" }
 ]
