@@ -49,11 +49,14 @@ const GameGrid = ({ games, onPlay }) => {
               <img 
                 src={game.thumbnailUrl || game.imageUrl} 
                 alt={game.title} 
-                className="w-full object-cover transition-transform duration-500"
+                className="w-full object-contain transition-transform duration-500"
                 style={{ 
-                  height: 'auto', 
+                  height: 'auto',
+                  maxHeight: '100%',
+                  maxWidth: '100%',
                   aspectRatio: '16/9',
-                  objectPosition: 'center'
+                  objectPosition: 'center',
+                  margin: '0 auto'
                 }}
                 onError={(e) => {
                   e.target.onerror = null;

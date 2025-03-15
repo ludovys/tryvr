@@ -165,11 +165,14 @@ const GameDetail = () => {
               <img 
                 src={game.thumbnailUrl || game.imageUrl} 
                 alt={game.title} 
-                className="w-full object-cover"
+                className="w-full object-contain"
                 style={{ 
-                  height: 'auto', 
+                  height: 'auto',
+                  maxHeight: '100%',
+                  maxWidth: '100%',
                   aspectRatio: '16/9',
-                  objectPosition: 'center'
+                  objectPosition: 'center',
+                  margin: '0 auto'
                 }}
                 onError={(e) => {
                   e.target.onerror = null;
@@ -247,11 +250,14 @@ const GameDetail = () => {
                       <img 
                         src={relatedGame.thumbnailUrl || relatedGame.imageUrl} 
                         alt={relatedGame.title} 
-                        className="w-full object-cover"
+                        className="w-full object-contain"
                         style={{ 
-                          height: 'auto', 
+                          height: 'auto',
+                          maxHeight: '100%',
+                          maxWidth: '100%',
                           aspectRatio: '16/9',
-                          objectPosition: 'center'
+                          objectPosition: 'center',
+                          margin: '0 auto'
                         }}
                         onError={(e) => {
                           e.target.onerror = null;
