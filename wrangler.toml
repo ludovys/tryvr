@@ -13,7 +13,7 @@ DEBUG = "false"
 [[d1_databases]]
 binding = "DB"
 database_name = "tryvr"
-database_id = "1e9a1ae1-42dc-41da-ae5e-6c4f4daff98e"
+database_id = "4cae8c71-4414-4fb6-8d1b-4efdd3377064"
 
 # Environment-specific configurations
 [env.production]
