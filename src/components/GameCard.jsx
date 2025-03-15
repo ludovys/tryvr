@@ -80,8 +80,8 @@ const GameCard = React.memo(({ game, onPlay }) => {
         {/* Card Content */}
         <div className="p-5">
           <div className="flex justify-between items-start mb-2">
-            <h3 className="text-xl font-bold text-gray-900 line-clamp-1">{game.title}</h3>
-            <span className="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded">
+            <h3 className="text-xl font-bold text-white line-clamp-1">{game.title}</h3>
+            <span className="bg-purple-700 text-white text-xs px-2 py-1 rounded">
               {game.category}
             </span>
           </div>
@@ -90,16 +90,16 @@ const GameCard = React.memo(({ game, onPlay }) => {
             <div className="flex mr-2">
               {renderStars(game.rating)}
             </div>
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-white">
               ({game.rating.toFixed(1)})
             </span>
           </div>
           
-          <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+          <p className="text-gray-300 text-sm mb-4 line-clamp-2">
             {game.description}
           </p>
           
-          <div className="flex justify-between items-center text-xs text-gray-500">
+          <div className="flex justify-between items-center text-xs text-gray-300">
             <span><i className="far fa-calendar-alt mr-1"></i> {formattedDate}</span>
             <span><i className="fas fa-users mr-1"></i> {game.players || 0} players</span>
           </div>

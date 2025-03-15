@@ -11,6 +11,7 @@
 - ✅ Fixed build by adding missing date-fns dependency
 - ✅ Fixed blank page issue by adding robust date validation
 - ✅ Improved game card display with consistent image sizes and simplified layout
+- ✅ Fixed text visibility issue in game cards (dark text on dark background)
 
 ## Current Tasks
 - 🔄 Further optimize website performance
