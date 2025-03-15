@@ -1,19 +1,21 @@
-import { useState } from 'react';
+import { useState, memo, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import vrLogo from '../assets/vr-logo.svg';
 
-const Footer = () => {
+// Tab configuration
+const TABS = [
+  { id: 'navigate', label: 'Navigate' },
+  { id: 'support', label: 'Support' },
+  { id: 'legal', label: 'Legal' },
+  { id: 'social', label: 'Social' }
+];
+
+const Footer = memo(() => {
   const currentYear = new Date().getFullYear();
   const [activeTab, setActiveTab] = useState('navigate');
 
-  const tabs = [
-    { id: 'navigate', label: 'Navigate' },
-    { id: 'support', label: 'Support' },
-    { id: 'legal', label: 'Legal' },
-    { id: 'social', label: 'Social' }
-  ];
-
-  const renderTabContent = () => {
+  // Memoize tab content to prevent unnecessary re-renders
+  const tabContent = useMemo(() => {
     switch (activeTab) {
       case 'navigate':
         return (
@@ -95,7 +97,7 @@ const Footer = () => {
       default:
         return null;
     }
-  };
+  }, [activeTab]);
 
   return (
     <footer className="site-footer">
@@ -104,7 +106,7 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row gap-8 justify-between mb-8">
           <div className="max-w-md">
             <div className="flex items-center mb-4">
-              <img src={vrLogo} alt="TryVR Logo" className="h-8 w-8 mr-3" />
+              <img src={vrLogo} alt="TryVR Logo" className="h-8 w-8 mr-3" loading="lazy" />
               <h3 className="text-xl font-bold text-indigo-600">TryVR</h3>
             </div>
             <p className="mb-4 text-gray-600">
@@ -114,10 +116,11 @@ const Footer = () => {
           
           <div className="max-w-md w-full">
             <h4 className="text-sm font-semibold uppercase text-gray-700 mb-3">Stay updated</h4>
-            <form className="flex">
+            <form className="flex" onSubmit={(e) => e.preventDefault()}>
               <input 
                 type="email" 
                 placeholder="Your email" 
+                aria-label="Email for newsletter"
                 className="flex-grow px-3 py-2 bg-gray-50 border border-gray-200 rounded-l-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               />
               <button 
@@ -134,7 +137,7 @@ const Footer = () => {
         <div className="border-t border-gray-200 pt-8">
           {/* Tab navigation */}
           <div className="flex overflow-x-auto mb-6 border-b border-gray-200">
-            {tabs.map(tab => (
+            {TABS.map(tab => (
               <button
                 key={tab.id}
                 className={`px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap ${
@@ -143,6 +146,8 @@ const Footer = () => {
                     : 'text-gray-600 hover:text-indigo-600'
                 }`}
                 onClick={() => setActiveTab(tab.id)}
+                aria-selected={activeTab === tab.id}
+                role="tab"
               >
                 {tab.label}
               </button>
@@ -150,8 +155,8 @@ const Footer = () => {
           </div>
           
           {/* Tab content */}
-          <div className="py-4">
-            {renderTabContent()}
+          <div className="py-4" role="tabpanel">
+            {tabContent}
           </div>
         </div>
         
@@ -170,6 +175,8 @@ const Footer = () => {
       </div>
     </footer>
   );
-};
+});
+
+Footer.displayName = 'Footer';
 
 export default Footer; 

@@ -1,7 +1,8 @@
+import { memo } from 'react';
 import { Link } from 'react-router-dom';
 import vrLogo from '../assets/vr-logo.svg';
 
-const Header = () => {
+const Header = memo(() => {
   return (
     <div className="page-container py-4">
       <div className="flex items-center justify-between">
@@ -12,6 +13,7 @@ const Header = () => {
               src={vrLogo} 
               alt="TryVR Logo" 
               className="h-10 w-10"
+              loading="eager"
             />
           </div>
           <h1 className="text-2xl font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">
@@ -30,6 +32,8 @@ const Header = () => {
       </div>
     </div>
   );
-};
+});
+
+Header.displayName = 'Header';
 
 export default Header; 
