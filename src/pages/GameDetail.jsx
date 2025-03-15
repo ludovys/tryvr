@@ -165,7 +165,7 @@ const GameDetail = () => {
               <img 
                 src={game.thumbnailUrl || game.imageUrl} 
                 alt={game.title} 
-                className="w-full h-full object-cover"
+                className="w-full object-cover"
                 style={{ maxHeight: '100%', objectFit: 'cover' }}
                 onError={(e) => {
                   e.target.onerror = null;
@@ -243,7 +243,8 @@ const GameDetail = () => {
                       <img 
                         src={relatedGame.thumbnailUrl || relatedGame.imageUrl} 
                         alt={relatedGame.title} 
-                        className="w-full h-full object-cover"
+                        className="w-full object-cover"
+                        style={{ maxHeight: '100%', objectFit: 'cover' }}
                         onError={(e) => {
                           e.target.onerror = null;
                           e.target.src = 'https://via.placeholder.com/300x169?text=Game+Thumbnail';

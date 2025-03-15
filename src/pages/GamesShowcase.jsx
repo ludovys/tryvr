@@ -162,7 +162,7 @@ const GamesShowcase = () => {
               <img 
                 src={featured.thumbnailUrl || featured.imageUrl} 
                 alt={featured.title} 
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                className="w-full object-cover hover:scale-105 transition-transform duration-500"
                 style={{ maxHeight: '100%', objectFit: 'cover' }}
                 onError={(e) => {
                   e.target.onerror = null;
