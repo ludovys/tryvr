@@ -17,6 +17,7 @@ This document outlines the planned features and improvements for the TryVR proje
 
 ## Completed Tasks
 
+- [x] Simplify header to only show the animated logo
 - [x] Fix header design by removing unnecessary buttons and improving navigation layout
 - [x] Fix game grid display to ensure games appear in rows instead of one per line
 - [x] Complete UI redesign with new modern template, color scheme, and components
