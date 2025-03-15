@@ -68,8 +68,8 @@ const Header = () => {
               to="/" 
               className={`vr-button px-4 py-2 rounded-lg transition ${
                 isActive('/') 
-                  ? 'bg-purple-600 text-white pulse' 
-                  : 'bg-gray-800/70 hover:bg-purple-700 text-gray-200'
+                  ? 'bg-purple-500 text-white pulse' 
+                  : 'bg-gray-200 hover:bg-purple-400 text-gray-800'
               }`}
             >
               <i className="fas fa-home mr-2"></i> Home
@@ -78,8 +78,8 @@ const Header = () => {
               to="/games" 
               className={`vr-button px-4 py-2 rounded-lg transition ${
                 isActive('/games') 
-                  ? 'bg-purple-600 text-white pulse' 
-                  : 'bg-gray-800/70 hover:bg-purple-700 text-gray-200'
+                  ? 'bg-purple-500 text-white pulse' 
+                  : 'bg-gray-200 hover:bg-purple-400 text-gray-800'
               }`}
             >
               <i className="fas fa-gamepad mr-2"></i> Games
@@ -88,8 +88,8 @@ const Header = () => {
               to="/games-showcase" 
               className={`vr-button px-4 py-2 rounded-lg transition ${
                 isActive('/games-showcase') 
-                  ? 'bg-purple-600 text-white pulse' 
-                  : 'bg-gray-800/70 hover:bg-purple-700 text-gray-200'
+                  ? 'bg-purple-500 text-white pulse' 
+                  : 'bg-gray-200 hover:bg-purple-400 text-gray-800'
               }`}
             >
               <i className="fas fa-th-large mr-2"></i> Games Showcase
@@ -98,8 +98,8 @@ const Header = () => {
               to="/games-without-images" 
               className={`vr-button px-4 py-2 rounded-lg transition ${
                 isActive('/games-without-images') 
-                  ? 'bg-purple-600 text-white pulse' 
-                  : 'bg-gray-800/70 hover:bg-purple-700 text-gray-200'
+                  ? 'bg-purple-500 text-white pulse' 
+                  : 'bg-gray-200 hover:bg-purple-400 text-gray-800'
               }`}
             >
               <i className="fas fa-image-slash mr-2"></i> Missing Images
@@ -108,8 +108,8 @@ const Header = () => {
               to="/about" 
               className={`vr-button px-4 py-2 rounded-lg transition ${
                 isActive('/about') 
-                  ? 'bg-purple-600 text-white pulse' 
-                  : 'bg-gray-800/70 hover:bg-purple-700 text-gray-200'
+                  ? 'bg-purple-500 text-white pulse' 
+                  : 'bg-gray-200 hover:bg-purple-400 text-gray-800'
               }`}
             >
               <i className="fas fa-info-circle mr-2"></i> About VR

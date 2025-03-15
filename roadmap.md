@@ -17,6 +17,8 @@ This document outlines the planned features and improvements for the TryVR proje
 
 ## Completed Tasks
 
+- [x] Update UI color scheme to be lighter for better daylight viewing
+- [x] Ensure games display side by side in rows on desktop screens
 - [x] Improve responsive design for better mobile and tablet experience
 - [x] Fix image styling to prevent stretching and maintain aspect ratio
 - [x] Fix image sizes to use thumbnails instead of full-sized images

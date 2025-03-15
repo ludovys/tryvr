@@ -44,17 +44,17 @@ const GameGrid = ({ games, onPlay }) => {
   };
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-4 py-6">
       {games.map(game => (
         <div 
           key={game.id}
-          className="game-thumbnail bg-gray-800/90 rounded-lg overflow-hidden shadow-lg h-full flex flex-col"
+          className="game-thumbnail bg-gray-100 rounded-lg overflow-hidden shadow-md h-full flex flex-col"
           onMouseEnter={() => setHoveredGame(game.id)}
           onMouseLeave={() => setHoveredGame(null)}
           style={{ height: '400px' }}
         >
           <Link to={`/game/${game.id}`} className="block">
-            <div className="relative bg-gray-800 flex items-center justify-center" style={{ height: '180px', overflow: 'hidden' }}>
+            <div className="relative bg-gray-200 flex items-center justify-center" style={{ height: '180px', overflow: 'hidden' }}>
               <img 
                 src={game.thumbnailUrl || game.imageUrl} 
                 alt={game.title} 
@@ -70,35 +70,35 @@ const GameGrid = ({ games, onPlay }) => {
                 }}
                 loading="lazy"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-80"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-gray-400/70 to-transparent opacity-50"></div>
               
               {game.featured && (
-                <div className="absolute top-2 left-2 bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 text-xs font-bold px-2 py-1 rounded-full shadow-lg">
+                <div className="absolute top-2 left-2 bg-gradient-to-r from-yellow-400 to-amber-400 text-gray-800 text-xs font-bold px-2 py-1 rounded-full shadow-md">
                   <i className="fas fa-crown mr-1"></i>
                 </div>
               )}
               
               <div className="absolute bottom-0 left-0 w-full p-3">
-                <h3 className="text-sm font-bold text-white mb-1 line-clamp-1 drop-shadow-lg">{game.title}</h3>
+                <h3 className="text-sm font-bold text-gray-800 mb-1 line-clamp-1 drop-shadow-md">{game.title}</h3>
                 <div className="flex items-center">
-                  <div className="flex mr-2 drop-shadow-lg scale-75 origin-left">
+                  <div className="flex mr-2 drop-shadow-md scale-75 origin-left">
                     {renderStars(game.rating)}
                   </div>
-                  <span className="text-gray-200 text-xs drop-shadow-lg">{game.rating.toFixed(1)}</span>
+                  <span className="text-gray-700 text-xs drop-shadow-md">{game.rating.toFixed(1)}</span>
                 </div>
               </div>
             </div>
           </Link>
           
-          <div className="p-3 flex flex-col flex-grow">
-            <div className="flex items-center justify-between text-xs text-gray-400 mb-3">
-              <span className="bg-gray-700 px-2 py-1 rounded-full">
+          <div className="p-3 flex flex-col flex-grow bg-white">
+            <div className="flex items-center justify-between text-xs text-gray-600 mb-3">
+              <span className="bg-gray-200 px-2 py-1 rounded-full">
                 {game.category.charAt(0).toUpperCase() + game.category.slice(1)}
               </span>
               <span><i className="fas fa-gamepad mr-1"></i> {game.playCount.toLocaleString()}</span>
             </div>
             
-            <p className="text-gray-300 text-sm mb-4 line-clamp-2 h-10 overflow-hidden">{game.description}</p>
+            <p className="text-gray-700 text-sm mb-4 line-clamp-2 h-10 overflow-hidden">{game.description}</p>
             
             <button 
               onClick={() => playGame(game)}

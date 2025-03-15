@@ -4,12 +4,12 @@
 
 /* Custom VR-related styles */
 .vr-header-bg {
-  background: linear-gradient(135deg, #3b0764 0%, #6b21a8 100%);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #e7e5e4 0%, #a1a1aa 100%);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .vr-text-3d {
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   background: linear-gradient(to right, #a855f7, #ec4899);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -23,14 +23,14 @@
 .vr-button {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #6b21a8 0%, #9333ea 100%);
-  box-shadow: 0 4px 10px rgba(107, 33, 168, 0.3);
+  background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+  box-shadow: 0 4px 10px rgba(139, 92, 246, 0.3);
   transition: all 0.3s ease;
 }
 
 .vr-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(107, 33, 168, 0.4);
+  box-shadow: 0 6px 15px rgba(139, 92, 246, 0.4);
 }
 
 .vr-button::after {
@@ -63,15 +63,15 @@
 /* Game card styles */
 .game-card {
   transition: all 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(229, 231, 235, 0.5);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(5px);
 }
 
 .game-card:hover {
   transform: translateY(-10px) scale(1.02);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(147, 51, 234, 0.5);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(139, 92, 246, 0.3);
 }
 
 .game-card img {
@@ -91,11 +91,11 @@
   max-width: 100%;
   max-height: 100%;
   display: block;
-  background-color: black;
+  background-color: white;
 }
 
 :fullscreen, ::backdrop {
-  background-color: black;
+  background-color: white;
 }
 
 /* Set fullscreen sizing for iframe */
