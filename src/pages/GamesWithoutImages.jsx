@@ -64,14 +64,14 @@ const GamesWithoutImages = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
+    <div className="min-h-screen bg-gray-900 text-white">
       <Header />
       
-      <main className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Games Without Valid Images</h1>
+      <main className="page-container py-8">
+        <div className="mb-8 bg-gray-800/50 p-6 rounded-lg shadow-lg border border-gray-700/50">
+          <h1 className="text-3xl font-bold mb-4 text-indigo-300">Games Without Valid Images</h1>
           <p className="text-gray-300">
-            This page displays games that have missing or invalid image URLs.
+            This page displays games that have missing or invalid image URLs. These games need attention to ensure a consistent user experience.
           </p>
         </div>
         
@@ -86,59 +86,72 @@ const GamesWithoutImages = () => {
         {loading ? (
           renderSkeleton()
         ) : error ? (
-          <div className="bg-red-900/50 border border-red-700 text-white p-4 rounded-lg">
-            <p>Error: {error}</p>
+          <div className="bg-red-900/50 border border-red-700 text-white p-6 rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold mb-2 flex items-center">
+              <i className="fas fa-exclamation-circle mr-2 text-red-400"></i>
+              Error Occurred
+            </h2>
+            <p>{error}</p>
           </div>
         ) : games.length === 0 ? (
-          <div className="bg-blue-900/50 border border-blue-700 text-white p-4 rounded-lg">
+          <div className="bg-indigo-900/30 border border-indigo-700/50 p-6 rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold mb-2 flex items-center">
+              <i className="fas fa-check-circle mr-2 text-indigo-400"></i>
+              All Clear!
+            </h2>
             <p>Great news! All games have valid images.</p>
           </div>
         ) : (
           <div>
-            <div className="bg-blue-900/50 border border-blue-700 text-white p-4 rounded-lg mb-6">
+            <div className="bg-indigo-900/30 border border-indigo-700/50 p-6 rounded-lg shadow-md mb-6">
+              <h2 className="text-xl font-semibold mb-2 flex items-center">
+                <i className="fas fa-info-circle mr-2 text-indigo-400"></i>
+                Image Issues Found
+              </h2>
               <p>Found {games.length} games with missing or invalid images.</p>
             </div>
             
             <div className="space-y-4">
               {games.map(game => (
-                <div key={game.id} className="bg-gray-800/90 rounded-lg overflow-hidden shadow-lg p-4">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div key={game.id} className="bg-gray-800/80 rounded-lg overflow-hidden shadow-lg p-6 border border-gray-700/50 hover:border-indigo-500/30 transition-colors">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div>
-                      <h2 className="text-xl font-bold mb-2">{game.title}</h2>
-                      <p className="text-gray-300 mb-2 line-clamp-2">{game.description}</p>
+                      <h2 className="text-xl font-bold mb-3 text-white">{game.title}</h2>
+                      <p className="text-gray-300 mb-4 line-clamp-2">{game.description}</p>
                       <div className="flex flex-wrap gap-2 mb-2">
-                        <span className="bg-purple-900/70 text-purple-100 text-xs px-2 py-1 rounded">
+                        <span className="bg-indigo-900/70 text-indigo-100 text-xs px-3 py-1 rounded-full">
                           {game.category}
                         </span>
                         {game.featured && (
-                          <span className="bg-yellow-900/70 text-yellow-100 text-xs px-2 py-1 rounded">
-                            Featured
+                          <span className="bg-yellow-900/70 text-yellow-100 text-xs px-3 py-1 rounded-full">
+                            <i className="fas fa-star mr-1"></i> Featured
                           </span>
                         )}
-                        <span className="bg-gray-700/70 text-gray-100 text-xs px-2 py-1 rounded">
-                          Rating: {game.rating}
+                        <span className="bg-gray-700/70 text-gray-100 text-xs px-3 py-1 rounded-full">
+                          <i className="fas fa-star-half-alt mr-1"></i> Rating: {game.rating}
                         </span>
-                        <span className="bg-gray-700/70 text-gray-100 text-xs px-2 py-1 rounded">
-                          Plays: {game.playCount}
+                        <span className="bg-gray-700/70 text-gray-100 text-xs px-3 py-1 rounded-full">
+                          <i className="fas fa-gamepad mr-1"></i> Plays: {game.playCount}
                         </span>
-                        <span className="bg-gray-700/70 text-gray-100 text-xs px-2 py-1 rounded">
-                          Added: {formatDate(game.createdAt)}
+                        <span className="bg-gray-700/70 text-gray-100 text-xs px-3 py-1 rounded-full">
+                          <i className="fas fa-calendar-alt mr-1"></i> Added: {formatDate(game.createdAt)}
                         </span>
                       </div>
                     </div>
                     
-                    <div className="flex flex-col gap-2">
-                      <div className={`text-sm px-3 py-1 rounded-full ${
+                    <div className="flex flex-col gap-3">
+                      <div className={`text-sm px-4 py-2 rounded-full flex items-center ${
                         game.imageStatus === 'missing' 
                           ? 'bg-red-900/70 text-red-100' 
                           : 'bg-orange-900/70 text-orange-100'
                       }`}>
-                        <i className={`fas ${game.imageStatus === 'missing' ? 'fa-times-circle' : 'fa-exclamation-circle'} mr-1`}></i>
+                        <i className={`fas ${game.imageStatus === 'missing' ? 'fa-times-circle' : 'fa-exclamation-circle'} mr-2`}></i>
                         {game.imageStatus === 'missing' ? 'Missing Image URL' : 'Invalid Image URL'}
                       </div>
                       
                       {game.imageUrl && (
-                        <div className="text-xs text-gray-400 break-all">
+                        <div className="text-xs text-gray-400 break-all bg-gray-900/80 p-3 rounded border border-gray-700">
+                          <div className="font-semibold mb-1 text-gray-300">Current URL:</div>
                           <span className="font-mono">{game.imageUrl}</span>
                         </div>
                       )}
