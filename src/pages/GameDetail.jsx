@@ -161,7 +161,7 @@ const GameDetail = () => {
         <div className="flex flex-col lg:flex-row gap-4 lg:gap-8">
           {/* Main Content */}
           <div className="w-full lg:w-2/3">
-            <div className="relative aspect-video overflow-hidden rounded-lg shadow-2xl mb-4 lg:mb-6">
+            <div className="relative aspect-video overflow-hidden rounded-lg shadow-2xl mb-4 lg:mb-6 bg-gray-800 flex items-center justify-center" style={{ height: '360px' }}>
               <img 
                 src={game.thumbnailUrl || game.imageUrl} 
                 alt={game.title} 
@@ -169,13 +169,11 @@ const GameDetail = () => {
                 style={{ 
                   width: 'auto',
                   height: 'auto',
-                  maxWidth: '100%',
-                  maxHeight: '100%',
+                  maxWidth: '90%',
+                  maxHeight: '90%',
                   objectFit: 'contain',
                   margin: '0 auto',
-                  display: 'block',
-                  imageRendering: 'auto',
-                  objectPosition: 'center'
+                  display: 'block'
                 }}
                 onError={(e) => {
                   e.target.onerror = null;
@@ -249,7 +247,7 @@ const GameDetail = () => {
                     to={`/game/${relatedGame.id}`}
                     className="block bg-gray-800 rounded-lg overflow-hidden hover:bg-gray-700 transition-colors"
                   >
-                    <div className="relative aspect-video">
+                    <div className="relative aspect-video bg-gray-800 flex items-center justify-center" style={{ height: '120px' }}>
                       <img 
                         src={relatedGame.thumbnailUrl || relatedGame.imageUrl} 
                         alt={relatedGame.title} 
@@ -257,13 +255,11 @@ const GameDetail = () => {
                         style={{ 
                           width: 'auto',
                           height: 'auto',
-                          maxWidth: '100%',
-                          maxHeight: '100%',
+                          maxWidth: '90%',
+                          maxHeight: '90%',
                           objectFit: 'contain',
                           margin: '0 auto',
-                          display: 'block',
-                          imageRendering: 'auto',
-                          objectPosition: 'center'
+                          display: 'block'
                         }}
                         onError={(e) => {
                           e.target.onerror = null;

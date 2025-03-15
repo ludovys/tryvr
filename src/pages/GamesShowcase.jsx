@@ -158,7 +158,7 @@ const GamesShowcase = () => {
         <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-purple-900/40 to-blue-900/40 backdrop-blur-sm">
           <div className="absolute inset-0 bg-cover bg-center opacity-20" style={{ backgroundImage: `url(${featured.thumbnailUrl || featured.imageUrl})` }}></div>
           <div className="relative z-10 flex flex-col md:flex-row p-4 md:p-8 gap-4 md:gap-8">
-            <div className="w-full md:w-1/2 aspect-video overflow-hidden rounded-lg shadow-2xl">
+            <div className="w-full md:w-1/2 aspect-video overflow-hidden rounded-lg shadow-2xl bg-gray-800 flex items-center justify-center" style={{ height: '280px' }}>
               <img 
                 src={featured.thumbnailUrl || featured.imageUrl} 
                 alt={featured.title} 
@@ -166,13 +166,11 @@ const GamesShowcase = () => {
                 style={{ 
                   width: 'auto',
                   height: 'auto',
-                  maxWidth: '100%',
-                  maxHeight: '100%',
+                  maxWidth: '90%',
+                  maxHeight: '90%',
                   objectFit: 'contain',
                   margin: '0 auto',
-                  display: 'block',
-                  imageRendering: 'auto',
-                  objectPosition: 'center'
+                  display: 'block'
                 }}
                 onError={(e) => {
                   e.target.onerror = null;
@@ -355,7 +353,7 @@ const GamesShowcase = () => {
                   onMouseEnter={() => setHoveredGame(game.id)}
                   onMouseLeave={() => setHoveredGame(null)}
                 >
-                  <div className="w-full md:w-2/5 aspect-video overflow-hidden rounded-lg">
+                  <div className="w-full md:w-2/5 aspect-video overflow-hidden rounded-lg bg-gray-800 flex items-center justify-center" style={{ height: '220px' }}>
                     <img 
                       src={game.thumbnailUrl || game.imageUrl} 
                       alt={game.title} 
@@ -363,13 +361,11 @@ const GamesShowcase = () => {
                       style={{ 
                         width: 'auto',
                         height: 'auto',
-                        maxWidth: '100%',
-                        maxHeight: '100%',
+                        maxWidth: '90%',
+                        maxHeight: '90%',
                         objectFit: 'contain',
                         margin: '0 auto',
-                        display: 'block',
-                        imageRendering: 'auto',
-                        objectPosition: 'center'
+                        display: 'block'
                       }}
                       onError={(e) => {
                         e.target.onerror = null;
@@ -399,7 +395,7 @@ const GamesShowcase = () => {
                       <span className="text-gray-300">{game.rating.toFixed(1)}</span>
                     </div>
                     
-                    <p className="text-gray-300 mb-6 text-sm md:text-base">{game.description}</p>
+                    <p className="text-gray-300 mb-6 text-sm md:text-base line-clamp-3">{game.description}</p>
                     
                     <div className="flex flex-wrap gap-4 mb-6">
                       <button 

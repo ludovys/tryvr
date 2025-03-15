@@ -46,9 +46,9 @@ const GameCard = ({ game, onPlay }) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="relative overflow-hidden aspect-video">
+      <div className="relative overflow-hidden aspect-video bg-gray-800 flex items-center justify-center" style={{ height: '180px' }}>
         {imageError ? (
-          <div className="w-full h-48 bg-gray-700 flex items-center justify-center">
+          <div className="w-full h-full bg-gray-700 flex items-center justify-center">
             <i className="fas fa-gamepad text-4xl text-gray-500"></i>
           </div>
         ) : (
@@ -63,9 +63,7 @@ const GameCard = ({ game, onPlay }) => {
               maxHeight: '100%',
               objectFit: 'contain',
               margin: '0 auto',
-              display: 'block',
-              imageRendering: 'auto',
-              objectPosition: 'center'
+              display: 'block'
             }}
             onError={handleImageError}
             loading="lazy"
@@ -92,7 +90,7 @@ const GameCard = ({ game, onPlay }) => {
       </div>
       
       <div className="p-4 flex flex-col flex-grow">
-        <p className="text-gray-300 text-sm mb-4 line-clamp-3 flex-grow">{game.description}</p>
+        <p className="text-gray-300 text-sm mb-4 line-clamp-2 flex-grow h-12 overflow-hidden">{game.description}</p>
         
         <div className="flex items-center justify-between text-sm text-gray-400 mb-4">
           <span><i className="fas fa-gamepad mr-1"></i> {game.playCount.toLocaleString()} plays</span>

@@ -45,7 +45,7 @@ const GameGrid = ({ games, onPlay }) => {
           onMouseLeave={() => setHoveredGame(null)}
         >
           <Link to={`/game/${game.id}`} className="block">
-            <div className="relative aspect-video overflow-hidden">
+            <div className="relative aspect-video overflow-hidden bg-gray-800 flex items-center justify-center" style={{ height: '180px' }}>
               <img 
                 src={game.thumbnailUrl || game.imageUrl} 
                 alt={game.title} 
@@ -57,9 +57,7 @@ const GameGrid = ({ games, onPlay }) => {
                   maxHeight: '100%',
                   objectFit: 'contain',
                   margin: '0 auto',
-                  display: 'block',
-                  imageRendering: 'auto',
-                  objectPosition: 'center'
+                  display: 'block'
                 }}
                 onError={(e) => {
                   e.target.onerror = null;
