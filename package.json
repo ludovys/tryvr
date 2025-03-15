@@ -1,23 +1,39 @@
 {
-  "name": "amazon-affiliate-showcase",
-  "version": "1.0.0",
-  "description": "A lightweight Amazon affiliate product showcase with automatic affiliate link integration",
-  "main": "server.js",
+  "name": "tryvr-react",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
+    "wrangler:dev": "wrangler pages dev --compatibility-date=2023-01-01 dist",
+    "wrangler:deploy": "wrangler pages deploy dist --project-name=tryvr",
+    "deploy": "./deploy.sh",
+    "start": "npm run build && npm run wrangler:dev"
   },
-  "keywords": [
-    "amazon",
-    "affiliate",
-    "sqlite",
-    "tailwind",
-    "javascript"
-  ],
-  "author": "",
-  "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "@cloudflare/kv-asset-handler": "^0.3.0",
+    "@cloudflare/workers-types": "^4.20250313.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^6.30.0",
+    "wrangler": "^4.0.0"
+  },
   "devDependencies": {
-    "nodemon": "^2.0.22"
+    "@eslint/js": "^9.21.0",
+    "@tailwindcss/postcss": "^4.0.14",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.21",
+    "eslint": "^9.21.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "globals": "^15.15.0",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.0.14",
+    "vite": "^6.2.0"
   }
-} 
+}

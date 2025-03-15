@@ -1,90 +1,99 @@
-# TryVR - Virtual Reality Affiliate Showcase
+# TryVR - Browser-Based VR Games
 
-A lightweight, single-page web application for showcasing VR products with automatic Amazon affiliate link integration. Built with HTML5, JavaScript, Tailwind CSS, and SQLite3.
+TryVR is a platform for discovering and playing virtual reality games directly in your browser. No downloads required - just click and play!
+
+## Live Demo
+
+Visit the live demo at [https://tryvr.pages.dev](https://tryvr.pages.dev) or [https://dev.tryvr.pages.dev](https://dev.tryvr.pages.dev)
 
 ## Features
 
-- **VR-Focused Product Showcase**: Dedicated to virtual reality headsets, controllers, accessories, and games
-- **Automatic Affiliate Link Integration**: Automatically adds your Amazon affiliate ID to all product links
-- **SQLite3 Database**: Lightweight client-side database for storing product information
-- **Responsive Design**: Works on desktop and mobile devices
-- **Product Filtering**: Filter VR products by category and rating
-- **Pagination**: Handles large product collections with scrollable interface
-- **AI-Generated Descriptions**: Button to generate VR product descriptions with AI (mock implementation)
-- **Import/Export**: Save and load your product database
-- **Interactive VR Animations**: Engaging animations and 3D effects for an immersive experience
+- Browse a curated collection of browser-based VR games
+- Filter games by category
+- Search for games by title or description
+- Play games directly in your browser
+- Admin dashboard for managing games
+- Responsive design for all devices
 
-## Setup Instructions
+## Tech Stack
 
-1. **Configure Your Affiliate ID**:
-   - Open `app.js`
-   - Find the line `const AFFILIATE_ID = "youraffiliateid-20";`
-   - Replace `youraffiliateid-20` with your actual Amazon affiliate ID
+- **Frontend**: React, React Router, TailwindCSS
+- **Backend**: Cloudflare Workers, Cloudflare D1 (SQLite)
+- **Deployment**: Cloudflare Pages
 
-2. **Launch the Application**:
-   - **Option 1: Direct File Opening**
-     - Simply open `index.html` in a web browser
-     - No server setup required - everything runs in the browser
-   
-   - **Option 2: Using the Built-in Server**
-     - Install Node.js if you don't have it already
-     - Run `npm install` to install dependencies
-     - Run `npm start` to start the server
-     - Open `http://localhost:3000` in your browser
-     - For development with auto-reload, use `npm run dev` instead
+## Development
 
-3. **Adding VR Products**:
-   - Click the "Add New VR Product" button
-   - Enter the Amazon product URL, title, rating, and other details
-   - Click "Save Product" to add it to your showcase
-   - The affiliate link will be automatically generated
+### Prerequisites
 
-4. **AI-Generated VR Descriptions**:
-   - When adding a product, enter the title first
-   - Click "Generate Description" to create an AI-generated VR product description
-   - (Note: The current implementation uses mock data. To integrate with a real AI service, modify the `generateDescriptionWithAI` function in `app.js`)
+- Node.js (v16+)
+- npm or yarn
+- Wrangler CLI (for Cloudflare Workers)
 
-5. **Filtering VR Products**:
-   - Use the category and rating filters in the sidebar
-   - Products will update automatically when filters change
-   - Quick filter buttons in the header for VR headsets and accessories
+### Installation
 
-6. **Saving Your Database**:
-   - Click the "Export Database" button in the sidebar
-   - This will download a .db file with your product data
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/tryvr.git
+   cd tryvr
+   ```
 
-7. **Loading a Saved Database**:
-   - Click the "Import Database" button in the sidebar
-   - Select your previously saved .db file
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-## Technical Details
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
 
-- **SQLite**: Uses SQL.js, a JavaScript implementation of SQLite
-- **Tailwind CSS**: Utility-first CSS framework for styling
-- **Font Awesome**: Icon library for UI elements
-- **Three.js**: 3D animation library for immersive background effects
-- **No External Dependencies**: No build process or server required
+4. Open [http://localhost:5173](http://localhost:5173) in your browser.
 
-## VR Product Categories
+### Cloudflare Workers Development
 
-The application comes with predefined VR product categories:
+1. Install Wrangler CLI:
+   ```bash
+   npm install -g wrangler
+   ```
 
-- **VR Headsets**: Standalone and PC-connected virtual reality headsets
-- **Controllers**: VR controllers and input devices
-- **Accessories**: Comfort mods, cables, and other VR accessories
-- **VR Games**: Software titles for various VR platforms
+2. Login to Cloudflare:
+   ```bash
+   wrangler login
+   ```
 
-## Customization
+3. Start the local development server:
+   ```bash
+   wrangler dev
+   ```
 
-- **Styling**: Modify `styles.css` and `vr-animations.css` to change the appearance
-- **Categories**: Add more categories by updating the select options in `index.html` and the `getCategoryLabel` function in `app.js`
-- **Product Display**: Modify the `displayProducts` function in `app.js` to change how products are displayed
-- **Animations**: Adjust the Three.js animation in the index.html file
+## Deployment
+
+### Deploy to Cloudflare Pages
+
+1. Build the project:
+   ```bash
+   npm run build
+   ```
+
+2. Deploy to Cloudflare Pages:
+   ```bash
+   wrangler pages publish dist
+   ```
+
+## Admin Access
+
+To access the admin dashboard, navigate to `/admin-login` and use the following credentials:
+
+- Username: `admin`
+- Password: `password`
 
 ## License
 
-This project is open source and available under the MIT License.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-## Disclaimer
+## Acknowledgements
 
-This application is for demonstration purposes. Make sure to comply with Amazon's Affiliate Program policies when using this in production. 
+- [PlayCanvas](https://playcanvas.com/) - For providing the WebGL engine used by many of the games
+- [Unsplash](https://unsplash.com/) - For the game images
+- [Font Awesome](https://fontawesome.com/) - For the icons
+- [TailwindCSS](https://tailwindcss.com/) - For the styling
