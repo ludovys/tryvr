@@ -8,6 +8,7 @@
 - ✅ Updated header to include navigation tabs while keeping the logo on the left
 - ✅ Improved content layout for better display and responsiveness
 - ✅ Enhanced card component design for games
+- ✅ Fixed build by adding missing date-fns dependency
 
 ## Current Tasks
 - 🔄 Further optimize website performance
