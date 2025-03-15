@@ -11,27 +11,6 @@ DEBUG = "false"
 
 # D1 Database configuration
 [[d1_databases]]
-binding = "DB"
+binding = "DATABASE"
 database_name = "tryvr"
-database_id = "4cae8c71-4414-4fb6-8d1b-4efdd3377064"
-
-# Environment-specific configurations
-[env.production]
-[env.production.vars]
-API_KEY = "your-production-api-key"
-DEBUG = "false"
-
-[[env.production.d1_databases]]
-binding = "DB"
-database_name = "tryvr-db"
-database_id = "placeholder-id"
-
-[env.preview]
-[env.preview.vars]
-API_KEY = "your-preview-api-key"
-DEBUG = "true"
-
-[[env.preview.d1_databases]]
-binding = "DB"
-database_name = "tryvr-db-dev"
-database_id = "placeholder-id" 
+database_id = "4cae8c71-4414-4fb6-8d1b-4efdd3377064" 

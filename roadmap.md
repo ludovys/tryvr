@@ -4,7 +4,6 @@ This document outlines the planned features and improvements for the TryVR proje
 
 ## Current Tasks
 
-- [ ] Fix Cloudflare Functions deployment issue
 - [ ] Implement user authentication and profiles
 - [ ] Add game rating functionality
 - [ ] Create game comments/reviews system
@@ -18,6 +17,7 @@ This document outlines the planned features and improvements for the TryVR proje
 
 ## Completed Tasks
 
+- [x] Fix Cloudflare Functions deployment issue by renaming DB binding to DATABASE
 - [x] Fix wrangler.toml configuration by removing unsupported routes
 - [x] Fix Cloudflare Pages deployment by removing R2 configuration
 - [x] Fix dependency version mismatch for @cloudflare/kv-asset-handler
