@@ -15,16 +15,10 @@ binding = "DB"
 database_name = "tryvr"
 database_id = "1e9a1ae1-42dc-41da-ae5e-6c4f4daff98e"
 
-# R2 Storage configuration
-[[r2_buckets]]
-binding = "BUCKET"
-bucket_name = "tryvr"
-preview_bucket_name = "tryvr-preview"
-
-# Routes - moved from r2_buckets section
-[routes]
-pattern = "/*"
-zone_name = "tryvr.pages.dev"
+# Simple routes configuration
+routes = [
+  { pattern = "/*", zone_name = "tryvr.pages.dev" }
+]
 
 # Environment-specific configurations
 [env.production]
@@ -37,14 +31,10 @@ binding = "DB"
 database_name = "tryvr-db"
 database_id = "placeholder-id"
 
-[[env.production.r2_buckets]]
-binding = "BUCKET"
-bucket_name = "tryvr"
-
 # Routes for production
-[env.production.routes]
-pattern = "/api/*"
-zone_name = "tryvr.pages.dev"
+routes = [
+  { pattern = "/api/*", zone_name = "tryvr.pages.dev" }
+]
 
 [env.preview]
 [env.preview.vars]
@@ -56,11 +46,7 @@ binding = "DB"
 database_name = "tryvr-db-dev"
 database_id = "placeholder-id"
 
-[[env.preview.r2_buckets]]
-binding = "BUCKET"
-bucket_name = "tryvr-preview"
-
-# Routes for preview - fixed format
-[env.preview.routes]
-pattern = "/api/*"
-zone_name = "tryvr.pages.dev" 
+# Routes for preview
+routes = [
+  { pattern = "/api/*", zone_name = "tryvr.pages.dev" }
+] 
