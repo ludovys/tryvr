@@ -4,10 +4,21 @@ import { Link } from 'react-router-dom';
 const GameGrid = ({ games, onPlay }) => {
   const [hoveredGame, setHoveredGame] = useState(null);
 
-  // Format date
+  // Format date with error handling
   const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'short', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
+    try {
+      // Check if date is valid
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        return 'Date unavailable';
+      }
+      
+      const options = { year: 'numeric', month: 'short', day: 'numeric' };
+      return date.toLocaleDateString(undefined, options);
+    } catch (error) {
+      console.warn(`Error formatting date: ${dateString}`, error);
+      return 'Date unavailable';
+    }
   };
 
   // Render stars for rating
@@ -88,7 +99,7 @@ const GameGrid = ({ games, onPlay }) => {
                 <span className="ml-1">{game.rating.toFixed(1)}</span>
               </div>
               <span className="text-xs flex items-center">
-                <i className="fas fa-gamepad mr-1"></i> {game.playCount.toLocaleString()}
+                <i className="fas fa-gamepad mr-1"></i> {(game.playCount || 0).toLocaleString()}
               </span>
             </div>
             

@@ -2,8 +2,23 @@ import React from 'react';
 import { format } from 'date-fns';
 
 const GameCard = React.memo(({ game, onPlay }) => {
-  // Format the date
-  const formattedDate = format(new Date(game.releaseDate), 'MMM d, yyyy');
+  // Format the date with error handling
+  const formatDate = (dateString) => {
+    try {
+      // Check if date is valid
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        return 'Date unavailable';
+      }
+      return format(date, 'MMM d, yyyy');
+    } catch (error) {
+      console.warn(`Error formatting date: ${dateString}`, error);
+      return 'Date unavailable';
+    }
+  };
+  
+  // Safely get formatted date
+  const formattedDate = game.releaseDate ? formatDate(game.releaseDate) : 'Date unavailable';
   
   // Render stars for the rating
   const renderStars = (rating) => {
@@ -86,7 +101,7 @@ const GameCard = React.memo(({ game, onPlay }) => {
           
           <div className="flex justify-between items-center text-xs text-gray-500">
             <span><i className="far fa-calendar-alt mr-1"></i> {formattedDate}</span>
-            <span><i className="fas fa-users mr-1"></i> {game.players} players</span>
+            <span><i className="fas fa-users mr-1"></i> {game.players || 0} players</span>
           </div>
         </div>
       </div>
