@@ -170,39 +170,34 @@ const GamesShowcase = () => {
                   e.target.src = 'https://via.placeholder.com/640x360?text=Game+Image';
                 }}
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+              
+              <button 
+                onClick={() => handlePlayGame(featured)}
+                className="absolute bottom-4 right-4 vr-button px-6 py-3 rounded-lg text-base font-medium text-white flex items-center justify-center"
+              >
+                <i className="fas fa-play-circle mr-2"></i> Play
+              </button>
             </div>
             
             <div className="w-full md:w-1/2 flex flex-col justify-center">
-              <div className="flex flex-wrap items-center gap-3 mb-4">
-                <span className="bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 text-sm font-bold px-3 py-1 rounded-full shadow-lg">
-                  <i className="fas fa-crown mr-1"></i> FEATURED
-                </span>
-                <span className="bg-gradient-to-r from-purple-700 to-purple-500 text-white text-sm px-3 py-1 rounded-full shadow-lg">
-                  {featured.category.charAt(0).toUpperCase() + featured.category.slice(1)}
-                </span>
-              </div>
-              
               <h3 className="text-2xl md:text-4xl font-bold text-white mb-4">{featured.title}</h3>
               
-              <div className="flex items-center mb-8">
+              <div className="flex items-center mb-4">
                 <div className="flex mr-3 scale-125 origin-left">
                   {renderStars(featured.rating)}
                 </div>
-                <span className="text-gray-300 text-lg">{featured.rating.toFixed(1)}</span>
+                <span className="text-white text-lg">{featured.rating.toFixed(1)}</span>
               </div>
               
-              <div className="flex flex-wrap gap-4">
-                <button 
-                  onClick={() => handlePlayGame(featured)}
-                  className="vr-button px-6 md:px-8 py-4 rounded-lg flex items-center text-base font-medium"
-                >
-                  <i className="fas fa-play-circle mr-2"></i> Play Now
-                </button>
-              </div>
+              <span className="bg-gradient-to-r from-purple-700 to-purple-500 text-white text-sm px-3 py-1 rounded-full shadow-lg inline-block w-fit">
+                {featured.category.charAt(0).toUpperCase() + featured.category.slice(1)}
+              </span>
               
-              <div className="flex items-center gap-6 mt-8 text-sm text-gray-400">
-                <span><i className="fas fa-gamepad mr-1"></i> {featured.playCount.toLocaleString()} plays</span>
-                <span><i className="far fa-calendar-alt mr-1"></i> {formatDate(featured.createdAt)}</span>
+              <div className="mt-4">
+                <span className="bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 text-sm font-bold px-3 py-1 rounded-full shadow-lg inline-block">
+                  <i className="fas fa-crown mr-1"></i> FEATURED
+                </span>
               </div>
             </div>
           </div>
@@ -358,31 +353,29 @@ const GamesShowcase = () => {
                         <i className="fas fa-crown mr-1"></i> FEATURED
                       </div>
                     )}
+                    
+                    <button 
+                      onClick={() => handlePlayGame(game)}
+                      className="absolute bottom-3 right-3 vr-button px-4 py-2 rounded-lg text-sm font-medium text-white flex items-center justify-center"
+                    >
+                      <i className="fas fa-play-circle mr-2"></i> Play
+                    </button>
                   </div>
                   
-                  <div className="p-4 flex flex-col flex-grow">
+                  <div className="p-3 flex flex-col">
                     <h3 className="text-lg font-bold text-white mb-2 line-clamp-1">{game.title}</h3>
                     
-                    <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center justify-between">
                       <div className="flex items-center">
                         <div className="flex mr-2">
                           {renderStars(game.rating)}
                         </div>
-                        <span className="text-gray-300 text-sm">{game.rating.toFixed(1)}</span>
+                        <span className="text-white text-sm">{game.rating.toFixed(1)}</span>
                       </div>
                       
                       <span className="bg-purple-700/70 px-2 py-1 rounded-full text-white text-xs">
                         {game.category.charAt(0).toUpperCase() + game.category.slice(1)}
                       </span>
-                    </div>
-                    
-                    <div className="mt-auto">
-                      <button 
-                        onClick={() => handlePlayGame(game)}
-                        className="vr-button w-full px-4 py-3 rounded-lg text-sm font-medium text-white flex items-center justify-center"
-                      >
-                        <i className="fas fa-play-circle mr-2"></i> Play Now
-                      </button>
                     </div>
                   </div>
                 </div>
