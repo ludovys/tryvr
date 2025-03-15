@@ -163,7 +163,7 @@ const GameDetail = () => {
           <div className="w-full lg:w-2/3">
             <div className="relative aspect-video overflow-hidden rounded-lg shadow-2xl mb-6">
               <img 
-                src={game.imageUrl} 
+                src={game.thumbnailUrl || game.imageUrl} 
                 alt={game.title} 
                 className="w-full h-full object-cover"
                 style={{ maxHeight: '100%', objectFit: 'cover' }}

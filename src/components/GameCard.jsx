@@ -53,7 +53,7 @@ const GameCard = ({ game, onPlay }) => {
           </div>
         ) : (
           <img 
-            src={game.imageUrl} 
+            src={game.thumbnailUrl || game.imageUrl} 
             alt={game.title} 
             className="w-full h-full object-cover transition-transform duration-500"
             onError={handleImageError}

@@ -17,6 +17,7 @@ This document outlines the planned features and improvements for the TryVR proje
 
 ## Completed Tasks
 
+- [x] Fix image sizes to use thumbnails instead of full-sized images
 - [x] Create a page to identify games with missing or invalid images
 - [x] Create a 5-column grid layout for games with individual game pages
 - [x] Create a new Games Showcase page with an alternative layout for displaying games
