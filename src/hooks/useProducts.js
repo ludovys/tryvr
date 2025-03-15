@@ -29,7 +29,7 @@ const useProducts = () => {
       
       // Get the API base URL from environment variables or use relative path
       const baseUrl = import.meta.env.VITE_API_BASE_URL || '';
-      const apiUrl = `${baseUrl}/api/products?${params.toString()}`;
+      const apiUrl = baseUrl ? `${baseUrl}/api/products?${params.toString()}` : `/api/products?${params.toString()}`;
       
       console.log('Fetching products from:', apiUrl); // Debug log
       const response = await fetch(apiUrl);

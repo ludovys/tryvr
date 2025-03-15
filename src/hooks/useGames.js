@@ -29,7 +29,7 @@ const useGames = () => {
       
       // Get the API base URL from environment variables or use relative path
       const baseUrl = import.meta.env.VITE_API_BASE_URL || '';
-      const apiUrl = `${baseUrl}/api/games?${params.toString()}`;
+      const apiUrl = baseUrl ? `${baseUrl}/api/games?${params.toString()}` : `/api/games?${params.toString()}`;
       
       console.log('Fetching games from:', apiUrl); // Debug log
       const response = await fetch(apiUrl);
