@@ -17,6 +17,7 @@ This document outlines the planned features and improvements for the TryVR proje
 
 ## Completed Tasks
 
+- [x] Fix wrangler.toml configuration by removing unsupported routes
 - [x] Fix Cloudflare Pages deployment by removing R2 configuration
 - [x] Fix dependency version mismatch for @cloudflare/kv-asset-handler
 - [x] Fix UI issues: categories superposition, image flickering, and video player fullscreen functionality
