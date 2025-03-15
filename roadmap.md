@@ -17,6 +17,8 @@ This document outlines the planned features and improvements for the TryVR proje
 
 ## Completed Tasks
 
+- [x] Update header to show only logo and name with contact link
+- [x] Revamp footer with tabbed navigation for better organization
 - [x] Simplify header further to keep only the logo image without any text
 - [x] Remove header completely and keep only the animated logo on the left side
 - [x] Simplify header to only show the animated logo
