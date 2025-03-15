@@ -461,8 +461,21 @@ function setupEventListeners() {
     // Close video modal when clicking the close button
     document.getElementById('close-video-modal').addEventListener('click', closeVideoModal);
     
+    // Close video modal when clicking the close button in the control panel
+    const closeVideoBtn = document.getElementById('close-video-btn');
+    if (closeVideoBtn) {
+        closeVideoBtn.addEventListener('click', closeVideoModal);
+    }
+    
+    // Handle fullscreen button click
+    const fullscreenBtn = document.getElementById('fullscreen-video');
+    if (fullscreenBtn) {
+        fullscreenBtn.addEventListener('click', toggleVideoFullscreen);
+    }
+    
     // Close video modal when clicking outside the video player
     document.getElementById('video-modal').addEventListener('click', (event) => {
+        // Only close if clicking directly on the modal background, not on the video or controls
         if (event.target === document.getElementById('video-modal')) {
             closeVideoModal();
         }
@@ -535,6 +548,31 @@ function closeVideoModal() {
     videoModal.classList.add('hidden');
     videoPlayer.pause();
     videoPlayer.currentTime = 0;
+}
+
+// Toggle fullscreen for video
+function toggleVideoFullscreen() {
+    const videoPlayer = document.getElementById('video-player');
+    
+    if (!document.fullscreenElement) {
+        // Enter fullscreen
+        if (videoPlayer.requestFullscreen) {
+            videoPlayer.requestFullscreen();
+        } else if (videoPlayer.webkitRequestFullscreen) { /* Safari */
+            videoPlayer.webkitRequestFullscreen();
+        } else if (videoPlayer.msRequestFullscreen) { /* IE11 */
+            videoPlayer.msRequestFullscreen();
+        }
+    } else {
+        // Exit fullscreen
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) { /* Safari */
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) { /* IE11 */
+            document.msExitFullscreen();
+        }
+    }
 }
 
 // Open product detail modal

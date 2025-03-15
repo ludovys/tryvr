@@ -414,7 +414,7 @@ function displayProducts(result) {
         return;
     }
     
-    // Clear table
+    // Clear table completely to prevent UI issues
     productsBody.innerHTML = '';
     
     // Check if there are products
@@ -433,10 +433,13 @@ function displayProducts(result) {
     // Get column names
     const columns = result[0].columns;
     
+    // Create a document fragment for better performance
+    const fragment = document.createDocumentFragment();
+    
     // Add products to table
     result[0].values.forEach(product => {
         const row = document.createElement('tr');
-        row.classList.add('border-b', 'hover:bg-gray-50');
+        row.classList.add('border-b', 'hover:bg-gray-50', 'transition-colors');
         
         // Map values to column names
         const productObj = {};
@@ -469,8 +472,12 @@ function displayProducts(result) {
             </td>
         `;
         
-        productsBody.appendChild(row);
+        // Add to fragment instead of directly to DOM
+        fragment.appendChild(row);
     });
+    
+    // Append all rows at once
+    productsBody.appendChild(fragment);
     
     // Add event listeners to edit and delete buttons
     document.querySelectorAll('.edit-product-btn').forEach(button => {

@@ -81,6 +81,7 @@
 /* Video modal styles */
 #video-modal {
     transition: opacity 0.3s ease;
+    z-index: 9999;
 }
 
 #video-modal.hidden {
@@ -90,6 +91,36 @@
 
 #video-modal:not(.hidden) {
     opacity: 1;
+}
+
+#video-modal .relative {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+#video-player {
+    width: 100%;
+    height: auto;
+    max-height: 85vh;
+    aspect-ratio: 16 / 9;
+    background: #000;
+}
+
+/* Fullscreen video player */
+#video-player:fullscreen {
+    width: 100vw;
+    height: 100vh;
+}
+
+#video-player:-webkit-full-screen {
+    width: 100vw;
+    height: 100vh;
+}
+
+#video-player:-moz-full-screen {
+    width: 100vw;
+    height: 100vh;
 }
 
 /* Button hover effects */

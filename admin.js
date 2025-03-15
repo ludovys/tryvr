@@ -231,6 +231,7 @@ function displayProducts(products) {
             return;
         }
         
+        // Clear existing content properly to prevent superpositioning
         tableBody.innerHTML = '';
         
         if (!products || products.length === 0) {
@@ -245,11 +246,15 @@ function displayProducts(products) {
             return;
         }
         
+        // Create a document fragment to improve performance
+        const fragment = document.createDocumentFragment();
+        
         products.forEach(product => {
             try {
                 const [id, title, amazonUrl, affiliateUrl, rating, category, imageUrl, price, description] = product;
                 
                 const row = document.createElement('tr');
+                row.classList.add('border-b', 'hover:bg-gray-700', 'transition-colors');
                 
                 // Generate star rating HTML
                 const fullStars = Math.floor(rating);
@@ -312,11 +317,15 @@ function displayProducts(products) {
                     </td>
                 `;
                 
-                tableBody.appendChild(row);
+                // Add to fragment instead of directly to DOM for better performance
+                fragment.appendChild(row);
             } catch (error) {
                 console.error('Error displaying product:', error, product);
             }
         });
+        
+        // Append all rows at once
+        tableBody.appendChild(fragment);
         
         // Add event listeners to edit and delete buttons
         document.querySelectorAll('.edit-product-btn').forEach(button => {
