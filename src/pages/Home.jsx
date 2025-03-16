@@ -179,24 +179,18 @@ const Home = () => {
     return [...games].sort((a, b) => b.players - a.players).slice(0, 8);
   };
 
-  // CrazyGames style categories
+  // Blog categories
   const categories = [
-    { id: 'action', name: 'Action', icon: 'bolt' },
-    { id: 'adventure', name: 'Adventure', icon: 'mountain' },
-    { id: 'puzzle', name: 'Puzzle', icon: 'puzzle-piece' },
-    { id: 'simulation', name: 'Simulation', icon: 'desktop' },
+    { id: 'technology', name: 'Technology', icon: 'microchip' },
+    { id: 'lifestyle', name: 'Lifestyle', icon: 'coffee' },
+    { id: 'business', name: 'Business', icon: 'briefcase' },
+    { id: 'travel', name: 'Travel', icon: 'plane' },
     { id: 'sports', name: 'Sports', icon: 'futbol' },
-    { id: 'racing', name: 'Racing', icon: 'car' },
-    { id: 'casual', name: 'Casual', icon: 'smile' },
-    { id: 'card', name: 'Card', icon: 'cards' },
-    { id: 'fps', name: 'FPS', icon: 'crosshairs' },
-    { id: 'horror', name: 'Horror', icon: 'ghost' },
-    { id: 'io', name: '.io', icon: 'globe' },
-    { id: 'multiplayer', name: 'Multiplayer', icon: 'users' }
+    { id: 'economy', name: 'Economy', icon: 'chart-line' }
   ];
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-[#181A2A] text-white">
       <Header />
       
       {currentGame && (
@@ -214,260 +208,123 @@ const Home = () => {
         />
       )}
       
-      <main>
-        {/* Search Bar - CrazyGames style */}
-        <section className="py-4 bg-white border-b border-gray-200">
-          <div className="page-container">
-            <form onSubmit={handleSearch} className="max-w-lg mx-auto">
-              <div className="relative">
-                <input
-                  type="text"
-                  name="search"
-                  placeholder="Search games..."
-                  className="w-full px-4 py-3 pl-12 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                  defaultValue={filters.searchTerm}
-                />
-                <button 
-                  type="submit" 
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-                >
-                  <i className="fas fa-search text-lg"></i>
-                </button>
-              </div>
-            </form>
-          </div>
-        </section>
-        
-        {/* Featured Games Section */}
+      <main className="flex-grow">
+        {/* Hero Section */}
         <section className="py-8">
-          <div className="page-container">
-            <div className="section-heading mb-6">
-              <h2>Featured Games</h2>
-              <Link to="/games?featured=true" className="hover:underline">
-                View more <i className="fas fa-chevron-right text-xs ml-1"></i>
-              </Link>
-            </div>
-            
-            <div className="games-grid">
-              {loading ? renderGameCardSkeleton() : 
-                getFeaturedGames().map(game => (
-                  <GameCard 
-                    key={game.id} 
-                    game={game} 
-                    onPlay={handlePlayGame} 
+          <div className="container mx-auto px-4">
+            <div className="bg-[#181A2A] rounded-xl overflow-hidden shadow-xl relative">
+              <div className="flex flex-col md:flex-row">
+                {/* Featured Image */}
+                <div className="w-full md:w-2/3 h-[400px] relative">
+                  <img 
+                    src={games[0]?.image || 'https://via.placeholder.com/800x400'} 
+                    alt={games[0]?.title || 'Featured Post'} 
+                    className="w-full h-full object-cover rounded-t-xl md:rounded-l-xl md:rounded-tr-none"
                   />
-                ))
-              }
-            </div>
-          </div>
-        </section>
-        
-        {/* New Games Section */}
-        <section className="py-8 bg-gray-50">
-          <div className="page-container">
-            <div className="section-heading mb-6">
-              <h2>New Games</h2>
-              <Link to="/new" className="hover:underline">
-                View more <i className="fas fa-chevron-right text-xs ml-1"></i>
-              </Link>
-            </div>
-            
-            <div className="games-grid">
-              {loading ? renderGameCardSkeleton() : 
-                getNewGames().map(game => (
-                  <GameCard 
-                    key={game.id} 
-                    game={game} 
-                    onPlay={handlePlayGame} 
-                  />
-                ))
-              }
-            </div>
-          </div>
-        </section>
-        
-        {/* Popular Categories */}
-        <section className="py-8">
-          <div className="page-container">
-            <div className="section-heading mb-6">
-              <h2>Popular Categories</h2>
-            </div>
-            
-            <div className="category-grid">
-              {categories.map(category => (
-                <Link 
-                  key={category.id}
-                  to={`/games?category=${category.id}`}
-                  className="category-card hover:no-underline"
-                >
-                  <div className="category-icon">
-                    <i className={`fas fa-${category.icon}`}></i>
-                  </div>
-                  <div className="category-name">
-                    {category.name}
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-        
-        {/* Trending Games Section */}
-        <section className="py-8 bg-gray-50">
-          <div className="page-container">
-            <div className="section-heading mb-6">
-              <h2>Trending Now</h2>
-              <Link to="/trending" className="hover:underline">
-                View more <i className="fas fa-chevron-right text-xs ml-1"></i>
-              </Link>
-            </div>
-            
-            <div className="games-grid">
-              {loading ? renderGameCardSkeleton() : 
-                getTrendingGames().map(game => (
-                  <GameCard 
-                    key={game.id} 
-                    game={game} 
-                    onPlay={handlePlayGame} 
-                  />
-                ))
-              }
-            </div>
-          </div>
-        </section>
-        
-        {/* Multiplayer Section */}
-        <section className="py-8">
-          <div className="page-container">
-            <div className="section-heading mb-6">
-              <h2>Play with friends!</h2>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-white p-6 rounded-lg shadow-sm">
-                <div className="flex items-center mb-3">
-                  <div className="text-indigo-600 text-2xl mr-3">
-                    <i className="fas fa-users"></i>
-                  </div>
-                  <h3 className="text-lg font-semibold">Local multiplayer</h3>
                 </div>
-                <p className="text-gray-600 mb-4">Play on the same device</p>
-                <Link to="/games?type=local-multiplayer" className="inline-block px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors">
-                  Explore games
-                </Link>
-              </div>
-              
-              <div className="bg-white p-6 rounded-lg shadow-sm">
-                <div className="flex items-center mb-3">
-                  <div className="text-indigo-600 text-2xl mr-3">
-                    <i className="fas fa-globe"></i>
-                  </div>
-                  <h3 className="text-lg font-semibold">Online multiplayer</h3>
-                </div>
-                <p className="text-gray-600 mb-4">Play on separate devices</p>
-                <Link to="/games?type=online-multiplayer" className="inline-block px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors">
-                  Explore games
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
-        
-        {/* Main Games Section - if filters active */}
-        {(filters.category !== 'all' || filters.searchTerm) && (
-          <section className="py-8 bg-gray-50">
-            <div className="page-container">
-              <div className="mb-6">
-                <h2 className="text-2xl font-bold mb-4">
-                  {filters.searchTerm ? `Search results for "${filters.searchTerm}"` : 
-                   filters.category !== 'all' ? `${filters.category.charAt(0).toUpperCase() + filters.category.slice(1)} Games` : 
-                   'All Games'}
-                </h2>
                 
-                {/* Category Pills */}
-                {!filters.searchTerm && (
-                  <div className="flex flex-wrap gap-2 mb-6">
-                    <button
-                      onClick={() => handleCategoryChange('all')}
-                      className={`category-pill ${filters.category === 'all' ? 'active' : ''}`}
-                    >
-                      <i className="fas fa-gamepad"></i> All
-                    </button>
-                    
-                    {categories.map(category => (
-                      <button
-                        key={category.id}
-                        onClick={() => handleCategoryChange(category.id)}
-                        className={`category-pill ${filters.category === category.id ? 'active' : ''}`}
-                      >
-                        <i className={`fas fa-${category.icon}`}></i> {category.name}
-                      </button>
-                    ))}
+                {/* Content */}
+                <div className="w-full md:w-1/3 p-8 bg-[#181A2A] border border-[#242535] shadow-lg rounded-b-xl md:rounded-r-xl md:rounded-bl-none">
+                  <div className="mb-4">
+                    <span className="inline-block px-3 py-1 bg-[#4B6BFB] text-white text-sm font-medium rounded-md">
+                      Technology
+                    </span>
                   </div>
-                )}
-              </div>
-              
-              {/* Games Grid */}
-              {loading ? (
-                <div className="games-grid">
-                  {renderGameCardSkeleton()}
-                </div>
-              ) : games.length > 0 ? (
-                <>
-                  <div className="games-grid">
-                    {games.map(game => (
-                      <GameCard 
-                        key={game.id} 
-                        game={game} 
-                        onPlay={handlePlayGame} 
+                  <h2 className="text-3xl font-bold mb-6 text-white">
+                    The Impact of Technology on the Workplace: How Technology is Changing
+                  </h2>
+                  <div className="flex items-center space-x-4">
+                    <div className="flex items-center">
+                      <img 
+                        src="https://via.placeholder.com/40" 
+                        alt="Author" 
+                        className="w-8 h-8 rounded-full mr-2"
                       />
-                    ))}
+                      <span className="text-[#97989F]">Jason Francisco</span>
+                    </div>
+                    <span className="text-[#97989F]">August 20, 2022</span>
                   </div>
-                  {renderPagination()}
-                </>
-              ) : (
-                <div className="text-center py-8">
-                  <div className="text-gray-500 text-5xl mb-4">
-                    <i className="fas fa-search"></i>
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2">No games found</h3>
-                  <p className="text-gray-600 mb-4">
-                    We couldn't find any games matching your search criteria.
-                  </p>
-                  <button
-                    onClick={() => updateFilters({ category: 'all', searchTerm: '', page: 1 })}
-                    className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors"
-                  >
-                    View all games
-                  </button>
                 </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        {/* Advertisement Section */}
+        <section className="py-4">
+          <div className="container mx-auto px-4">
+            <div className="bg-[#242535] rounded-xl p-8 flex flex-col items-center justify-center h-[100px]">
+              <p className="text-xs text-[#696A75]">Advertisement</p>
+              <p className="text-lg text-[#696A75]">You can place ads</p>
+              <p className="text-sm text-[#696A75]">750x100</p>
+            </div>
+          </div>
+        </section>
+        
+        {/* Latest Posts Section */}
+        <section className="py-8">
+          <div className="container mx-auto px-4">
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="text-2xl font-bold">Latest Post</h2>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {loading ? (
+                renderGameCardSkeleton()
+              ) : (
+                getNewGames().map((game) => (
+                  <div key={game.id} className="bg-[#181A2A] border border-[#242535] rounded-xl overflow-hidden shadow-lg">
+                    <div className="h-48 overflow-hidden">
+                      <img 
+                        src={game.image || 'https://via.placeholder.com/400x200'} 
+                        alt={game.title} 
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="p-6">
+                      <div className="mb-4">
+                        <span className="inline-block px-2 py-1 bg-[rgba(75,107,251,0.05)] text-[#4B6BFB] text-xs font-medium rounded-md">
+                          Technology
+                        </span>
+                      </div>
+                      <h3 className="text-xl font-semibold mb-4 text-white">
+                        {game.title}
+                      </h3>
+                      <div className="flex items-center space-x-4">
+                        <div className="flex items-center">
+                          <img 
+                            src="https://via.placeholder.com/30" 
+                            alt="Author" 
+                            className="w-7 h-7 rounded-full mr-2"
+                          />
+                          <span className="text-sm text-[#97989F]">Tracey Wilson</span>
+                        </div>
+                        <span className="text-sm text-[#97989F]">August 20, 2022</span>
+                      </div>
+                    </div>
+                  </div>
+                ))
               )}
             </div>
-          </section>
-        )}
+            
+            <div className="flex justify-center mt-8">
+              <Link 
+                to="/games" 
+                className="px-5 py-3 border border-[rgba(105,106,117,0.3)] text-[#696A75] rounded-lg hover:bg-[#242535] transition-colors"
+              >
+                View All Post
+              </Link>
+            </div>
+          </div>
+        </section>
         
-        {/* SEO Text Section - Similar to CrazyGames */}
-        <section className="py-8 bg-white">
-          <div className="page-container">
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-2xl font-bold mb-4">Online Games at TryVR</h2>
-              <p className="text-gray-600 mb-4">
-                TryVR features the latest and best free virtual reality games. You can enjoy playing 
-                fun VR games without interruptions from downloads, intrusive ads, or pop-ups. Just load 
-                up your favorite games instantly in your web browser and enjoy the experience.
-              </p>
-              <p className="text-gray-600 mb-4">
-                You can play our games on desktop and on mobile devices. That includes everything from 
-                desktop PCs, laptops, and Chromebooks, to the latest smartphones and tablets from 
-                Apple and Android.
-              </p>
-              <h3 className="text-xl font-bold mt-6 mb-3">About TryVR</h3>
-              <p className="text-gray-600">
-                There are plenty of online multiplayer games with active communities on TryVR. 
-                You can find many of the best free multiplayer titles on our multiplayer games page. 
-                In these games, you can play with your friends online and with other people from 
-                around the world, no matter where you are.
-              </p>
+        {/* Second Advertisement Section */}
+        <section className="py-4 mb-8">
+          <div className="container mx-auto px-4">
+            <div className="bg-[#242535] rounded-xl p-8 flex flex-col items-center justify-center h-[100px]">
+              <p className="text-xs text-[#696A75]">Advertisement</p>
+              <p className="text-lg text-[#696A75]">You can place ads</p>
+              <p className="text-sm text-[#696A75]">750x100</p>
             </div>
           </div>
         </section>
