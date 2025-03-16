@@ -14,12 +14,14 @@ Visit the live demo at [https://tryvr.pages.dev](https://tryvr.pages.dev) or [ht
 - Play games directly in your browser
 - Admin dashboard for managing games
 - Responsive design for all devices
+- Figma integration for direct access to design assets
 
 ## Tech Stack
 
 - **Frontend**: React, React Router, TailwindCSS
 - **Backend**: Cloudflare Workers, Cloudflare D1 (SQLite)
 - **Deployment**: Cloudflare Pages
+- **Design**: Figma with MCP integration
 
 ## Development
 
@@ -28,6 +30,7 @@ Visit the live demo at [https://tryvr.pages.dev](https://tryvr.pages.dev) or [ht
 - Node.js (v16+)
 - npm or yarn
 - Wrangler CLI (for Cloudflare Workers)
+- Figma API key (for design integration)
 
 ### Installation
 
@@ -42,12 +45,34 @@ Visit the live demo at [https://tryvr.pages.dev](https://tryvr.pages.dev) or [ht
    npm install
    ```
 
-3. Start the development server:
+3. Set up environment variables:
+   ```bash
+   cp .env.example .env
+   ```
+   Then edit the `.env` file and add your Figma API key.
+
+4. Start the development server:
    ```bash
    npm run dev
    ```
 
-4. Open [http://localhost:5173](http://localhost:5173) in your browser.
+5. Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+### Figma Integration Setup
+
+The project uses Figma Developer MCP for direct access to Figma designs from Cursor IDE.
+
+1. Get a Figma API key from your Figma account settings.
+2. Add your Figma API key to the `.env` file:
+   ```
+   FIGMA_API_KEY=your_figma_api_key_here
+   ```
+3. Start the Figma MCP server:
+   ```bash
+   ./start-figma-mcp.sh
+   ```
+   
+**Note:** Never commit your actual Figma API key to the repository. The repository is set up to use environment variables for sensitive information.
 
 ### Cloudflare Workers Development
 
@@ -97,3 +122,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - [Unsplash](https://unsplash.com/) - For the game images
 - [Font Awesome](https://fontawesome.com/) - For the icons
 - [TailwindCSS](https://tailwindcss.com/) - For the styling
+- [Figma](https://figma.com/) - For design templates and integration
