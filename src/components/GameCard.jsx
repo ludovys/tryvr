@@ -1,7 +1,10 @@
 import React from 'react';
 import { format } from 'date-fns';
+import { useTheme } from '../context/ThemeContext';
 
 const GameCard = React.memo(({ game, onPlay }) => {
+  const { isDarkMode } = useTheme();
+  
   // Format the date with error handling
   const formatDate = (dateString) => {
     try {
@@ -49,7 +52,7 @@ const GameCard = React.memo(({ game, onPlay }) => {
   };
 
   return (
-    <div className="game-card rounded-lg overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-xl">
+    <div className={`game-card rounded-lg overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-xl ${isDarkMode ? 'shadow-dark' : 'shadow-light'}`}>
       {/* Card Image with Play Button Overlay */}
       <div className="relative">
         {/* Featured Badge */}
@@ -79,13 +82,13 @@ const GameCard = React.memo(({ game, onPlay }) => {
       </div>
       
       {/* Card Content */}
-      <div className="p-3 bg-white">
-        <h3 className="text-base font-semibold text-gray-800 mb-1 line-clamp-1">
+      <div className={`p-3 ${isDarkMode ? 'bg-[var(--theme-card-bg)] text-[var(--theme-text-primary)]' : 'bg-white text-gray-800'}`}>
+        <h3 className={`text-base font-semibold mb-1 line-clamp-1 ${isDarkMode ? 'text-[var(--theme-text-primary)]' : 'text-gray-800'}`}>
           {game.title}
         </h3>
         
-        <div className="flex items-center text-xs text-gray-500 mb-2">
-          <span className="bg-gray-100 text-gray-600 rounded px-2 py-0.5">
+        <div className="flex items-center text-xs mb-2">
+          <span className={`rounded px-2 py-0.5 ${isDarkMode ? 'bg-[var(--theme-bg-tertiary)] text-[var(--theme-text-tertiary)]' : 'bg-gray-100 text-gray-600'}`}>
             {game.category}
           </span>
           <span className="ml-2 flex items-center">
@@ -94,7 +97,7 @@ const GameCard = React.memo(({ game, onPlay }) => {
           </span>
         </div>
         
-        <p className="text-xs text-gray-600 line-clamp-2 mb-2">
+        <p className={`text-xs line-clamp-2 mb-2 ${isDarkMode ? 'text-[var(--theme-text-secondary)]' : 'text-gray-600'}`}>
           {game.description}
         </p>
         

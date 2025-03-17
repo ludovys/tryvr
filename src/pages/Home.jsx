@@ -6,11 +6,13 @@ import GameCard from '../components/GameCard';
 import GamePlayer from '../components/GamePlayer';
 import Notification from '../components/Notification';
 import useGames from '../hooks/useGames';
+import { useTheme } from '../context/ThemeContext';
 
 const Home = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [notification, setNotification] = useState(null);
   const [currentGame, setCurrentGame] = useState(null);
+  const { isDarkMode } = useTheme();
   const { 
     games, 
     loading, 
@@ -190,7 +192,7 @@ const Home = () => {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#181A2A] text-white">
+    <div className={`flex flex-col min-h-screen ${isDarkMode ? 'bg-[#181A2A] text-white' : 'bg-white text-[#181A2A]'}`}>
       <Header />
       
       {currentGame && (

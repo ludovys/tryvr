@@ -18,6 +18,37 @@
   --color-error: #ef4444;
 }
 
+/* Theme variables */
+.dark-mode {
+  --theme-bg-primary: #181A2A;
+  --theme-bg-secondary: #242535;
+  --theme-bg-tertiary: #141624;
+  --theme-text-primary: #FFFFFF;
+  --theme-text-secondary: #97989F;
+  --theme-text-tertiary: #BABABF;
+  --theme-border: #242535;
+  --theme-card-bg: #242535;
+  --theme-input-bg: #242535;
+  --theme-input-text: #FFFFFF;
+  --theme-input-placeholder: #97989F;
+  --theme-input-border: #3B3C4A;
+}
+
+.light-mode {
+  --theme-bg-primary: #FFFFFF;
+  --theme-bg-secondary: #F4F4F5;
+  --theme-bg-tertiary: #F6F6F7;
+  --theme-text-primary: #181A2A;
+  --theme-text-secondary: #3B3C4A;
+  --theme-text-tertiary: #696A75;
+  --theme-border: #E8E8EA;
+  --theme-card-bg: #FFFFFF;
+  --theme-input-bg: #F4F4F5;
+  --theme-input-text: #3B3C4A;
+  --theme-input-placeholder: #A1A1AA;
+  --theme-input-border: #E8E8EA;
+}
+
 /* Base styles */
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;

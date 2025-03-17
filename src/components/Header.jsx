@@ -1,11 +1,12 @@
 import { memo, useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useTheme } from '../context/ThemeContext';
 
 const Header = memo(() => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(true); // Default to dark mode
+  const { isDarkMode, toggleTheme } = useTheme();
 
   // Handle scroll effect for header
   useEffect(() => {
@@ -22,17 +23,15 @@ const Header = memo(() => {
     return location.pathname === path;
   };
 
-  // Toggle dark mode
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-    // In a real app, you would apply dark mode to the entire site here
-  };
-
   return (
     <header className={`sticky top-0 z-40 transition-all duration-300 ${
-      isScrolled 
-        ? 'bg-[#181A2A]/95 backdrop-blur-md shadow-lg' 
-        : 'bg-[#181A2A]'
+      isDarkMode
+        ? isScrolled 
+          ? 'bg-[#181A2A]/95 backdrop-blur-md shadow-lg' 
+          : 'bg-[#181A2A]'
+        : isScrolled 
+          ? 'bg-white/95 backdrop-blur-md shadow-lg' 
+          : 'bg-white'
     }`}>
       <div className="container mx-auto px-4 py-8">
         {/* Main Navigation Bar */}
@@ -40,7 +39,7 @@ const Header = memo(() => {
           {/* Left section: Logo */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-2 group">
-              <div className="text-white font-bold text-2xl">
+              <div className={`font-bold text-2xl ${isDarkMode ? 'text-white' : 'text-[#181A2A]'}`}>
                 <span className="text-[#4B6BFB]">Meta</span>Blog
               </div>
             </Link>
@@ -52,8 +51,8 @@ const Header = memo(() => {
               to="/" 
               className={`text-base font-medium transition-colors ${
                 isActive('/') 
-                  ? 'text-white' 
-                  : 'text-white hover:text-[#4B6BFB]'
+                  ? isDarkMode ? 'text-white' : 'text-[#181A2A]' 
+                  : isDarkMode ? 'text-white hover:text-[#4B6BFB]' : 'text-[#3B3C4A] hover:text-[#4B6BFB]'
               }`}
             >
               Home
@@ -62,8 +61,8 @@ const Header = memo(() => {
               to="/blog" 
               className={`text-base font-medium transition-colors ${
                 isActive('/blog') 
-                  ? 'text-white' 
-                  : 'text-white hover:text-[#4B6BFB]'
+                  ? isDarkMode ? 'text-white' : 'text-[#181A2A]' 
+                  : isDarkMode ? 'text-white hover:text-[#4B6BFB]' : 'text-[#3B3C4A] hover:text-[#4B6BFB]'
               }`}
             >
               Blog
@@ -72,8 +71,8 @@ const Header = memo(() => {
               to="/single-post" 
               className={`text-base font-medium transition-colors ${
                 isActive('/single-post') 
-                  ? 'text-white' 
-                  : 'text-white hover:text-[#4B6BFB]'
+                  ? isDarkMode ? 'text-white' : 'text-[#181A2A]' 
+                  : isDarkMode ? 'text-white hover:text-[#4B6BFB]' : 'text-[#3B3C4A] hover:text-[#4B6BFB]'
               }`}
             >
               Single Post
@@ -82,8 +81,8 @@ const Header = memo(() => {
               to="/pages" 
               className={`text-base font-medium transition-colors ${
                 isActive('/pages') 
-                  ? 'text-white' 
-                  : 'text-white hover:text-[#4B6BFB]'
+                  ? isDarkMode ? 'text-white' : 'text-[#181A2A]' 
+                  : isDarkMode ? 'text-white hover:text-[#4B6BFB]' : 'text-[#3B3C4A] hover:text-[#4B6BFB]'
               }`}
             >
               Pages
@@ -92,8 +91,8 @@ const Header = memo(() => {
               to="/contact" 
               className={`text-base font-medium transition-colors ${
                 isActive('/contact') 
-                  ? 'text-white' 
-                  : 'text-white hover:text-[#4B6BFB]'
+                  ? isDarkMode ? 'text-white' : 'text-[#181A2A]' 
+                  : isDarkMode ? 'text-white hover:text-[#4B6BFB]' : 'text-[#3B3C4A] hover:text-[#4B6BFB]'
               }`}
             >
               Contact
@@ -102,11 +101,11 @@ const Header = memo(() => {
           
           <div className="flex items-center space-x-4">
             {/* Search Input */}
-            <div className="hidden md:flex items-center bg-[#242535] rounded-md px-4 py-2">
+            <div className={`hidden md:flex items-center ${isDarkMode ? 'bg-[#242535]' : 'bg-[#F4F4F5]'} rounded-md px-4 py-2`}>
               <input 
                 type="text" 
                 placeholder="Search" 
-                className="bg-transparent text-gray-300 text-sm focus:outline-none w-32"
+                className={`bg-transparent ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} text-sm focus:outline-none w-32`}
               />
               <button className="text-gray-400 ml-2">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -117,7 +116,7 @@ const Header = memo(() => {
             
             {/* Dark Mode Toggle */}
             <button 
-              onClick={toggleDarkMode}
+              onClick={toggleTheme}
               className="hidden md:flex items-center justify-center w-10 h-5 bg-[#4B6BFB] rounded-full relative"
             >
               <div className={`absolute w-4 h-4 bg-white rounded-full shadow-md transition-transform ${isDarkMode ? 'translate-x-5' : '-translate-x-5'}`}>
@@ -136,7 +135,7 @@ const Header = memo(() => {
             {/* Mobile Menu Button */}
             <button 
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 rounded-md text-white hover:bg-[#242535] focus:outline-none"
+              className={`md:hidden p-2 rounded-md ${isDarkMode ? 'text-white hover:bg-[#242535]' : 'text-[#181A2A] hover:bg-[#F4F4F5]'} focus:outline-none`}
               aria-label="Toggle menu"
             >
               {isMobileMenuOpen ? (
@@ -154,14 +153,14 @@ const Header = memo(() => {
         
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <nav className="md:hidden py-4 mt-4 border-t border-[#242535] animate-fadeIn">
+          <nav className={`md:hidden py-4 mt-4 border-t ${isDarkMode ? 'border-[#242535]' : 'border-[#E8E8EA]'} animate-fadeIn`}>
             <div className="space-y-3">
               <Link 
                 to="/" 
                 className={`block px-4 py-2 text-base font-medium rounded-md ${
                   isActive('/') 
-                    ? 'bg-[#4B6BFB] text-white' 
-                    : 'text-white hover:bg-[#242535]'
+                    ? isDarkMode ? 'bg-[#4B6BFB] text-white' : 'bg-[#4B6BFB] text-white'
+                    : isDarkMode ? 'text-white hover:bg-[#242535]' : 'text-[#3B3C4A] hover:bg-[#F4F4F5]'
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -171,8 +170,8 @@ const Header = memo(() => {
                 to="/blog" 
                 className={`block px-4 py-2 text-base font-medium rounded-md ${
                   isActive('/blog') 
-                    ? 'bg-[#4B6BFB] text-white' 
-                    : 'text-white hover:bg-[#242535]'
+                    ? isDarkMode ? 'bg-[#4B6BFB] text-white' : 'bg-[#4B6BFB] text-white'
+                    : isDarkMode ? 'text-white hover:bg-[#242535]' : 'text-[#3B3C4A] hover:bg-[#F4F4F5]'
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -182,8 +181,8 @@ const Header = memo(() => {
                 to="/single-post" 
                 className={`block px-4 py-2 text-base font-medium rounded-md ${
                   isActive('/single-post') 
-                    ? 'bg-[#4B6BFB] text-white' 
-                    : 'text-white hover:bg-[#242535]'
+                    ? isDarkMode ? 'bg-[#4B6BFB] text-white' : 'bg-[#4B6BFB] text-white'
+                    : isDarkMode ? 'text-white hover:bg-[#242535]' : 'text-[#3B3C4A] hover:bg-[#F4F4F5]'
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -193,8 +192,8 @@ const Header = memo(() => {
                 to="/pages" 
                 className={`block px-4 py-2 text-base font-medium rounded-md ${
                   isActive('/pages') 
-                    ? 'bg-[#4B6BFB] text-white' 
-                    : 'text-white hover:bg-[#242535]'
+                    ? isDarkMode ? 'bg-[#4B6BFB] text-white' : 'bg-[#4B6BFB] text-white'
+                    : isDarkMode ? 'text-white hover:bg-[#242535]' : 'text-[#3B3C4A] hover:bg-[#F4F4F5]'
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -204,8 +203,8 @@ const Header = memo(() => {
                 to="/contact" 
                 className={`block px-4 py-2 text-base font-medium rounded-md ${
                   isActive('/contact') 
-                    ? 'bg-[#4B6BFB] text-white' 
-                    : 'text-white hover:bg-[#242535]'
+                    ? isDarkMode ? 'bg-[#4B6BFB] text-white' : 'bg-[#4B6BFB] text-white'
+                    : isDarkMode ? 'text-white hover:bg-[#242535]' : 'text-[#3B3C4A] hover:bg-[#F4F4F5]'
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -214,11 +213,11 @@ const Header = memo(() => {
               
               {/* Mobile Search */}
               <div className="px-4 py-2">
-                <div className="flex items-center bg-[#242535] rounded-md px-3 py-2">
+                <div className={`flex items-center ${isDarkMode ? 'bg-[#242535]' : 'bg-[#F4F4F5]'} rounded-md px-3 py-2`}>
                   <input 
                     type="text" 
                     placeholder="Search" 
-                    className="bg-transparent text-gray-300 text-sm focus:outline-none w-full"
+                    className={`bg-transparent ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} text-sm focus:outline-none w-full`}
                   />
                   <button className="text-gray-400 ml-2">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -230,9 +229,11 @@ const Header = memo(() => {
               
               {/* Mobile Dark Mode Toggle */}
               <div className="px-4 py-2 flex items-center">
-                <span className="text-white text-sm mr-3">Dark Mode</span>
+                <span className={`${isDarkMode ? 'text-white' : 'text-[#181A2A]'} text-sm mr-3`}>
+                  {isDarkMode ? 'Dark Mode' : 'Light Mode'}
+                </span>
                 <button 
-                  onClick={toggleDarkMode}
+                  onClick={toggleTheme}
                   className="flex items-center justify-center w-10 h-5 bg-[#4B6BFB] rounded-full relative"
                 >
                   <div className={`absolute w-4 h-4 bg-white rounded-full shadow-md transition-transform ${isDarkMode ? 'translate-x-5' : '-translate-x-5'}`}>

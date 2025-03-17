@@ -20,6 +20,10 @@
 - ✅ Integrated Figma MCP server for direct access to Figma designs from Cursor
 - ✅ Implemented the home page design from the Figma blog template with dark theme, featured posts, and modern UI
 - ✅ Secured API keys and sensitive information by using environment variables instead of hardcoded values
+- ✅ Fixed styling issues by updating package.json to use stable versions of React and Tailwind
+- ✅ Updated Node.js to version 20 for improved performance and modern JavaScript features
+- ✅ Automated browser-tools-server startup for seamless Cursor integration with browser tools
+- ✅ Implemented light/dark mode toggle with ThemeContext for a modern user experience
 
 ## Current Tasks
 - 🔄 Further optimize website performance
@@ -27,7 +31,6 @@
 - 🔄 Utilize Figma designs for UI improvements using the MCP integration
 
 ## Future Ideas
-- Add dark mode support
 - Implement user profiles
 - Add filter by VR headset compatibility
 - Create a dedicated showcase page for premium games

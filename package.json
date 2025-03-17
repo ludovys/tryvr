@@ -11,31 +11,32 @@
     "wrangler:dev": "wrangler pages dev --compatibility-date=2023-01-01 dist",
     "wrangler:deploy": "wrangler pages deploy dist --project-name=tryvr",
     "deploy": "./deploy.sh",
-    "start": "npm run build && npm run wrangler:dev"
+    "start": "npm run build && npm run wrangler:dev",
+    "mcp:postgres": "./start-mcp-postgres.sh"
   },
   "dependencies": {
     "@cloudflare/kv-asset-handler": "^0.4.0",
     "@cloudflare/workers-types": "^4.20250313.0",
-    "date-fns": "^4.1.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-router-dom": "^6.30.0",
-    "wrangler": "^4.0.0"
+    "date-fns": "^2.30.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.20.0",
+    "wrangler": "^3.22.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.21.0",
-    "@tailwindcss/postcss": "^4.0.14",
-    "@types/react": "^19.0.10",
-    "@types/react-dom": "^19.0.4",
-    "@vitejs/plugin-react": "^4.3.4",
-    "autoprefixer": "^10.4.21",
-    "eslint": "^9.21.0",
-    "eslint-plugin-react-hooks": "^5.1.0",
-    "eslint-plugin-react-refresh": "^0.4.19",
+    "@eslint/js": "^8.56.0",
+    "@tailwindcss/postcss": "^3.0.0",
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@vitejs/plugin-react": "^4.2.0",
+    "autoprefixer": "^10.4.16",
+    "eslint": "^8.56.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
     "figma-developer-mcp": "^0.1.8",
-    "globals": "^15.15.0",
-    "postcss": "^8.5.3",
-    "tailwindcss": "^4.0.14",
-    "vite": "^6.2.0"
+    "globals": "^13.24.0",
+    "postcss": "^8.4.31",
+    "tailwindcss": "^3.3.5",
+    "vite": "^5.0.0"
   }
 }

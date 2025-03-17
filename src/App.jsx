@@ -13,22 +13,25 @@ import GamesWithoutImages from './pages/GamesWithoutImages';
 
 // Import context
 import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/games" element={<Games />} />
-          <Route path="/game/:gameId" element={<GameDetail />} />
-          <Route path="/games-showcase" element={<GamesShowcase />} />
-          <Route path="/games-without-images" element={<GamesWithoutImages />} />
-          <Route path="/admin-login" element={<AdminLogin />} />
-          <Route path="/admin-dashboard" element={<AdminDashboard />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Router>
+      <ThemeProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/games" element={<Games />} />
+            <Route path="/game/:gameId" element={<GameDetail />} />
+            <Route path="/games-showcase" element={<GamesShowcase />} />
+            <Route path="/games-without-images" element={<GamesWithoutImages />} />
+            <Route path="/admin-login" element={<AdminLogin />} />
+            <Route path="/admin-dashboard" element={<AdminDashboard />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Router>
+      </ThemeProvider>
     </AuthProvider>
   );
 }
