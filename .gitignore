@@ -58,7 +58,11 @@ dist-ssr
 !.env.example
 
 # Cursor config files that might contain secrets
-~/.cursor/config/mcp.json
+.cursor/
+.cursor/config/mcp.json
+**/cursor/config/mcp.json
+home/*/.cursor/
+~/*/cursor/
 
 # Cloudflare
 .wrangler/
