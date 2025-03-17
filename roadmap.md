@@ -26,6 +26,8 @@
 - ✅ Implemented light/dark mode toggle with ThemeContext for a modern user experience
 - ✅ Cleaned up project structure by removing unused files and components
 - ✅ Simplified Git branch structure to only maintain master (production) and dev (development) branches
+- ✅ Fixed security vulnerability by removing exposed Figma API token from repository
+- ✅ Resolved dependency issues by removing non-existent @tailwindcss/postcss package
 
 ## Current Tasks
 - 🔄 Further optimize website performance
