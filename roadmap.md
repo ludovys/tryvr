@@ -28,6 +28,7 @@
 - ✅ Simplified Git branch structure to only maintain master (production) and dev (development) branches
 - ✅ Fixed security vulnerability by removing exposed Figma API token from repository
 - ✅ Resolved dependency issues by removing non-existent @tailwindcss/postcss package
+- ✅ Fixed PostCSS configuration to use the standard tailwindcss plugin
 
 ## Current Tasks
 - 🔄 Further optimize website performance
