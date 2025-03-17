@@ -1,0 +1,5 @@
+mcp.json
+replace-secrets.py
+sensitive-data.txt
+start-figma-mcp.sh
+~/.cursor/config/mcp.json

@@ -1,0 +1,29 @@
+# Cloudflare Pages configuration
+
+# Build configuration
+[build]
+  command = "npm run build"
+  output_directory = "dist"
+  node_version = "20"
+
+# Environment variables for production
+[env.production]
+  NODE_ENV = "production"
+
+# Environment variables for preview deployments
+[env.preview]
+  NODE_ENV = "development"
+
+# Redirects
+[[redirects]]
+  from = "/api/*"
+  to = "/api/:splat"
+  status = 200
+
+# Headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin" 
