@@ -1,11 +1,40 @@
-# Logs
-logs
-*.log
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# Testing
+/coverage
+
+# Production
+/build
+/dist
+
+# Misc
+.DS_Store
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+
+# Sensitive files
+mcp.json
+replace-secrets.py
+sensitive-data.txt
+start-figma-mcp.sh
+mcp-postgres.config.json
+bfg.jar
+start-mcp-postgres.sh
+.cursor/
+
+# Logs
+logs
+*.log
 
 node_modules
 dist
