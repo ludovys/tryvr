@@ -24,6 +24,8 @@
 - ✅ Updated Node.js to version 20 for improved performance and modern JavaScript features
 - ✅ Automated browser-tools-server startup for seamless Cursor integration with browser tools
 - ✅ Implemented light/dark mode toggle with ThemeContext for a modern user experience
+- ✅ Cleaned up project structure by removing unused files and components
+- ✅ Simplified Git branch structure to only maintain master (production) and dev (development) branches
 
 ## Current Tasks
 - 🔄 Further optimize website performance
