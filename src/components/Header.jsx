@@ -1,6 +1,7 @@
 import { memo, useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
+import vrLogo from '../assets/vr-logo.svg';
 
 const Header = memo(() => {
   const location = useLocation();
@@ -39,9 +40,14 @@ const Header = memo(() => {
           {/* Left section: Logo */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-2 group">
-              <div className={`font-bold text-2xl ${isDarkMode ? 'text-white' : 'text-[#181A2A]'}`}>
-                <span className="text-[#4B6BFB]">Meta</span>Blog
-              </div>
+              <img 
+                src={vrLogo}
+                alt="TryVR Logo" 
+                className="h-10 w-10 logo-float" 
+              />
+              <span className={`font-bold text-2xl ${isDarkMode ? 'text-white' : 'text-[#181A2A]'}`}>
+                TryVR
+              </span>
             </Link>
           </div>
           
@@ -58,44 +64,44 @@ const Header = memo(() => {
               Home
             </Link>
             <Link 
-              to="/blog" 
+              to="/games" 
               className={`text-base font-medium transition-colors ${
-                isActive('/blog') 
+                isActive('/games') 
                   ? isDarkMode ? 'text-white' : 'text-[#181A2A]' 
                   : isDarkMode ? 'text-white hover:text-[#4B6BFB]' : 'text-[#3B3C4A] hover:text-[#4B6BFB]'
               }`}
             >
-              Blog
+              Games
             </Link>
             <Link 
-              to="/single-post" 
+              to="/games-showcase" 
               className={`text-base font-medium transition-colors ${
-                isActive('/single-post') 
+                isActive('/games-showcase') 
                   ? isDarkMode ? 'text-white' : 'text-[#181A2A]' 
                   : isDarkMode ? 'text-white hover:text-[#4B6BFB]' : 'text-[#3B3C4A] hover:text-[#4B6BFB]'
               }`}
             >
-              Single Post
+              Showcase
             </Link>
             <Link 
-              to="/pages" 
+              to="/games-without-images" 
               className={`text-base font-medium transition-colors ${
-                isActive('/pages') 
+                isActive('/games-without-images') 
                   ? isDarkMode ? 'text-white' : 'text-[#181A2A]' 
                   : isDarkMode ? 'text-white hover:text-[#4B6BFB]' : 'text-[#3B3C4A] hover:text-[#4B6BFB]'
               }`}
             >
-              Pages
+              Dashboard
             </Link>
             <Link 
-              to="/contact" 
+              to="/admin-login" 
               className={`text-base font-medium transition-colors ${
-                isActive('/contact') 
+                isActive('/admin-login') 
                   ? isDarkMode ? 'text-white' : 'text-[#181A2A]' 
                   : isDarkMode ? 'text-white hover:text-[#4B6BFB]' : 'text-[#3B3C4A] hover:text-[#4B6BFB]'
               }`}
             >
-              Contact
+              Admin
             </Link>
           </nav>
           
@@ -167,48 +173,48 @@ const Header = memo(() => {
                 Home
               </Link>
               <Link 
-                to="/blog" 
+                to="/games" 
                 className={`block px-4 py-2 text-base font-medium rounded-md ${
-                  isActive('/blog') 
+                  isActive('/games') 
                     ? isDarkMode ? 'bg-[#4B6BFB] text-white' : 'bg-[#4B6BFB] text-white'
                     : isDarkMode ? 'text-white hover:bg-[#242535]' : 'text-[#3B3C4A] hover:bg-[#F4F4F5]'
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Blog
+                Games
               </Link>
               <Link 
-                to="/single-post" 
+                to="/games-showcase" 
                 className={`block px-4 py-2 text-base font-medium rounded-md ${
-                  isActive('/single-post') 
+                  isActive('/games-showcase') 
                     ? isDarkMode ? 'bg-[#4B6BFB] text-white' : 'bg-[#4B6BFB] text-white'
                     : isDarkMode ? 'text-white hover:bg-[#242535]' : 'text-[#3B3C4A] hover:bg-[#F4F4F5]'
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Single Post
+                Showcase
               </Link>
               <Link 
-                to="/pages" 
+                to="/games-without-images" 
                 className={`block px-4 py-2 text-base font-medium rounded-md ${
-                  isActive('/pages') 
+                  isActive('/games-without-images') 
                     ? isDarkMode ? 'bg-[#4B6BFB] text-white' : 'bg-[#4B6BFB] text-white'
                     : isDarkMode ? 'text-white hover:bg-[#242535]' : 'text-[#3B3C4A] hover:bg-[#F4F4F5]'
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Pages
+                Dashboard
               </Link>
               <Link 
-                to="/contact" 
+                to="/admin-login" 
                 className={`block px-4 py-2 text-base font-medium rounded-md ${
-                  isActive('/contact') 
+                  isActive('/admin-login') 
                     ? isDarkMode ? 'bg-[#4B6BFB] text-white' : 'bg-[#4B6BFB] text-white'
                     : isDarkMode ? 'text-white hover:bg-[#242535]' : 'text-[#3B3C4A] hover:bg-[#F4F4F5]'
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Contact
+                Admin
               </Link>
               
               {/* Mobile Search */}
