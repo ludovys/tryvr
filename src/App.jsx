@@ -21,8 +21,12 @@ function App() {
       <ThemeProvider>
         <Router>
           <Routes>
+            {/* Home page now has the games grid */}
             <Route path="/" element={<Home />} />
+            
+            {/* Games page is now a separate page for future features */}
             <Route path="/games" element={<Games />} />
+            
             <Route path="/game/:gameId" element={<GameDetail />} />
             <Route path="/games-showcase" element={<GamesShowcase />} />
             <Route path="/games-without-images" element={<GamesWithoutImages />} />

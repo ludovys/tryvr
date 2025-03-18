@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import GameCard from '../components/GameCard';
+import GameGrid from '../components/GameGrid';
 import GamePlayer from '../components/GamePlayer';
 import Notification from '../components/Notification';
 import useGames from '../hooks/useGames';
@@ -12,7 +12,9 @@ const Home = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [notification, setNotification] = useState(null);
   const [currentGame, setCurrentGame] = useState(null);
+  const [activeCategory, setActiveCategory] = useState('all');
   const { isDarkMode } = useTheme();
+  
   const { 
     games, 
     loading, 
@@ -29,6 +31,7 @@ const Home = () => {
     const search = searchParams.get('search') || '';
     const page = parseInt(searchParams.get('page') || '1', 10);
     
+    setActiveCategory(category);
     updateFilters({
       category,
       searchTerm: search,
@@ -58,6 +61,7 @@ const Home = () => {
 
   // Handle category change
   const handleCategoryChange = (category) => {
+    setActiveCategory(category);
     updateFilters({ category, page: 1 });
   };
 
@@ -68,20 +72,10 @@ const Home = () => {
     updateFilters({ searchTerm: searchInput, page: 1 });
   };
 
-  // Handle pagination
-  const handlePageChange = (newPage) => {
-    updateFilters({ page: newPage });
-    // Scroll to top
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
   // Handle game play
   const handlePlayGame = (game) => {
     setCurrentGame(game);
     incrementPlayCount(game.id);
-    
-    // Track play in analytics (in a real app)
-    console.log(`Playing game: ${game.title}`);
   };
 
   // Close game player
@@ -89,119 +83,60 @@ const Home = () => {
     setCurrentGame(null);
   };
 
-  // Render pagination controls
+  // Render loading skeleton
+  const renderSkeleton = () => {
+    return (
+      <div className="games-grid">
+        {Array(12).fill().map((_, index) => (
+          <div key={index} className={`game-card ${isDarkMode ? 'bg-gray-800/90' : 'bg-gray-100'}`}>
+            <div className="game-card-image">
+              <div className={`w-full h-0 pb-[100%] relative ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}></div>
+            </div>
+            <div className={`game-card-content ${isDarkMode ? 'bg-[var(--theme-card-bg)]' : 'bg-white'}`}>
+              <div className={`h-5 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'} rounded w-3/4 mb-3`}></div>
+              <div className="flex justify-between mb-3">
+                <div className={`h-4 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'} rounded w-1/4`}></div>
+                <div className={`h-4 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'} rounded w-1/4`}></div>
+              </div>
+              <div className={`h-4 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'} rounded w-1/3 mb-3`}></div>
+              <div className={`h-16 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'} rounded w-full mb-4`}></div>
+              <div className={`h-10 bg-white rounded-full w-full`}></div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  // Render pagination
   const renderPagination = () => {
     if (totalPages <= 1) return null;
     
-    const pages = [];
-    const currentPage = filters.page;
-    
-    // Previous button
-    pages.push(
-      <button
-        key="prev"
-        onClick={() => handlePageChange(currentPage - 1)}
-        disabled={currentPage === 1}
-        className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg mr-2 disabled:opacity-50 hover:bg-gray-200 transition-colors"
-      >
-        <i className="fas fa-chevron-left mr-1"></i> Prev
-      </button>
-    );
-    
-    // Page numbers
-    const startPage = Math.max(1, currentPage - 2);
-    const endPage = Math.min(totalPages, startPage + 4);
-    
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(
-        <button
-          key={i}
-          onClick={() => handlePageChange(i)}
-          className={`px-4 py-2 rounded-lg mx-1 transition-colors ${
-            i === currentPage 
-              ? 'bg-indigo-600 text-white' 
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-          }`}
-        >
-          {i}
-        </button>
-      );
-    }
-    
-    // Next button
-    pages.push(
-      <button
-        key="next"
-        onClick={() => handlePageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
-        className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg ml-2 disabled:opacity-50 hover:bg-gray-200 transition-colors"
-      >
-        Next <i className="fas fa-chevron-right ml-1"></i>
-      </button>
-    );
-    
     return (
-      <div className="flex justify-center mt-8 mb-8">
-        {pages}
+      <div className="pagination flex justify-center mt-8 space-x-2">
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+          <button
+            key={page}
+            onClick={() => updateFilters({ page })}
+            className={`w-10 h-10 rounded-full flex items-center justify-center transition ${
+              page === filters.page
+                ? `${isDarkMode ? 'bg-white text-gray-900' : 'bg-gray-900 text-white'}`
+                : `${isDarkMode ? 'bg-gray-800 text-gray-300 hover:bg-gray-700' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`
+            }`}
+          >
+            {page}
+          </button>
+        ))}
       </div>
     );
   };
 
-  // Render loading skeleton for GameCard
-  const renderGameCardSkeleton = () => {
-    return Array(filters.itemsPerPage || 8).fill().map((_, index) => (
-      <div key={`skeleton-${index}`} className="bg-white rounded-lg overflow-hidden shadow-sm animate-pulse">
-        <div className="aspect-[16/9] bg-gray-200"></div>
-        <div className="p-4">
-          <div className="h-5 bg-gray-200 rounded w-3/4 mb-3"></div>
-          <div className="flex items-center mb-3">
-            <div className="h-4 bg-gray-200 rounded w-1/4 mr-2"></div>
-            <div className="h-4 bg-gray-200 rounded w-1/6"></div>
-          </div>
-          <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
-          <div className="h-4 bg-gray-200 rounded w-5/6 mb-4"></div>
-          <div className="h-8 bg-gray-200 rounded w-full"></div>
-        </div>
-      </div>
-    ));
-  };
-
-  // Filter games by category
-  const getFeaturedGames = () => {
-    return games.filter(game => game.featured).slice(0, 6);
-  };
-
-  const getNewGames = () => {
-    return [...games].sort((a, b) => {
-      return new Date(b.releaseDate) - new Date(a.releaseDate);
-    }).slice(0, 8);
-  };
-
-  const getTrendingGames = () => {
-    return [...games].sort((a, b) => b.players - a.players).slice(0, 8);
-  };
-
-  // Blog categories
-  const categories = [
-    { id: 'technology', name: 'Technology', icon: 'microchip' },
-    { id: 'lifestyle', name: 'Lifestyle', icon: 'coffee' },
-    { id: 'business', name: 'Business', icon: 'briefcase' },
-    { id: 'travel', name: 'Travel', icon: 'plane' },
-    { id: 'sports', name: 'Sports', icon: 'futbol' },
-    { id: 'economy', name: 'Economy', icon: 'chart-line' }
-  ];
-
+  // Main component render
   return (
-    <div className={`flex flex-col min-h-screen ${isDarkMode ? 'bg-[#181A2A] text-white' : 'bg-white text-[#181A2A]'}`}>
+    <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-[var(--theme-bg-primary)]' : 'bg-gray-50'}`}>
       <Header />
       
-      {currentGame && (
-        <GamePlayer 
-          game={currentGame} 
-          onClose={handleCloseGame} 
-        />
-      )}
-      
+      {/* Notification */}
       {notification && (
         <Notification 
           message={notification.message} 
@@ -209,126 +144,83 @@ const Home = () => {
           onClose={() => setNotification(null)} 
         />
       )}
+
+      {/* Game Player (if a game is selected) */}
+      {currentGame && (
+        <GamePlayer
+          game={currentGame}
+          onClose={handleCloseGame}
+        />
+      )}
       
-      <main className="flex-grow">
-        {/* Hero Section */}
-        <section className="py-8">
-          <div className="container mx-auto px-4">
-            <div className="bg-[#181A2A] rounded-xl overflow-hidden shadow-xl relative">
-              <div className="flex flex-col md:flex-row">
-                {/* Featured Image */}
-                <div className="w-full md:w-2/3 h-[400px] relative">
-                  <img 
-                    src={games[0]?.image || 'https://via.placeholder.com/800x400'} 
-                    alt={games[0]?.title || 'Featured Post'} 
-                    className="w-full h-full object-cover rounded-t-xl md:rounded-l-xl md:rounded-tr-none"
-                  />
-                </div>
-                
-                {/* Content */}
-                <div className="w-full md:w-1/3 p-8 bg-[#181A2A] border border-[#242535] shadow-lg rounded-b-xl md:rounded-r-xl md:rounded-bl-none">
-                  <div className="mb-4">
-                    <span className="inline-block px-3 py-1 bg-[#4B6BFB] text-white text-sm font-medium rounded-md">
-                      Technology
-                    </span>
-                  </div>
-                  <h2 className="text-3xl font-bold mb-6 text-white">
-                    The Impact of Technology on the Workplace: How Technology is Changing
-                  </h2>
-                  <div className="flex items-center space-x-4">
-                    <div className="flex items-center">
-                      <img 
-                        src="https://via.placeholder.com/40" 
-                        alt="Author" 
-                        className="w-8 h-8 rounded-full mr-2"
-                      />
-                      <span className="text-[#97989F]">Jason Francisco</span>
-                    </div>
-                    <span className="text-[#97989F]">August 20, 2022</span>
-                  </div>
-                </div>
+      {/* Main Content */}
+      <main className={`flex-grow container mx-auto px-4 py-8`}>
+        <section className="mb-12">
+          {/* Page heading */}
+          <div className="mb-8">
+            <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              Welcome to TryVR
+            </h1>
+            <p className={`mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              Discover and play the best virtual reality games
+            </p>
+          </div>
+          
+          {/* Search and filters */}
+          <div className="flex flex-col md:flex-row gap-4 mb-8">
+            {/* Search form */}
+            <form onSubmit={handleSearch} className="flex-grow">
+              <div className={`relative rounded-full overflow-hidden ${isDarkMode ? 'bg-[var(--theme-input-bg)]' : 'bg-white'}`}>
+                <input
+                  type="search"
+                  name="search"
+                  placeholder="Search games..."
+                  className={`w-full py-3 pl-5 pr-12 outline-none ${isDarkMode ? 'bg-[var(--theme-input-bg)] text-white' : 'bg-white text-gray-900'}`}
+                  defaultValue={filters.searchTerm}
+                />
+                <button 
+                  type="submit"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  <i className="fas fa-search"></i>
+                </button>
               </div>
-            </div>
-          </div>
-        </section>
-        
-        {/* Advertisement Section */}
-        <section className="py-4">
-          <div className="container mx-auto px-4">
-            <div className="bg-[#242535] rounded-xl p-8 flex flex-col items-center justify-center h-[100px]">
-              <p className="text-xs text-[#696A75]">Advertisement</p>
-              <p className="text-lg text-[#696A75]">You can place ads</p>
-              <p className="text-sm text-[#696A75]">750x100</p>
-            </div>
-          </div>
-        </section>
-        
-        {/* Latest Posts Section */}
-        <section className="py-8">
-          <div className="container mx-auto px-4">
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-2xl font-bold">Latest Post</h2>
-            </div>
+            </form>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {loading ? (
-                renderGameCardSkeleton()
+            {/* Category filters */}
+            <div className="category-nav flex items-center space-x-2 pb-2 overflow-x-auto">
+              {['all', 'action', 'adventure', 'puzzle', 'racing', 'sports', 'simulation'].map(category => (
+                <button
+                  key={category}
+                  onClick={() => handleCategoryChange(category)}
+                  className={`category-nav-item ${activeCategory === category ? 'active' : ''}`}
+                >
+                  {category === 'all' ? 'All Games' : category.charAt(0).toUpperCase() + category.slice(1)}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Games grid */}
+          <div className="games-container">
+            {loading ? renderSkeleton() : (
+              games.length > 0 ? (
+                <GameGrid 
+                  games={games} 
+                  onPlay={handlePlayGame} 
+                />
               ) : (
-                getNewGames().map((game) => (
-                  <div key={game.id} className="bg-[#181A2A] border border-[#242535] rounded-xl overflow-hidden shadow-lg">
-                    <div className="h-48 overflow-hidden">
-                      <img 
-                        src={game.image || 'https://via.placeholder.com/400x200'} 
-                        alt={game.title} 
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="p-6">
-                      <div className="mb-4">
-                        <span className="inline-block px-2 py-1 bg-[rgba(75,107,251,0.05)] text-[#4B6BFB] text-xs font-medium rounded-md">
-                          Technology
-                        </span>
-                      </div>
-                      <h3 className="text-xl font-semibold mb-4 text-white">
-                        {game.title}
-                      </h3>
-                      <div className="flex items-center space-x-4">
-                        <div className="flex items-center">
-                          <img 
-                            src="https://via.placeholder.com/30" 
-                            alt="Author" 
-                            className="w-7 h-7 rounded-full mr-2"
-                          />
-                          <span className="text-sm text-[#97989F]">Tracey Wilson</span>
-                        </div>
-                        <span className="text-sm text-[#97989F]">August 20, 2022</span>
-                      </div>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-            
-            <div className="flex justify-center mt-8">
-              <Link 
-                to="/games" 
-                className="px-5 py-3 border border-[rgba(105,106,117,0.3)] text-[#696A75] rounded-lg hover:bg-[#242535] transition-colors"
-              >
-                View All Post
-              </Link>
-            </div>
+                <div className={`text-center py-16 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                  <i className="fas fa-search text-4xl mb-3"></i>
+                  <h3 className="text-xl font-medium mb-2">No games found</h3>
+                  <p>Try a different search term or category</p>
+                </div>
+              )
+            )}
           </div>
-        </section>
-        
-        {/* Second Advertisement Section */}
-        <section className="py-4 mb-8">
-          <div className="container mx-auto px-4">
-            <div className="bg-[#242535] rounded-xl p-8 flex flex-col items-center justify-center h-[100px]">
-              <p className="text-xs text-[#696A75]">Advertisement</p>
-              <p className="text-lg text-[#696A75]">You can place ads</p>
-              <p className="text-sm text-[#696A75]">750x100</p>
-            </div>
-          </div>
+          
+          {/* Pagination */}
+          {!loading && renderPagination()}
         </section>
       </main>
       

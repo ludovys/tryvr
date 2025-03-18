@@ -12,7 +12,8 @@
     "wrangler:deploy": "wrangler pages deploy dist --project-name=tryvr",
     "deploy": "./deploy.sh",
     "start": "npm run build && npm run wrangler:dev",
-    "mcp:postgres": "./start-mcp-postgres.sh"
+    "mcp:postgres": "./start-mcp-postgres.sh",
+    "figma:mcp": "./start-figma-mcp.sh"
   },
   "dependencies": {
     "@cloudflare/kv-asset-handler": "^0.4.0",

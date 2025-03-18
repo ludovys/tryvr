@@ -32,6 +32,7 @@
 - ✅ Fixed GitHub Actions workflow permissions for Cloudflare Pages deployments
 - ✅ Updated game design based on Figma layout with consistent thumbnail sizes, uniform spacing, and improved visual design
 - ✅ Implemented Puppeteer browser automation with headless mode configuration that works without requiring an X server
+- ✅ Moved Games page layout to the homepage while creating a new Games page for future features
 
 ## Current Tasks
 - 🔄 Further optimize website performance
