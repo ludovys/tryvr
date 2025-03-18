@@ -9,21 +9,21 @@ const Footer = memo(() => {
   
   // Categories for the footer
   const categories = [
-    { name: 'Lifestyle', to: '/category/lifestyle' },
-    { name: 'Technology', to: '/category/technology' },
-    { name: 'Travel', to: '/category/travel' },
-    { name: 'Business', to: '/category/business' },
-    { name: 'Economy', to: '/category/economy' },
-    { name: 'Sports', to: '/category/sports' }
+    { name: 'VR Headsets', to: '/category/vr-headsets' },
+    { name: 'Action Games', to: '/category/action' },
+    { name: 'Adventure', to: '/category/adventure' },
+    { name: 'Simulation', to: '/category/simulation' },
+    { name: 'Puzzle', to: '/category/puzzle' },
+    { name: 'Multiplayer', to: '/category/multiplayer' }
   ];
 
   // Quick links
   const quickLinks = [
     { name: 'Home', to: '/' },
+    { name: 'Games', to: '/games' },
+    { name: 'Showcase', to: '/games-showcase' },
+    { name: 'Dashboard', to: '/games-without-images' },
     { name: 'About', to: '/about' },
-    { name: 'Blog', to: '/blog' },
-    { name: 'Archived', to: '/archived' },
-    { name: 'Author', to: '/author' },
     { name: 'Contact', to: '/contact' }
   ];
 
@@ -46,11 +46,11 @@ const Footer = memo(() => {
           <div className="space-y-4">
             <h3 className={`text-xl font-semibold ${isDarkMode ? 'text-white' : 'text-[#181A2A]'} mb-4`}>About</h3>
             <p className={`${isDarkMode ? 'text-[#97989F]' : 'text-[#696A75]'} text-base`}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam
+              TryVR is your gateway to immersive virtual reality experiences. Browse our collection of VR games and play them directly in your browser without any downloads or installations.
             </p>
             <div className="space-y-2">
-              <p className={`${isDarkMode ? 'text-white' : 'text-[#181A2A]'} font-semibold`}>Email : info@jstemplate.net</p>
-              <p className={`${isDarkMode ? 'text-white' : 'text-[#181A2A]'} font-semibold`}>Phone : 880 123 456 789</p>
+              <p className={`${isDarkMode ? 'text-white' : 'text-[#181A2A]'} font-semibold`}>Email : contact@tryvr.com</p>
+              <p className={`${isDarkMode ? 'text-white' : 'text-[#181A2A]'} font-semibold`}>Discord : TryVR Community</p>
             </div>
           </div>
           
@@ -94,8 +94,8 @@ const Footer = memo(() => {
           {/* Newsletter */}
           <div className={`${isDarkMode ? 'bg-[#242535]' : 'bg-white'} p-6 rounded-xl`}>
             <div className="text-center mb-6">
-              <h3 className={`text-xl font-semibold ${isDarkMode ? 'text-white' : 'text-[#181A2A]'} mb-2`}>Weekly Newsletter</h3>
-              <p className={`${isDarkMode ? 'text-[#97989F]' : 'text-[#696A75]'}`}>Get blog articles and offers via email</p>
+              <h3 className={`text-xl font-semibold ${isDarkMode ? 'text-white' : 'text-[#181A2A]'} mb-2`}>VR Updates</h3>
+              <p className={`${isDarkMode ? 'text-[#97989F]' : 'text-[#696A75]'}`}>Get the latest VR games and news via email</p>
             </div>
             
             <form onSubmit={handleSubscribe} className="space-y-4">
@@ -137,10 +137,10 @@ const Footer = memo(() => {
             </div>
             <div>
               <div className={`font-bold text-xl ${isDarkMode ? 'text-white' : 'text-[#181A2A]'}`}>
-                <span className="text-[#4B6BFB]">Meta</span>Blog
+                <span className="text-[#4B6BFB]">Try</span><span className="text-[#FF6B35]">VR</span>
               </div>
               <p className={`text-sm ${isDarkMode ? 'text-[#97989F]' : 'text-[#3B3C4A]'}`}>
-                © JS Template {currentYear}. All Rights Reserved.
+                © TryVR {currentYear}. All Rights Reserved.
               </p>
             </div>
           </div>

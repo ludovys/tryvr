@@ -1,6 +1,8 @@
 # Project Roadmap
 
 ## Completed Tasks
+- ✅ Updated footer and applied two-color styling to TryVR brand (blue "Try", orange "VR")
+- ✅ Updated header with VR logo and improved navigation links
 - ✅ Updated the header with animated logo
 - ✅ Revamped footer with tabbed navigation
 - ✅ Added contact link

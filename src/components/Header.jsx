@@ -45,8 +45,8 @@ const Header = memo(() => {
                 alt="TryVR Logo" 
                 className="h-10 w-10 logo-float" 
               />
-              <span className={`font-bold text-2xl ${isDarkMode ? 'text-white' : 'text-[#181A2A]'}`}>
-                TryVR
+              <span className={`font-bold text-2xl`}>
+                <span className="text-[#4B6BFB]">Try</span><span className={`text-[#FF6B35]`}>VR</span>
               </span>
             </Link>
           </div>
