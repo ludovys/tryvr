@@ -6,12 +6,14 @@ import GameGrid from '../components/GameGrid';
 import GamePlayer from '../components/GamePlayer';
 import Notification from '../components/Notification';
 import useGames from '../hooks/useGames';
+import { useTheme } from '../context/ThemeContext';
 
 const Games = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [notification, setNotification] = useState(null);
   const [currentGame, setCurrentGame] = useState(null);
   const [activeCategory, setActiveCategory] = useState('all');
+  const { isDarkMode } = useTheme();
   
   const { 
     games, 
@@ -85,17 +87,20 @@ const Games = () => {
   const renderSkeleton = () => {
     return (
       <div className="games-grid">
-        {Array(15).fill().map((_, index) => (
-          <div key={index} className="bg-gray-800/90 rounded-lg overflow-hidden shadow-lg h-full">
-            <div className="aspect-video bg-gray-700"></div>
-            <div className="p-3">
-              <div className="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
-              <div className="h-3 bg-gray-700 rounded w-1/2 mb-3"></div>
+        {Array(12).fill().map((_, index) => (
+          <div key={index} className={`game-card ${isDarkMode ? 'bg-gray-800/90' : 'bg-gray-100'}`}>
+            <div className="game-card-image">
+              <div className={`w-full h-0 pb-[100%] relative ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}></div>
+            </div>
+            <div className={`game-card-content ${isDarkMode ? 'bg-[var(--theme-card-bg)]' : 'bg-white'}`}>
+              <div className={`h-5 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'} rounded w-3/4 mb-3`}></div>
               <div className="flex justify-between mb-3">
-                <div className="h-3 bg-gray-700 rounded w-1/4"></div>
-                <div className="h-3 bg-gray-700 rounded w-1/4"></div>
+                <div className={`h-4 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'} rounded w-1/4`}></div>
+                <div className={`h-4 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'} rounded w-1/4`}></div>
               </div>
-              <div className="h-8 bg-gray-700 rounded w-full"></div>
+              <div className={`h-4 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'} rounded w-1/3 mb-3`}></div>
+              <div className={`h-16 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'} rounded w-full mb-4`}></div>
+              <div className={`h-10 bg-white rounded-full w-full`}></div>
             </div>
           </div>
         ))}
@@ -103,177 +108,123 @@ const Games = () => {
     );
   };
 
+  // Render pagination
+  const renderPagination = () => {
+    if (totalPages <= 1) return null;
+    
+    return (
+      <div className="pagination flex justify-center mt-8 space-x-2">
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+          <button
+            key={page}
+            onClick={() => updateFilters({ page })}
+            className={`w-10 h-10 rounded-full flex items-center justify-center transition ${
+              page === filters.page
+                ? `${isDarkMode ? 'bg-white text-gray-900' : 'bg-gray-900 text-white'}`
+                : `${isDarkMode ? 'bg-gray-800 text-gray-300 hover:bg-gray-700' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`
+            }`}
+          >
+            {page}
+          </button>
+        ))}
+      </div>
+    );
+  };
+
+  // Main component render
   return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col">
+    <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-[var(--theme-bg-primary)]' : 'bg-gray-50'}`}>
       <Header />
-      
-      <main className="flex-grow container mx-auto px-4 py-8 pt-32">
-        {/* Hero Section */}
-        <section className="mb-12 text-center py-8">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 vr-text-3d">
-            VR Games Collection
-          </h1>
-          <p className="text-lg text-gray-300 max-w-3xl mx-auto">
-            Browse our collection of browser-based VR games. Filter by category or search for your favorite games.
-          </p>
-        </section>
-        
-        {/* Search and Filter */}
-        <section className="mb-8">
-          <div className="flex flex-col md:flex-row justify-between items-center bg-gray-800/80 backdrop-blur-sm p-4 rounded-xl shadow-lg">
-            <div className="flex flex-wrap gap-2 mb-4 md:mb-0">
-              <button
-                onClick={() => handleCategoryChange('all')}
-                className={`px-4 py-2 rounded-lg transition-colors ${
-                  activeCategory === 'all' ? 'bg-purple-700 text-white' : 'bg-gray-700 hover:bg-gray-600'
-                }`}
-                disabled={loading}
-              >
-                All Games
-              </button>
-              <button
-                onClick={() => handleCategoryChange('action')}
-                className={`px-4 py-2 rounded-lg transition-colors ${
-                  activeCategory === 'action' ? 'bg-purple-700 text-white' : 'bg-gray-700 hover:bg-gray-600'
-                }`}
-                disabled={loading}
-              >
-                <i className="fas fa-fist-raised mr-1"></i> Action
-              </button>
-              <button
-                onClick={() => handleCategoryChange('adventure')}
-                className={`px-4 py-2 rounded-lg transition-colors ${
-                  activeCategory === 'adventure' ? 'bg-purple-700 text-white' : 'bg-gray-700 hover:bg-gray-600'
-                }`}
-                disabled={loading}
-              >
-                <i className="fas fa-mountain mr-1"></i> Adventure
-              </button>
-              <button
-                onClick={() => handleCategoryChange('simulation')}
-                className={`px-4 py-2 rounded-lg transition-colors ${
-                  activeCategory === 'simulation' ? 'bg-purple-700 text-white' : 'bg-gray-700 hover:bg-gray-600'
-                }`}
-                disabled={loading}
-              >
-                <i className="fas fa-rocket mr-1"></i> Simulation
-              </button>
-              <button
-                onClick={() => handleCategoryChange('puzzle')}
-                className={`px-4 py-2 rounded-lg transition-colors ${
-                  activeCategory === 'puzzle' ? 'bg-purple-700 text-white' : 'bg-gray-700 hover:bg-gray-600'
-                }`}
-                disabled={loading}
-              >
-                <i className="fas fa-puzzle-piece mr-1"></i> Puzzle
-              </button>
-              <button
-                onClick={() => handleCategoryChange('racing')}
-                className={`px-4 py-2 rounded-lg transition-colors ${
-                  activeCategory === 'racing' ? 'bg-purple-700 text-white' : 'bg-gray-700 hover:bg-gray-600'
-                }`}
-                disabled={loading}
-              >
-                <i className="fas fa-flag-checkered mr-1"></i> Racing
-              </button>
-              <button
-                onClick={() => handleCategoryChange('sports')}
-                className={`px-4 py-2 rounded-lg transition-colors ${
-                  activeCategory === 'sports' ? 'bg-purple-700 text-white' : 'bg-gray-700 hover:bg-gray-600'
-                }`}
-                disabled={loading}
-              >
-                <i className="fas fa-basketball-ball mr-1"></i> Sports
-              </button>
-            </div>
-            
-            <form onSubmit={handleSearch} className="w-full md:w-auto">
-              <div className="relative">
-                <input
-                  type="text"
-                  name="search"
-                  placeholder="Search games..."
-                  className="w-full md:w-64 bg-gray-700 text-white px-4 py-2 pl-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  defaultValue={filters.searchTerm}
-                  disabled={loading}
-                />
-                <button 
-                  type="submit" 
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                  disabled={loading}
-                >
-                  <i className="fas fa-search"></i>
-                </button>
-              </div>
-            </form>
-          </div>
-        </section>
-        
-        {/* Games Grid */}
-        <section>
-          <div className="flex items-center mb-6">
-            <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
-              {activeCategory === 'all' 
-                ? 'All Games' 
-                : `${activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)} Games`}
-            </h2>
-            <div className="ml-4 h-1 flex-grow bg-gradient-to-r from-purple-400 to-pink-600 rounded-full"></div>
-          </div>
-          
-          {loading ? (
-            renderSkeleton()
-          ) : games.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 text-center">
-              <div className="text-gray-500 text-8xl mb-6">
-                <i className="fas fa-ghost"></i>
-              </div>
-              <h3 className="text-2xl font-bold text-gray-300 mb-4">No Games Found</h3>
-              <p className="text-gray-400 mb-8 max-w-md">
-                We couldn't find any games matching your search criteria. Try adjusting your filters or search query.
-              </p>
-              <button
-                onClick={() => updateFilters({ category: 'all', searchTerm: '', page: 1 })}
-                className="vr-button px-6 py-3 rounded-lg"
-              >
-                <i className="fas fa-redo mr-2"></i> Show All Games
-              </button>
-            </div>
-          ) : (
-            <GameGrid games={games} onPlay={handlePlayGame} />
-          )}
-          
-          {/* Load More Button */}
-          {!loading && games.length > 0 && filters.page < totalPages && (
-            <div className="flex justify-center mt-8">
-              <button
-                onClick={() => updateFilters({ page: filters.page + 1 })}
-                className="vr-button px-6 py-3 rounded-lg"
-              >
-                <i className="fas fa-spinner mr-2"></i> Load More Games
-              </button>
-            </div>
-          )}
-        </section>
-      </main>
-      
-      <Footer />
-      
-      {/* Game Player Modal */}
-      {currentGame && (
-        <GamePlayer 
-          game={currentGame} 
-          onClose={handleCloseGame}
-        />
-      )}
       
       {/* Notification */}
       {notification && (
         <Notification 
           message={notification.message} 
-          type={notification.type}
-          onClose={() => setNotification(null)}
+          type={notification.type} 
+          onClose={() => setNotification(null)} 
         />
       )}
+
+      {/* Game Player (if a game is selected) */}
+      {currentGame && (
+        <GamePlayer
+          game={currentGame}
+          onClose={handleCloseGame}
+        />
+      )}
+      
+      {/* Main Content */}
+      <main className={`flex-grow container mx-auto px-4 py-8`}>
+        <section className="mb-12">
+          {/* Page heading */}
+          <div className="mb-8">
+            <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              Browse Games
+            </h1>
+            <p className={`mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              Discover and play the best virtual reality games
+            </p>
+          </div>
+          
+          {/* Search and filters */}
+          <div className="flex flex-col md:flex-row gap-4 mb-8">
+            {/* Search form */}
+            <form onSubmit={handleSearch} className="flex-grow">
+              <div className={`relative rounded-full overflow-hidden ${isDarkMode ? 'bg-[var(--theme-input-bg)]' : 'bg-white'}`}>
+                <input
+                  type="search"
+                  name="search"
+                  placeholder="Search games..."
+                  className={`w-full py-3 pl-5 pr-12 outline-none ${isDarkMode ? 'bg-[var(--theme-input-bg)] text-white' : 'bg-white text-gray-900'}`}
+                  defaultValue={filters.searchTerm}
+                />
+                <button 
+                  type="submit"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  <i className="fas fa-search"></i>
+                </button>
+              </div>
+            </form>
+            
+            {/* Category filters */}
+            <div className="category-nav flex items-center space-x-2 pb-2 overflow-x-auto">
+              {['all', 'action', 'adventure', 'puzzle', 'racing', 'sports', 'simulation'].map(category => (
+                <button
+                  key={category}
+                  onClick={() => handleCategoryChange(category)}
+                  className={`category-nav-item ${activeCategory === category ? 'active' : ''}`}
+                >
+                  {category === 'all' ? 'All Games' : category.charAt(0).toUpperCase() + category.slice(1)}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Games grid */}
+          <div className="games-container">
+            {loading ? renderSkeleton() : (
+              games.length > 0 ? (
+                <GameGrid 
+                  games={games} 
+                  onPlay={handlePlayGame} 
+                />
+              ) : (
+                <div className={`text-center py-16 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                  <i className="fas fa-search text-4xl mb-3"></i>
+                  <h3 className="text-xl font-medium mb-2">No games found</h3>
+                  <p>Try a different search term or category</p>
+                </div>
+              )
+            )}
+          </div>
+          
+          {/* Pagination */}
+          {!loading && renderPagination()}
+        </section>
+      </main>
+      
+      <Footer />
     </div>
   );
 };

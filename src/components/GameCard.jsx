@@ -52,9 +52,9 @@ const GameCard = React.memo(({ game, onPlay }) => {
   };
 
   return (
-    <div className={`game-card rounded-lg overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-xl ${isDarkMode ? 'shadow-dark' : 'shadow-light'}`}>
+    <div className={`game-card transition-all duration-200 hover:-translate-y-1 hover:shadow-xl ${isDarkMode ? 'shadow-dark' : 'shadow-light'}`}>
       {/* Card Image with Play Button Overlay */}
-      <div className="relative">
+      <div className="relative game-card-image-container">
         {/* Featured Badge */}
         {game.featured && (
           <span className="absolute top-2 right-2 bg-indigo-600 text-white text-xs px-2 py-1 rounded-full z-10">
@@ -66,7 +66,7 @@ const GameCard = React.memo(({ game, onPlay }) => {
         <img 
           src={game.imageUrl} 
           alt={game.title}
-          className="w-full aspect-[16/9] object-cover"
+          className="w-full h-full object-cover"
           loading="lazy"
         />
         
@@ -82,8 +82,8 @@ const GameCard = React.memo(({ game, onPlay }) => {
       </div>
       
       {/* Card Content */}
-      <div className={`p-3 ${isDarkMode ? 'bg-[var(--theme-card-bg)] text-[var(--theme-text-primary)]' : 'bg-white text-gray-800'}`}>
-        <h3 className={`text-base font-semibold mb-1 line-clamp-1 ${isDarkMode ? 'text-[var(--theme-text-primary)]' : 'text-gray-800'}`}>
+      <div className={`p-4 ${isDarkMode ? 'bg-[var(--theme-card-bg)] text-[var(--theme-text-primary)]' : 'bg-white text-gray-800'}`}>
+        <h3 className={`text-base font-semibold mb-2 line-clamp-1 ${isDarkMode ? 'text-[var(--theme-text-primary)]' : 'text-gray-800'}`}>
           {game.title}
         </h3>
         
@@ -97,14 +97,14 @@ const GameCard = React.memo(({ game, onPlay }) => {
           </span>
         </div>
         
-        <p className={`text-xs line-clamp-2 mb-2 ${isDarkMode ? 'text-[var(--theme-text-secondary)]' : 'text-gray-600'}`}>
+        <p className={`text-xs line-clamp-2 mb-3 ${isDarkMode ? 'text-[var(--theme-text-secondary)]' : 'text-gray-600'}`}>
           {game.description}
         </p>
         
         {/* Action Button */}
         <button 
           onClick={handlePlay}
-          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium py-2 rounded transition-colors duration-200"
+          className="w-full bg-white hover:bg-gray-100 text-gray-800 text-sm font-medium py-3 rounded-full transition-colors duration-200"
         >
           Play Now
         </button>

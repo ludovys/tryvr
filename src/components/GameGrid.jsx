@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTheme } from '../context/ThemeContext';
 
 const GameGrid = ({ games, onPlay }) => {
   const [hoveredGame, setHoveredGame] = useState(null);
+  const { isDarkMode } = useTheme();
 
   // Format date with error handling
   const formatDate = (dateString) => {
@@ -59,7 +61,7 @@ const GameGrid = ({ games, onPlay }) => {
       {games.map(game => (
         <div 
           key={game.id}
-          className="game-card h-full"
+          className="game-card"
           onMouseEnter={() => setHoveredGame(game.id)}
           onMouseLeave={() => setHoveredGame(null)}
         >
@@ -73,7 +75,7 @@ const GameGrid = ({ games, onPlay }) => {
                   e.target.src = 'https://via.placeholder.com/300x169?text=Game+Thumbnail';
                 }}
                 loading="lazy"
-                className="w-full h-full object-contain"
+                className="w-full h-full object-cover"
               />
               
               {/* Render badges */}
@@ -88,9 +90,9 @@ const GameGrid = ({ games, onPlay }) => {
             </div>
           </Link>
           
-          <div className="game-card-content">
+          <div className={`game-card-content ${isDarkMode ? 'bg-[var(--theme-card-bg)] text-[var(--theme-text-primary)]' : ''}`}>
             <Link to={`/game/${game.id}`}>
-              <h3 className="game-card-title line-clamp-1">{game.title}</h3>
+              <h3 className={`game-card-title line-clamp-1 ${isDarkMode ? 'text-[var(--theme-text-primary)]' : ''}`}>{game.title}</h3>
             </Link>
             
             <div className="game-card-meta">
@@ -103,18 +105,18 @@ const GameGrid = ({ games, onPlay }) => {
               </span>
             </div>
             
-            <div className="game-card-category">
+            <div className={`game-card-category ${isDarkMode ? 'bg-[var(--theme-bg-tertiary)] text-[var(--theme-text-tertiary)]' : ''}`}>
               {game.category.charAt(0).toUpperCase() + game.category.slice(1)}
             </div>
             
-            <p className="game-card-description line-clamp-2">{game.description}</p>
+            <p className={`game-card-description line-clamp-2 ${isDarkMode ? 'text-[var(--theme-text-secondary)]' : ''}`}>{game.description}</p>
             
             <button 
               onClick={() => playGame(game)}
-              className="btn btn-primary game-card-button mt-auto"
+              className="btn-play-now"
               aria-label={`Play ${game.title}`}
             >
-              <i className="fas fa-play-circle mr-2"></i> Play Now
+              Play Now
             </button>
           </div>
         </div>
