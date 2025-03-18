@@ -157,8 +157,8 @@ const Home = () => {
       <main className={`flex-grow container mx-auto px-4 py-8`}>
         <section className="mb-12">
           {/* Page heading */}
-          <div className="mb-8">
-            <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+          <div className="mb-4 sm:mb-6 md:mb-8">
+            <h1 className={`text-2xl sm:text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
               Welcome to TryVR
             </h1>
             <p className={`mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
@@ -167,7 +167,7 @@ const Home = () => {
           </div>
           
           {/* Search and filters */}
-          <div className="flex flex-col md:flex-row gap-4 mb-8">
+          <div className="flex flex-col sm:flex-row gap-3 mb-6">
             {/* Search form */}
             <form onSubmit={handleSearch} className="flex-grow">
               <div className={`relative rounded-full overflow-hidden ${isDarkMode ? 'bg-[var(--theme-input-bg)]' : 'bg-white'}`}>
@@ -175,7 +175,7 @@ const Home = () => {
                   type="search"
                   name="search"
                   placeholder="Search games..."
-                  className={`w-full py-3 pl-5 pr-12 outline-none ${isDarkMode ? 'bg-[var(--theme-input-bg)] text-white' : 'bg-white text-gray-900'}`}
+                  className={`w-full py-2 sm:py-3 pl-4 sm:pl-5 pr-10 sm:pr-12 outline-none text-sm sm:text-base ${isDarkMode ? 'bg-[var(--theme-input-bg)] text-white' : 'bg-white text-gray-900'}`}
                   defaultValue={filters.searchTerm}
                 />
                 <button 
@@ -188,12 +188,12 @@ const Home = () => {
             </form>
             
             {/* Category filters */}
-            <div className="category-nav flex items-center space-x-2 pb-2 overflow-x-auto">
+            <div className="category-nav flex items-center space-x-2 pb-1 overflow-x-auto">
               {['all', 'action', 'adventure', 'puzzle', 'racing', 'sports', 'simulation'].map(category => (
                 <button
                   key={category}
                   onClick={() => handleCategoryChange(category)}
-                  className={`category-nav-item ${activeCategory === category ? 'active' : ''}`}
+                  className={`category-nav-item text-xs sm:text-sm py-1 sm:py-2 px-2 sm:px-3 whitespace-nowrap ${activeCategory === category ? 'active' : ''}`}
                 >
                   {category === 'all' ? 'All Games' : category.charAt(0).toUpperCase() + category.slice(1)}
                 </button>

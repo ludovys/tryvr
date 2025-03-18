@@ -1,6 +1,7 @@
 # Project Roadmap
 
 ## Completed Tasks
+- ✅ Improved responsive design for 1360x768 resolution with optimized layout and components
 - ✅ Updated footer and applied two-color styling to TryVR brand (blue "Try", orange "VR")
 - ✅ Updated header with VR logo and improved navigation links
 - ✅ Updated the header with animated logo
